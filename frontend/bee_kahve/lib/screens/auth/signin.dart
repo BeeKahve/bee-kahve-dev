@@ -1,7 +1,10 @@
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/consts/validator.dart';
+import 'package:bee_kahve/root.dart';
 import 'package:bee_kahve/screens/auth/signup.dart';
 import 'package:flutter/material.dart';
+
+import '../profile/profile.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -32,6 +35,10 @@ class _SignInScreenState extends State<SignInScreen> {
   Future<void> _signin()async{
     final isValid = _formkey.currentState!.validate();
     FocusScope.of(context).unfocus();
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const RootScreen()));
   }
   @override
   Widget build(BuildContext context) {
@@ -41,7 +48,7 @@ class _SignInScreenState extends State<SignInScreen> {
       },
       child: Scaffold(
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(14.0),
           child: SingleChildScrollView(
             child: Column(
               children: [
