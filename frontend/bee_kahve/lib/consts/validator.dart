@@ -1,9 +1,9 @@
 class MyValidators {
-  static String? Namevalidator(String? Name) {
-    if (Name == null || Name.isEmpty) {
+  static String? nameValidator(String? name) {
+    if (name == null || name.isEmpty) {
       return 'Name cannot be empty';
     }
-    if (Name.length < 3 || Name.length > 20) {
+    if (name.length < 3 || name.length > 20) {
       return 'Name must be between 3 and 20 characters';
     }
 
