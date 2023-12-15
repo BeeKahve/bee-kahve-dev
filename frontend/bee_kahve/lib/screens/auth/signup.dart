@@ -1,6 +1,5 @@
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/consts/validator.dart';
-import 'package:bee_kahve/screens/auth/signin.dart';
 import 'package:flutter/material.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -41,6 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Future<void> _signup()async{
     final isValid = _formkey.currentState!.validate();
     FocusScope.of(context).unfocus();
+
   }
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       },
       child: Scaffold(
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(14.0),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -60,10 +60,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Row(
                     children: [
                       IconButton(
-                        onPressed: () {Navigator.push(
-                            context, MaterialPageRoute(builder: (context) => const SignInScreen()));
+                        onPressed: () {
+                          Navigator.pop(context);
                         },
-                        icon: const Icon(Icons.keyboard_backspace),
+                        icon: const Icon(Icons.keyboard_backspace, size: 32,),
                       ),
                     ],
                   ),
@@ -86,7 +86,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               hintText: "Name",
                               prefixIcon: Icon(Icons.message)),
                           validator: (value){
-                            return MyValidators.Namevalidator(value);
+                            return MyValidators.nameValidator(value);
                           },
                         ),
                         const SizedBox(height: 20,),
@@ -163,7 +163,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           keyboardType: TextInputType.streetAddress,
                           decoration: const InputDecoration(
                               hintText: "Address",
-                              prefixIcon: Icon(Icons.add_home)),
+                              prefixIcon: Icon(Icons.home_filled)),
                           validator: (value){
                             return MyValidators.addressValidator(value);
                           },
