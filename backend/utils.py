@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import List
 
 """
-
+fotoğraflar nasıl tutulacak
 """
 
 class Product(BaseModel):
@@ -37,6 +37,7 @@ class LineItem(BaseModel):
     milk_choice : str = None
     extra_shot : bool = None 
     caffein_choice : bool = None
+    # add extra choices (sugar, syrup etc)
 
 class Order(BaseModel):
     customer_id : int = None
