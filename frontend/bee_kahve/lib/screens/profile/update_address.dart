@@ -24,7 +24,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
       super.dispose();
     }
   }
-  Future<void> _signin()async{
+  Future<void> _update_address()async{
     FocusScope.of(context).unfocus();
   }
   @override
@@ -86,10 +86,9 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                               ),
                             ),
                             onPressed: () async {
-                              await _signin();
+                              await _update_address();
                             },
                             child: const Text("Submit", style: TextStyle(color: AppColors.darkColor),),
-
                           ),
                         ),
                       ],)),
