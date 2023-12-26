@@ -9,13 +9,14 @@ class Product(BaseModel):
     coffee_name : str = None 
     photo_path : str = None
     small_cup_only : bool = None
-    milk : bool = None             # 0 for amer 1 for others
-    chocolate_syrup : bool = None  # 1 for mocha 0 for others
-    white_chocolate_syrup : bool = None
-    caramel_syrup : bool = None
-    sugar : bool = None
+    contains_milk : bool = None             # 0 for amer 1 for others
+    contains_chocolate_syrup : bool = None  # 1 for mocha 0 for others
+    contains_white_chocolate_syrup : bool = None
+    contains_caramel_syrup : bool = None
+    contains_sugar : bool = None
     price : float = None
     rate : int = None
+
 
 class MenuProduct(BaseModel):
     product_id : int = None
@@ -24,9 +25,11 @@ class MenuProduct(BaseModel):
     rate : float = None
     price : float = None
 
+
 class ProductMenu(BaseModel):
     menuProducts : List[MenuProduct] = None
     product_count : int = None
+
 
 class LineItem(BaseModel):
     product_id : int = None
@@ -35,9 +38,10 @@ class LineItem(BaseModel):
     price : float = None
     size_choice : str = None
     milk_choice : str = None
-    extra_shot : bool = None 
+    extra_shot_choice : bool = None 
     caffein_choice : bool = None
     # add extra choices (sugar, syrup etc)
+
 
 class Order(BaseModel):
     customer_id : int = None
@@ -46,10 +50,12 @@ class Order(BaseModel):
     order_date : str = None
     order_status : str = None
 
+
 class Orders(BaseModel):
     customer_name : str = None
     orders : List[Order] = None
     order_count : int = None
+
 
 class Customer(BaseModel):
     customer_id : int = None
@@ -58,9 +64,11 @@ class Customer(BaseModel):
     address : str = None
     loyalty_count : int = None
 
+
 class StatusResponse(BaseModel):
     order_id : int = None
     order_status : str = None
+
 
 class Login(BaseModel):
     email : str = None
