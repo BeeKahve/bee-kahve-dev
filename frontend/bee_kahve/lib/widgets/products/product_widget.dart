@@ -1,10 +1,10 @@
 import 'dart:developer';
 
 import 'package:bee_kahve/consts/app_color.dart';
-import 'package:bee_kahve/consts/app_constants.dart';
+// import 'package:bee_kahve/consts/app_constants.dart';
 import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:flutter/material.dart';
-import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
+// import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 class ProductWidget extends StatefulWidget {
   const ProductWidget({super.key});
 

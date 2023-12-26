@@ -1,6 +1,71 @@
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/screens/profile/update_address.dart';
 import 'package:flutter/material.dart';
+import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
+import 'package:bee_kahve/screens/profile/order_details.dart';
+
+
+class Order {
+  final String name;
+  final String image;
+
+  Order(this.name, this.image);
+}
+
+List<Order> pastOrders = [
+  Order("Order 1", "assets/images/cappuccino.jpg"),
+  Order("Order 2", "assets/images/cappuccino.jpg"),
+  Order("Order 3", "assets/images/cappuccino.jpg"),
+];
+
+class OrderHistoryItem extends StatelessWidget {
+  final Order order;
+
+  const OrderHistoryItem({Key? key, required this.order}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Left side: Order details
+          Row(
+            children: [
+              Image.asset(
+                order.image,
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                order.name,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          // Right side: View Order button
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderDetailsScreen()));
+            },
+            style: ElevatedButton.styleFrom(
+              primary: AppColors.yellow,
+            ),
+            child: const Text(
+              "View Order",
+              style: TextStyle(color: AppColors.darkColor),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -100,7 +165,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         "Order History",
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor,),
                       ),
-                    ],),
+                      OrderHistoryItem(order: pastOrders[0]),
+                      OrderHistoryItem(order: pastOrders[1]),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -110,3 +178,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+

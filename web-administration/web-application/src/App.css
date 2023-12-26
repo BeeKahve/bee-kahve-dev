@@ -1,0 +1,116 @@
+.container {
+  display: flex;
+  flex-direction: column; /* Change from 'row' to 'column' */
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.signin-image {
+  background-image: url('../public/bee-logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 300px;
+  height: 300px;
+  margin-bottom: 50px;
+}
+
+.signin-form {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Rest of your styles remain unchanged */
+
+ 
+ .radio-btn {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+ }
+ 
+ .radio-btn input[type='radio'] {
+  display: none;
+ }
+ 
+ .radio-btn label {
+  display: inline-block;
+  cursor: pointer;
+  position: relative;
+  padding-left: 30px;
+  margin-right: 10px;
+  color: #333;
+ }
+ 
+ .radio-btn label:before,
+ .radio-btn label:after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+ }
+ 
+ .radio-btn label:before {
+  height: 20px;
+  width: 20px;
+  background: #f8f8f8;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+ }
+ 
+
+ .radio-btn input[type='radio']:checked + label:before {
+  background: #F1DB11;
+  box-shadow: 0 0 0 4px #ffffff;
+ }
+ 
+ .radio-btn label:after {
+  height: 10px;
+  width: 10px;
+  background: #F1DB11;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.1s;
+ }
+ 
+ .radio-btn input[type='radio']:checked + label:after {
+  opacity: 1;
+ }
+ 
+ form input[type='email'],
+ form input[type='password'] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+  box-sizing: border-box;
+ }
+ 
+ form button[type='submit'] {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #F1DB11;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+ }
+ 
+ form button[type='submit']:hover {
+  background-color: #e0a800;
+ }
+ 
+ form button[type='submit']:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+ }
