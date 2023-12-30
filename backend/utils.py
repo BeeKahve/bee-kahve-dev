@@ -73,3 +73,22 @@ class StatusResponse(BaseModel):
 class Login(BaseModel):
     email : str = None
     password : str = None
+
+class User(BaseModel):  # for register
+    email : str = None
+    password : str = None
+    name : str = None
+    address : str = None
+    is_customer : bool = True
+
+class UserResponse(BaseModel):
+    user_id : int = None
+    is_customer : bool = None
+    name : str = None
+    email : str = None
+    address : str = None
+    loyalty_count : int = None
+
+class Response(BaseModel):
+    status : bool = True
+    message : str = "Success"

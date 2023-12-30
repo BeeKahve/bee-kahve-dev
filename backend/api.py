@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from utils import *
 from appManager import *
@@ -7,6 +8,27 @@ from appManager import *
 
 app = FastAPI()
 manager = Manager()
+
+# origins = [
+#     "http://localhost:3000",
+#     "localhost:3000",
+#     "http://localhost:8000",
+#     "localhost:8000",
+#     "http://localhost",
+#     "localhost",
+#     "http://bee-kahve.herokuapp.com",
+#     "bee-kahve.herokuapp.com"
+# ]
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["POST", "GET"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
