@@ -101,7 +101,7 @@ INSERT INTO Stock (small_cup_count, medium_cup_count, large_cup_count, espresso_
 	VALUES (10, 15, 20, 100.0, 70.0, 1000.0, 1100.0, 1200.0, 1300.0, 1400.0,
 	100.0, 110.0, 120.0, 130.0, 140.0, 100);
 
-INSERT INTO Admins (admin_name, admin_email, admin_password, stock_id) VALUES ("Admin Name", "Admin Email", "Admin Password", 1);
+INSERT INTO Admins (admin_name, admin_email, admin_password, stock_id) VALUES ("Novruz Amirov", "admin@itu.edu.tr", "b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba", 1);
 INSERT INTO Employees (employee_name, employee_email, employee_password, admin_id) VALUES ("Employee Name", "Employee Email", "Employee Password", 1);
 INSERT INTO Customers (customer_name, customer_email, customer_password) VALUES ("Customer Name", "Customer Email", "Customer Password");
 INSERT INTO Products (product_id, coffee_name, photo_path, espresso_amount, milk_amount, price) VALUES (1, "Coffee Name", "Photo path", 40.0, 100.0, 60.0);
