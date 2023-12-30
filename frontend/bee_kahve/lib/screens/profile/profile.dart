@@ -6,65 +6,93 @@ import 'package:bee_kahve/screens/profile/order_details.dart';
 
 
 class Order {
-  final String name;
-  final String image;
+  final String id;
+  final String time;
+  final double cost;
+  final List<int> count;
+  final List<double> prices;
+  final List<String> names;
+  final List<String> images;
 
-  Order(this.name, this.image);
+  Order(this.id, this.time, this.cost, this.count, this.prices, this.names, this.images);
 }
 
 List<Order> pastOrders = [
-  Order("Order 1", "assets/images/cappuccino.jpg"),
-  Order("Order 2", "assets/images/cappuccino.jpg"),
-  Order("Order 3", "assets/images/cappuccino.jpg"),
+  Order(
+      "Order 1",
+      "12.12.23",
+      22.50,
+      [1, 2],
+      [10.50, 6.00],
+      ["Cappuccino", "BASKET OFC"],
+      ["assets/images/cappuccino.jpg", "assets/images/basket.png"],
+  ),
+  Order(
+      "Order 2",
+      "14.12.23",
+      22.00,
+      [1, 1, 1],
+      [6.00, 12.00, 4.00],
+      ["BASKET OFC", "Cappuccino", "LOGO LOL"],
+      ["assets/images/cappuccino.jpg", "assets/images/basket.png", "assets/images/bee-logo.png"]
+  ),
+  Order(
+      "Order 3",
+      "15.12.23",
+      10.50,
+      [1],
+      [6.0],
+      ["BASKET OFC"],
+      ["assets/images/basket.png"]),
 ];
 
-class OrderHistoryItem extends StatelessWidget {
-  final Order order;
-
-  const OrderHistoryItem({Key? key, required this.order}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Left side: Order details
-          Row(
-            children: [
-              Image.asset(
-                order.image,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                order.name,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          // Right side: View Order button
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderDetailsScreen()));
-            },
-            style: ElevatedButton.styleFrom(
-              primary: AppColors.yellow,
-            ),
-            child: const Text(
-              "View Order",
-              style: TextStyle(color: AppColors.darkColor),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// class OrderHistoryItem extends StatelessWidget {
+//   final Order order;
+//
+//   const OrderHistoryItem({Key? key, required this.order}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding: const EdgeInsets.symmetric(vertical: 10),
+//       width: double.infinity,
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           // Left side: Order details
+//           Row(
+//             children: [
+//               Image.asset(
+//                 order.image,
+//                 width: 60,
+//                 height: 60,
+//                 fit: BoxFit.cover,
+//               ),
+//               const SizedBox(width: 10),
+//               Text(
+//                 order.name,
+//                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+//               ),
+//             ],
+//           ),
+//           // Right side: View Order button
+//           ElevatedButton(
+//             onPressed: () {
+//               Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderDetailsScreen()));
+//             },
+//             style: ElevatedButton.styleFrom(
+//               primary: AppColors.yellow,
+//             ),
+//             child: const Text(
+//               "View Order",
+//               style: TextStyle(color: AppColors.darkColor),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 
 class ProfileScreen extends StatefulWidget {
@@ -96,81 +124,187 @@ class _ProfileScreenState extends State<ProfileScreen> {
         body: Padding(
           padding: const EdgeInsets.all(14.0),
           child: SingleChildScrollView(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 50,),
-                  const Row(
-                    children: [
-                       Text(
-                        "Bee'",
-                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.yellow),
-                      ),
-                      Text(
-                        "Kahve",
-                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.textColor),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20,),
-                  const Text(
-                    "Name",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor, ),
-                  ),
-                  const SizedBox(height: 20,),
-                  const Text(
-                    "test@gmail.com",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor, ),
-                  ),
-                  const SizedBox(height: 20,),
-                  const Text(
-                    "Address",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor, ),
-                  ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 50,),
+                const Row(
+                  children: [
+                     Text(
+                      "Bee'",
+                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.yellow),
+                    ),
+                    Text(
+                      "Kahve",
+                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.textColor),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20,),
+                const Text(
+                  "Name",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor, ),
+                ),
+                const SizedBox(height: 20,),
+                const Text(
+                  "test@gmail.com",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor, ),
+                ),
+                const SizedBox(height: 20,),
+                const Text(
+                  "Address",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor, ),
+                ),
 
-                  const SizedBox(height: 20,),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        " İTÜ Ayazağa Kampüsü, Rektörlük Binası, 34467 Maslak-İSTANBUL",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, color: AppColors.textColor, ),
-                      ),
-                      const SizedBox(height: 20,),
-                      SizedBox(
-                        width: 150,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.all(8),
-                            backgroundColor: AppColors.yellow,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
+                const SizedBox(height: 20,),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      " İTÜ Ayazağa Kampüsü, Rektörlük Binası, 34467 Maslak-İSTANBUL",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, color: AppColors.textColor, ),
+                    ),
+                    const SizedBox(height: 20,),
+                    SizedBox(
+                      width: 150,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(8),
+                          backgroundColor: AppColors.yellow,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
                           ),
-                          onPressed: () async {
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (context) => const UpdateAddressScreen()));
-                          },
-                          child: const Text("Update Address", style: TextStyle(color: AppColors.darkColor),),
+                        ),
+                        onPressed: () async {
+                          Navigator.push(
+                              context, MaterialPageRoute(builder: (context) => const UpdateAddressScreen()));
+                        },
+                        child: const Text("Update Address", style: TextStyle(color: AppColors.darkColor),),
 
+                      ),
+                    ),
+                    const SizedBox(height: 20,),
+                    const Text(
+                      "Order History",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor,),
+                    ),
+                  ],
+                ),
+                // DynamicHeightGridView(
+                //     mainAxisSpacing: 12,
+                //     crossAxisSpacing: 12,
+                //     shrinkWrap: true,
+                //     physics: const BouncingScrollPhysics(),
+                //     builder: (context, index){
+                //       return const Text("AAA");
+                //     },  itemCount: 200,
+                //     crossAxisCount: 1
+                // ),
+                ListView.builder(
+                  itemCount: pastOrders.length,
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                          bottom: 40.0,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: AppColors.yellow,
+                            width: 2.0,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    pastOrders[index].id,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  Text(
+                                    pastOrders[index].time,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                    )
+                                  )
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 40.0,
+                              ),
+                              for (int i = 0; i < pastOrders[index].count.length; i++)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: 8.0,
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Image.asset(
+                                        pastOrders[index].images[i],
+                                        width: 60,
+                                        height: 60,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      Text(
+                                        pastOrders[index].names[i].toString() + "  " + pastOrders[index].count[i].toString() + " x " + pastOrders[index].prices[i].toString() + "\$",
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              SizedBox(
+                                height: 20.0,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    pastOrders[index].cost.toString() + "\$",
+                                    style: const TextStyle(
+                                      fontSize: 20.0,
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context, MaterialPageRoute(builder: (context) => const OrderDetailsScreen()));
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.yellow,
+                                    ),
+                                    child: const Text(
+                                      "View Order",
+                                      style: TextStyle(color: AppColors.darkColor),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 20,),
-                      const Text(
-                        "Order History",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor,),
-                      ),
-                      OrderHistoryItem(order: pastOrders[0]),
-                      OrderHistoryItem(order: pastOrders[1]),
-                    ],
-                  ),
-                ],
-              ),
+                    );
+                    // return Center(
+                    //   child: Text(
+                    //     pastOrders[index].name,
+                    //     style: Theme.of(context).textTheme.headlineSmall,
+                    //   ),
+                    // );
+                  },
+                ),
+              ],
             ),
           ),
         ),
