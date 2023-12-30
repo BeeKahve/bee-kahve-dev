@@ -84,6 +84,7 @@
  }
  
  form input[type='email'],
+ form input[type='text'],
  form input[type='password'] {
   width: 100%;
   padding: 10px;
@@ -114,3 +115,58 @@
   background-color: #ddd;
   cursor: not-allowed;
  }
+
+ .employee-signup-link {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: #F1DB11;
+  color: #fff;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.employee-signup-link:hover {
+  background-color: #e0a800;
+}
+
+.adminPage {
+  display: flex;
+  height: 100vh;
+  border: 200px solid red;
+}
+
+.left-sidebar {
+  width: 20%;
+  background-color: gray;
+  padding: 20px;
+}
+
+.right-content {
+  width: 80%;
+  padding: 20px;
+}
+
+.greetings {
+  margin-bottom: 20px;
+}
+
+.brand {
+  font-size: 1.5em;
+}
+
+.menu-stock-header {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.add-update-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+}
