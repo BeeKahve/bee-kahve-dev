@@ -108,7 +108,7 @@ class UserResponse(BaseModel):
     loyalty_count : int = None
 
 class Response(BaseModel):
-    body : BaseModel = None
+    body : BaseModel = BaseModel()
     status : bool = True
     message : str = "Success"
 
