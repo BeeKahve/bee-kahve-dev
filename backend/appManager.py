@@ -14,15 +14,32 @@ class Manager:
     def __init__(self):
         self.database_manager = DatabaseManager(db_host="localhost", db_user="test", db_password="test", db_name="bee_kahve_db")
         pass
+    
+    def web_login(self, credentials: WebLogin):
+        # status, user = self.database_manager.get_webuser(credentials)
+        user = WebUser()
+        status = True
+        if status:
+            response = Response(body=user, status=status ,message="Login is successful.")
+            return response
+        else:
+            return Response(status=status ,message="User can not fetched.")
 
-    def register(self, user: User):
-        # register_status = self.database_manager.regkister(user)
+    def web_register(self, user: WebUserRegistration):
+        # register_status = self.database_manager.web_register(user)
         register_status = True
         if register_status:
             return Response(status=register_status ,message="User is registered successfully.")
         else:
             return Response(status=register_status ,message="User is not registered.")
 
+    def register(self, user: User):
+        # register_status = self.database_manager.register(user)
+        register_status = True
+        if register_status:
+            return Response(status=register_status ,message="User is registered successfully.")
+        else:
+            return Response(status=register_status ,message="User is not registered.")
 
 
     def login(self, credentials: Login): ##
@@ -54,7 +71,7 @@ class Manager:
 
     def get_product(self, product_id):
         # gets the contents of the product from db
-        # product = self.database_manager.get_product(product_id)
+        # product = self.database_manager.get_product_ui(product_id)
         product = Product()
         status = True
         if status:
@@ -64,6 +81,9 @@ class Manager:
 
 
     def place_order(self, order : Order):
+
+        #TODO Stock check and update
+
         status = self.database_manager.place_order(order)
         status = True
         if status:
@@ -114,7 +134,23 @@ class Manager:
         else:
             return Response(status=status ,message="Rate is not updated.")
 
+    def get_stock(self, stock_id):
+        # status, stock = self.database_manager.get_stock(stock_id)
+        stock = Stock()
+        status = True
+        if status:
+            return Response(body=stock, status=status ,message="Stock is fetched successfully.")
+        else:
+            return Response(status=status ,message="Stock is not fetched.")
     
+    def update_stock(self, stock_id):
+        # status = self.database_manager.update_stock(stock_id)
+        status = True
+        if status:
+            return Response(status=status ,message="Stock is updated successfully.")
+        else:
+            return Response(status=status ,message="Stock is not updated.")
+        
     
     #jwt token
     

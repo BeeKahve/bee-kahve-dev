@@ -68,6 +68,26 @@ class StatusResponse(BaseModel):
     order_id : int = None
     order_status : str = None
 
+class WebLogin(BaseModel):
+    email : str = None
+    hashedValue : str = None
+    is_admin : bool = None
+
+class WebUserRegistration(BaseModel):   # for web register
+    user_id : str = None
+    email : str = None
+    hashedValue : str = None
+    name : str = None
+    address : str = None
+    is_admin : bool = None
+
+class WebUser(BaseModel):  # for web login
+    user_id : str = None
+    is_admin : bool = None
+    name : str = None
+    email : str = None
+    address : str = None
+    stock_id : int = None
 
 class Login(BaseModel):
     email : str = None
@@ -78,7 +98,6 @@ class User(BaseModel):  # for register
     password : str = None
     name : str = None
     address : str = None
-    is_customer : bool = True
 
 class UserResponse(BaseModel):
     user_id : int = None
