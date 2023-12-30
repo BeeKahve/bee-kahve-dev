@@ -40,8 +40,7 @@ class LineItem(BaseModel):
     milk_choice : str = None
     extra_shot_choice : bool = None 
     caffein_choice : bool = None
-    # add extra choices (sugar, syrup etc)
-
+    
 
 class Order(BaseModel):
     customer_id : int = None
@@ -90,5 +89,15 @@ class UserResponse(BaseModel):
     loyalty_count : int = None
 
 class Response(BaseModel):
+    body : BaseModel = None
     status : bool = True
     message : str = "Success"
+
+
+class Address(BaseModel):
+    customer_id : int = None
+    address : str = None
+
+class Rate(BaseModel):
+    product_id : int = None
+    rate : int = None
