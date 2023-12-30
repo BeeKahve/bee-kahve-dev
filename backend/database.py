@@ -93,6 +93,20 @@ class DatabaseManager:
                                      stock_id=admin[2])
             else:
                 False, None
+        
+        else:
+            query_employee = "SELECT * FROM Employees WHERE employee_email = %s"
+            employee = self.database.fetch_data(query_employee, (credentials.email,))
+            
+            if employee == []:
+                return False, None
+            
+            employee = employee[0]
+            if credentials.hashedValue == employee[3]:
+                return True, WebUser(user_id=employee[0],
+                                     is_admin=False,
+                                     name=employee[1],
+                                     email=employee[2])
 
     
     def get_product(self, product_id):
