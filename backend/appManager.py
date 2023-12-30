@@ -70,7 +70,6 @@ class Manager:
     def get_product(self, product_id):
         # gets the contents of the product from db
         status, product = self.database_manager.get_product(product_id)
-        status = True
         if status:
             return Response(body=product, status=status ,message="Product is fetched successfully.")
         else:
