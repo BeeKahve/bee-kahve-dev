@@ -29,7 +29,7 @@ CREATE TABLE Admins (
 	stock_id INT UNIQUE,
 	FOREIGN KEY (stock_id) REFERENCES Stock(stock_id),
 	admin_email VARCHAR(50) UNIQUE NOT NULL,
-	admin_password VARCHAR(50) NOT NULL,
+	admin_password VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Employees (
@@ -60,7 +60,9 @@ CREATE TABLE Products (
 	foam_amount FLOAT,
 	chocolate_syrup_amount FLOAT,
 	caramel_syrup_amount FLOAT,
+	white_chocolate_syrup_amount FLOAT,
 	sugar_amount FLOAT,
+	ice_amount INT,
 	small_cup_only TINYINT(1) DEFAULT 0,
 	price FLOAT NOT NULL,
 	rate FLOAT DEFAULT 0,
@@ -69,7 +71,7 @@ CREATE TABLE Products (
 );
 
 CREATE TABLE Orders (
-	order_id INT PRIMARY KEY,
+	order_id INT AUTO_INCREMENT PRIMARY KEY,
 	customer_id INT NOT NULL,
 	FOREIGN KEY (customer_id) REFERENCES Customers(customer_id),
 	order_date VARCHAR(255) NOT NULL,
@@ -87,7 +89,8 @@ CREATE TABLE Line_Items (
 	size_choice VARCHAR(50) NOT NULL,
 	milk_choice VARCHAR(50) NOT NULL,
 	extra_shot_choice TINYINT(1) NOT NULL,
-	caffein_choice TINYINT(1) NOT NULL
+	caffein_choice TINYINT(1) NOT NULL,
+	price FLOAT NOT NULL
 );
 
 INSERT INTO Stock (small_cup_count, medium_cup_count, large_cup_count, espresso_amount, decaff_espresso_amount,
