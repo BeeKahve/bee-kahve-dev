@@ -83,7 +83,17 @@ async def register(user : User) -> Response:
 async def rate(rate : Rate) -> Response:
     return manager.rate(rate.product_id, rate.rate)
 
+@app.get("/get_stock")
+async def get_stock(admin_id : int) -> Stock:
+    return manager.get_stock(admin_id).body
 
+@app.post("/update_stock")
+async def update_stock(stock : dict) -> Response:
+    return manager.update_stock(stock)
+
+@app.get("/add_product")
+async def add_product(product : Product) -> Response:
+    return manager.add_product(product)
 
 if __name__ == "__main__":
     uvicorn.run(app,host="0.0.0.0", port=8000)

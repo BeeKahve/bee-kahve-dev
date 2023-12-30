@@ -16,9 +16,7 @@ class Manager:
         pass
     
     def web_login(self, credentials: WebLogin):
-        # status, user = self.database_manager.get_webuser(credentials)
-        user = WebUser()
-        status = True
+        status, user = self.database_manager.get_webuser(credentials)
         if status:
             response = Response(body=user, status=status ,message="Login is successful.")
             return response
@@ -133,7 +131,7 @@ class Manager:
         else:
             return Response(status=status ,message="Rate is not updated.")
 
-    def get_stock(self, stock_id):
+    def get_stock(self, admin_id):
         # status, stock = self.database_manager.get_stock(stock_id)
         stock = Stock()
         status = True
@@ -142,13 +140,21 @@ class Manager:
         else:
             return Response(status=status ,message="Stock is not fetched.")
     
-    def update_stock(self, stock_id):
-        # status = self.database_manager.update_stock(stock_id)
+    def update_stock(self, admin_id, stock):
+        # status = self.database_manager.update_stock(admin_id, stock)
         status = True
         if status:
             return Response(status=status ,message="Stock is updated successfully.")
         else:
             return Response(status=status ,message="Stock is not updated.")
+        
+    def add_product(self, product):
+        # status = self.database_manager.add_product(product)
+        status = True
+        if status:
+            return Response(status=status ,message="Product is added successfully.")
+        else:
+            return Response(status=status ,message="Product is not added.")
         
     
     #jwt token

@@ -108,7 +108,7 @@ class UserResponse(BaseModel):
     loyalty_count : int = None
 
 class Response(BaseModel):
-    body : BaseModel = None
+    body : BaseModel = BaseModel()
     status : bool = True
     message : str = "Success"
 
@@ -149,4 +149,20 @@ class ProductIngredient(BaseModel):
     sugar_amount : float = None
     ice_amount : float = None
     price : float = None
+
+class ProductFull(BaseModel):
+    admin_id : int = None
+    coffee_name : str = None
+    photo_path : str = None
+    small_cup_only : bool = None
+    price : float = None
+    rate : float = None
+    espresso_amount : float = None
+    milk_amount : float = None
+    foam_amount : float = None
+    chocolate_syrup_amount : float = None
+    caramel_syrup_amount : float = None
+    white_chocolate_syrup_amount : float = None
+    sugar_amount : float = None
+    ice_amount : float = None
     
