@@ -16,9 +16,7 @@ class Manager:
         pass
     
     def web_login(self, credentials: WebLogin):
-        # status, user = self.database_manager.get_webuser(credentials)
-        user = WebUser()
-        status = True
+        status, user = self.database_manager.get_webuser(credentials)
         if status:
             response = Response(body=user, status=status ,message="Login is successful.")
             return response
@@ -72,7 +70,6 @@ class Manager:
     def get_product(self, product_id):
         # gets the contents of the product from db
         status, product = self.database_manager.get_product(product_id)
-        status = True
         if status:
             return Response(body=product, status=status ,message="Product is fetched successfully.")
         else:

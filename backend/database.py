@@ -72,20 +72,47 @@ class DatabaseManager:
     def get_stock_by_id(self, admin_id):
         pass
 
+
+    def get_webuser(self, credentials: WebLogin):
+        is_admin = credentials.is_admin
+
+        if is_admin:
+            query_admin = "SELECT * FROM Admins WHERE admin_email = %s"
+            admin = self.database.fetch_data(query_admin, (credentials.email,))
+            
+            if admin == []:
+                return False, None
+            
+            admin = admin[0]
+            if credentials.hashedValue == admin[5]:
+                return True, WebUser(user_id=admin[0],
+                                     is_admin=True,
+                                     name=1,
+                                     email=admin[4],
+                                     address=admin[6],
+                                     stock_id=admin[2])
+            else:
+                False, None
+
     
     def get_product(self, product_id):
         query_product = "SELECT * FROM Products WHERE product_id = %s"  # list of tuples. each tuple is a product
-        product = self.database.fetch_data(query_product, (product_id,))[0]
-        return Product(coffee_name=product[1],
-                       photo_path=product[2],
-                       small_cup_only=product[11],
-                       contains_milk=(product[4] > 0),
-                       contains_chocolate_syrup=(product[6] > 0),
-                       contains_white_chocolate_syrup=(product[8] > 0),
-                       contains_caramel_syrup=(product[7] > 0),
-                       contains_sugar=(product[9] > 0),
-                       price=product[12],
-                       rate=product[13])
+        product = self.database.fetch_data(query_product, (product_id,))
+        
+        if product == []:
+            return False, None
+
+        product = product[0]
+        return True, Product(coffee_name=product[1],
+                             photo_path=product[2],
+                             small_cup_only=product[11],
+                             contains_milk=(product[4] > 0),
+                             contains_chocolate_syrup=(product[6] > 0),
+                             contains_white_chocolate_syrup=(product[8] > 0),
+                             contains_caramel_syrup=(product[7] > 0),
+                             contains_sugar=(product[9] > 0),
+                             price=product[12],
+                             rate=product[13])
 
 
     # Returns None if an insertion failed, "waiting" otherwise.
