@@ -1,35 +1,45 @@
+// SignIn.js
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom'; // Import Link from react-router-dom
 import axios from 'axios';
 
 const SignIn = () => {
- const [employeeAdmin, setEmployeeAdmin] = useState('employee');
- const [email, setEmail] = useState('');
- const [password, setPassword] = useState('');
- const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
- const handleSubmit = async (e) => {
+  const [employeeAdmin, setEmployeeAdmin] = useState('employee');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     const config = {
       headers: {
+        'accept': 'application/json',
         'Content-Type': 'application/json',
       },
     };
 
-    const body = JSON.stringify({ employeeAdmin, email, password });
+    const body = JSON.stringify({ email, password });
+    console.log(body);
 
-    try {
-      const res = await axios.post('/api/auth/signin', body, config);
-      console.log(res.data);
-      setLoading(false);
-    } catch (err) {
-      console.log(err.response.data);
-      setLoading(false);
-    }
- };
+    // Normally should enter here, and check the username pass is correct or not, and then should go to admin page
+    // Now for development purpose, bypass it
+    // try {
+    //   const res = await axios.post('http://51.20.117.162:8000/login', body, config);
+    //   console.log(res);
+    //   setLoading(false);
+    // } catch (err) {
+    //   console.log(err);
+    //   setLoading(false);
+    // }
+    //  navigate(`/adminPage?adminName=${res.data.adminName}`);
+    navigate(`/adminPage`);
+  };
 
- return (
+  return (
     <div className="container">
       <div className="signin-image"></div>
       <div className="signin-form">
@@ -74,9 +84,13 @@ const SignIn = () => {
             Sign In
           </button>
         </form>
+       
       </div>
+      <div className="employee-signup-link">
+          <Link to="/employeeSignUp">Employee SignUp</Link>
+        </div>
     </div>
- );
+  );
 };
 
 export default SignIn;
