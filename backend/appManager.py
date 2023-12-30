@@ -9,7 +9,6 @@ class Manager:
     order_status = {
         0 : "waiting"
     }
-    menu_state = 0
     
 
     def __init__(self):
@@ -26,47 +25,75 @@ class Manager:
 
 
 
-    def login(self, credentials: Login):
-        # login_status = self.database_manager.login(credentials)
-        login_status = True
-        if login_status:
-            return Response(status=login_status ,message="User is logged in successfully.")
+    def login(self, credentials: Login): ##
+        # status = self.database_manager.login(credentials)
+        status = True
+        if status:
+            # status, user = self.database_manager.get_user(credentials)
+            user = User()
+            if status:
+                response = Response(status=status ,message="Login is successful.")
+                response.body = user
+                return response
+            else:
+                return Response(status=status ,message="User can not fetched.")
         else:
-            return Response(status=login_status ,message="User is not logged in.")
+            return Response(status=status ,message="Login is not successful.")
+
 
 
 
     def get_menu(self):
         contents = 0 #response of db class
-        # menu = self.database_manager.get_menu()
-        menu = ProductMenu(self)
-        return menu
-
+        # status, menu = self.database_manager.get_menu()
+        menu = ProductMenu()
+        status = True
+        if status:
+            return Response(body=menu, status=status ,message="Menu is fetched successfully.")
+        else:
+            return Response(status=status ,message="Menu is not fetched.")
+        
 
     def get_product(self, product_id):
         # gets the contents of the product from db
         # product = self.database_manager.get_product(product_id)
         product = Product()
-        return product
+        status = True
+        if status:
+            return Response(body=product, status=status ,message="Product is fetched successfully.")
+        else:
+            return Response(status=status ,message="Product is not fetched.")
 
 
     def place_order(self, order : Order):
-        status = self.database_manager.place_order(order)
-        # status = StatusResponse()
-        return status
-        
+        #status = self.database_manager.place_order(order)
+        status = True
+        if status:
+            return Response(status=status ,message="Order is placed successfully.")
+        else:
+            return Response(status=status ,message="Order is not placed.")
+
 
     def get_status(self, order_id = 0):
         # if necessary check the db
-        status = StatusResponse(order_status=self.order_status[0])
-        return status
+        # status, order_status = self.database_manager.get_status(order_id)
+        order_status = StatusResponse(order_status=self.order_status[0])
+        status = True
+        if status:
+            return Response(body=order_status, status=status ,message="Status is fetched successfully.")
+        else:
+            return Response(status=status ,message="Status is not fetched.")
 
 
     def get_history(self, customer_id):
         # collect data from db
-        # history = self.database_manager.get_history(customer_id)
+        # status, history = self.database_manager.get_history(customer_id)
         history = Orders()
-        return history
+        status = True
+        if status:
+            return Response(body=history, status=status ,message="History is fetched successfully.")
+        else:
+            return Response(status=status ,message="History is not fetched.")
     
 
     def update_address(self, customer_id, address):
