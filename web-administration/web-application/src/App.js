@@ -2,6 +2,7 @@ import './App.css';
 import SignIn from './modules/signInPage';
 import EmployeeSignUp from './modules/employeeSignUp'; // Adjust the path accordingly
 import AdminPage from './modules/adminPage'
+import AddCoffee from './modules/addCoffee';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 // import { Link } from 'react-router-dom';
 
@@ -13,6 +14,7 @@ function App() {
         <Route path="/signInPage" element={<SignIn />} />
         <Route path="/employeeSignUp" element={<EmployeeSignUp />} />
         <Route path="/adminPage" element={<AdminPage />} />
+        <Route path="/addCoffee" element={<AddCoffee />} />
       </Routes>
     </Router>
   );

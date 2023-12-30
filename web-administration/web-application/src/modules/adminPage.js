@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Modal, Form, Input } from 'antd';
 import axios from 'axios';
-// import './adminPage.css';
+import { useNavigate } from 'react-router-dom';
 
 const { Column } = Table;
 
@@ -12,6 +12,8 @@ const AdminPage = () => {
   const [modalTitle, setModalTitle] = useState('');
   const [selectedCoffee, setSelectedCoffee] = useState({});
   const [adminName, setAdminName] = useState('Admin'); // Replace with the actual admin name
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCoffeeList();
@@ -36,6 +38,11 @@ const AdminPage = () => {
     setIsModalVisible(false);
   };
 
+  const handleAddCoffee = () => {
+    // Navigate to /addCoffee when Add Coffee button is clicked
+    navigate('/addCoffee');
+  };
+
   const handleSubmit = async (values) => {
     try {
       if (modalTitle === 'Add Coffee') {
@@ -53,45 +60,47 @@ const AdminPage = () => {
   return (
     <div className="adminPage">
       <div className="left-sidebar">
-        <h2 style={{ color: 'white' }}>ADMIN</h2>
-        <div className="menu-stock-header" style={{ backgroundColor: 'yellow' }}>
-          <h4 style={{ color: 'black' }}>Modify Menu</h4>
-          <h4 style={{ color: 'black' }}>Stock</h4>
+        <h1 style={{ color: 'white', marginLeft: '30%' }}>ADMIN</h1>
+        <div className="menu-stock-header" style={{ backgroundColor: '#F1DB11' }}>
+          <h4 style={{ color: 'black' }}>Modify Menu and Stock</h4>
         </div>
       </div>
 
       <div className="right-content">
-        <div className="greetings">
-          <p>Hello {adminName}</p>
-          <div className="brand">
-            <span style={{ color: 'yellow' }}>Bee'</span> Kahve
+        <div className="upper-content" style={{ height: '15%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <h1 style={{ color: 'black' }}>Hello {adminName}</h1>
+          <div className="brand" style={{ fontSize: '1.5em' }}>
+            <span style={{ color: '#F1DB11' }}>Bee'</span> Kahve
           </div>
         </div>
-        <h2>Coffee Menu</h2>
-        <Table dataSource={coffeeList} rowKey="_id">
-          {/* Columns for Coffee Menu Table */}
-          <Column title="Name" dataIndex="name" key="name" />
-          <Column title="Price" dataIndex="price" key="price" />
-          <Column title="Description" dataIndex="description" key="description" />
-          <Column
-            title="Action"
-            key="action"
-            render={(text, record) => (
-              <span>
-                <Button type="primary" onClick={() => showModal('Update Coffee', record)}>
-                  Edit
-                </Button>
-              </span>
-            )}
-          />
-        </Table>
-        <div className="add-update-buttons">
-          <Button type="primary" onClick={() => showModal('Add Coffee', {})}>
-            Add Coffee
-          </Button>
-          <Button type="primary" disabled={!selectedCoffee._id} onClick={() => showModal('Update Coffee', selectedCoffee)}>
-            Update Coffee
-          </Button>
+
+        <div className="lower-content" style={{ height: '85%' }}>
+          <h2>Coffee Menu</h2>
+          <Table dataSource={coffeeList} rowKey="_id">
+            {/* Columns for Coffee Menu Table */}
+            <Column title="Name" dataIndex="name" key="name" />
+            <Column title="Price" dataIndex="price" key="price" />
+            <Column title="Description" dataIndex="description" key="description" />
+            <Column
+              title="Action"
+              key="action"
+              render={(text, record) => (
+                <span>
+                  <Button type="primary" onClick={() => showModal('Update Coffee', record)}>
+                    Edit
+                  </Button>
+                </span>
+              )}
+            />
+          </Table>
+          <div className="add-update-buttons">
+            <Button type="primary" onClick={() => handleAddCoffee()}>
+              Add Coffee
+            </Button>
+            <Button type="primary" disabled={!selectedCoffee._id} onClick={() => showModal('Update Coffee', selectedCoffee)}>
+              Update Coffee
+            </Button>
+          </div>
         </div>
       </div>
 

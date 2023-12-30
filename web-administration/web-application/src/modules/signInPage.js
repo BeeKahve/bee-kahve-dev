@@ -1,9 +1,11 @@
 // SignIn.js
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link, useNavigate } from 'react-router-dom'; // Import Link from react-router-dom
 import axios from 'axios';
 
 const SignIn = () => {
+  const navigate = useNavigate();
+
   const [employeeAdmin, setEmployeeAdmin] = useState('employee');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,14 +25,18 @@ const SignIn = () => {
     const body = JSON.stringify({ email, password });
     console.log(body);
 
-    try {
-      const res = await axios.post('http://51.20.117.162:8000/login', body, config);
-      console.log(res);
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-    }
+    // Normally should enter here, and check the username pass is correct or not, and then should go to admin page
+    // Now for development purpose, bypass it
+    // try {
+    //   const res = await axios.post('http://51.20.117.162:8000/login', body, config);
+    //   console.log(res);
+    //   setLoading(false);
+    // } catch (err) {
+    //   console.log(err);
+    //   setLoading(false);
+    // }
+    //  navigate(`/adminPage?adminName=${res.data.adminName}`);
+    navigate(`/adminPage`);
   };
 
   return (
