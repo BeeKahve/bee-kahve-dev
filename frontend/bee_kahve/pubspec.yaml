@@ -32,6 +32,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   fancy_shimmer_image: ^2.0.3
   timelines: ^0.1.0
+  flutter_rating_bar: ^4.0.1
   flutter:
 
     sdk: flutter

@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const SignInScreen(),
       routes: {
-        "/details" : (context) => const ProductDetailsScreen(),
+        "/details": (context) => const ProductDetailsScreen(),
       },
     );
   }

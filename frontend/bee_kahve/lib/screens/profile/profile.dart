@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:bee_kahve/screens/profile/order_details.dart';
 
-
 class Order {
-  final String id;
+  final int id;
   final String time;
   final double cost;
   final List<int> count;
@@ -14,35 +13,38 @@ class Order {
   final List<String> names;
   final List<String> images;
 
-  Order(this.id, this.time, this.cost, this.count, this.prices, this.names, this.images);
+  Order(this.id, this.time, this.cost, this.count, this.prices, this.names,
+      this.images);
 }
 
 List<Order> pastOrders = [
   Order(
-      "Order 1",
-      "12.12.23",
-      22.50,
-      [1, 2],
-      [10.50, 6.00],
-      ["Cappuccino", "BASKET OFC"],
-      ["assets/images/cappuccino.jpg", "assets/images/basket.png"],
+    1,
+    "12.12.23",
+    22.50,
+    [1, 2],
+    [10.50, 6.00],
+    ["Cappuccino", "BASKET OFC"],
+    ["assets/images/cappuccino.jpg", "assets/images/basket.png"],
   ),
-  Order(
-      "Order 2",
-      "14.12.23",
-      22.00,
-      [1, 1, 1],
-      [6.00, 12.00, 4.00],
-      ["BASKET OFC", "Cappuccino", "LOGO LOL"],
-      ["assets/images/cappuccino.jpg", "assets/images/basket.png", "assets/images/bee-logo.png"]
-  ),
-  Order(
-      "Order 3",
-      "15.12.23",
-      10.50,
-      [1],
-      [6.0],
-      ["BASKET OFC"],
+  Order(2, "14.12.23", 22.00, [
+    1,
+    1,
+    1
+  ], [
+    6.00,
+    12.00,
+    4.00
+  ], [
+    "BASKET OFC",
+    "Cappuccino",
+    "LOGO LOL"
+  ], [
+    "assets/images/cappuccino.jpg",
+    "assets/images/basket.png",
+    "assets/images/bee-logo.png"
+  ]),
+  Order(3, "15.12.23", 10.50, [1], [6.0], ["BASKET OFC"],
       ["assets/images/basket.png"]),
 ];
 
@@ -94,7 +96,6 @@ List<Order> pastOrders = [
 //   }
 // }
 
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -104,12 +105,13 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
-  void initState(){
+  void initState() {
     super.initState();
   }
+
   @override
-  void dispose(){
-    if(mounted){
+  void dispose() {
+    if (mounted) {
       super.dispose();
     }
   }
@@ -117,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
@@ -128,45 +130,79 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 50,),
+                const SizedBox(
+                  height: 50,
+                ),
                 const Row(
                   children: [
-                     Text(
+                    Text(
                       "Bee'",
-                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.yellow),
+                      style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.yellow),
                     ),
                     Text(
                       "Kahve",
-                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.textColor),
+                      style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textColor),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 const Text(
                   "Name",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor, ),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textColor,
+                  ),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 const Text(
                   "test@gmail.com",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor, ),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textColor,
+                  ),
                 ),
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 const Text(
                   "Address",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor, ),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textColor,
+                  ),
                 ),
 
-                const SizedBox(height: 20,),
+                const SizedBox(
+                  height: 20,
+                ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
                       " İTÜ Ayazağa Kampüsü, Rektörlük Binası, 34467 Maslak-İSTANBUL",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, color: AppColors.textColor, ),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                        color: AppColors.textColor,
+                      ),
                     ),
-                    const SizedBox(height: 20,),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     SizedBox(
                       width: 150,
                       child: ElevatedButton(
@@ -179,16 +215,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         onPressed: () async {
                           Navigator.push(
-                              context, MaterialPageRoute(builder: (context) => const UpdateAddressScreen()));
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const UpdateAddressScreen()));
                         },
-                        child: const Text("Update Address", style: TextStyle(color: AppColors.darkColor),),
-
+                        child: const Text(
+                          "Update Address",
+                          style: TextStyle(color: AppColors.darkColor),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 20,),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     const Text(
                       "Order History",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textColor,),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textColor,
+                      ),
                     ),
                   ],
                 ),
@@ -209,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.only(
-                          bottom: 40.0,
+                        bottom: 40.0,
                       ),
                       child: Container(
                         decoration: BoxDecoration(
@@ -224,33 +271,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Column(
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    pastOrders[index].id,
+                                    "Order ID: ${pastOrders[index].id}",
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
                                   ),
-                                  Text(
-                                    pastOrders[index].time,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                    )
-                                  )
+                                  Text(pastOrders[index].time,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                      ))
                                 ],
                               ),
                               const SizedBox(
                                 height: 40.0,
                               ),
-                              for (int i = 0; i < pastOrders[index].count.length; i++)
+                              for (int i = 0;
+                                  i < pastOrders[index].count.length;
+                                  i++)
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     bottom: 8.0,
                                   ),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Image.asset(
                                         pastOrders[index].images[i],
@@ -259,19 +309,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         fit: BoxFit.cover,
                                       ),
                                       Text(
-                                        pastOrders[index].names[i].toString() + "  " + pastOrders[index].count[i].toString() + " x " + pastOrders[index].prices[i].toString() + "\$",
+                                        "${pastOrders[index].names[i]}  ${pastOrders[index].count[i]} x ${pastOrders[index].prices[i]}\$",
                                       )
                                     ],
                                   ),
                                 ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 20.0,
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    pastOrders[index].cost.toString() + "\$",
+                                    "${pastOrders[index].cost}\$",
                                     style: const TextStyle(
                                       fontSize: 20.0,
                                     ),
@@ -279,14 +330,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ElevatedButton(
                                     onPressed: () {
                                       Navigator.push(
-                                          context, MaterialPageRoute(builder: (context) => const OrderDetailsScreen()));
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const OrderDetailsScreen()));
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.yellow,
                                     ),
                                     child: const Text(
                                       "View Order",
-                                      style: TextStyle(color: AppColors.darkColor),
+                                      style:
+                                          TextStyle(color: AppColors.darkColor),
                                     ),
                                   ),
                                 ],
@@ -312,4 +367,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
-
