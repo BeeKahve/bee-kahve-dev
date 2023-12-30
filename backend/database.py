@@ -52,11 +52,11 @@ class DatabaseManager:
     
     def __init__(self, db_host, db_user, db_password, db_name):
         self.database = Database(db_host, db_user, db_password, db_name)
-    
+
 
     def get_product_by_id(self, product_id):
         query_product = "SELECT * FROM Products WHERE product_id = %s"  # list of tuples. each tuple is a product
-        product = self.database.fetch_data(query_product, (product_id))[0]
+        product = self.database.fetch_data(query_product, (product_id,))[0]
         # [(1, 'Coffee Name', 'Photo path', 40.0, 100.0, None, None, None, None, 0, 60.0, 0.0, 0, 0)][0]
         return ProductIngredient(espresso_amount=product[3],
                                  milk_amount=product[4],
@@ -66,8 +66,26 @@ class DatabaseManager:
                                  white_chocolate_syrup_amount=product[8],
                                  sugar_amount=product[9],
                                  ice_amount=product[10],
-                                 price=product[12]
-                                 )
+                                 price=product[12])
+
+
+    def get_stock_by_id(self, admin_id):
+        pass
+
+    
+    def get_product(self, product_id):
+        query_product = "SELECT * FROM Products WHERE product_id = %s"  # list of tuples. each tuple is a product
+        product = self.database.fetch_data(query_product, (product_id,))[0]
+        return Product(coffee_name=product[1],
+                       photo_path=product[2],
+                       small_cup_only=product[11],
+                       contains_milk=(product[4] > 0),
+                       contains_chocolate_syrup=(product[6] > 0),
+                       contains_white_chocolate_syrup=(product[8] > 0),
+                       contains_caramel_syrup=(product[7] > 0),
+                       contains_sugar=(product[9] > 0),
+                       price=product[12],
+                       rate=product[13])
 
 
     # Returns None if an insertion failed, "waiting" otherwise.
