@@ -12,7 +12,7 @@ class Manager:
     
 
     def __init__(self):
-        # self.database_manager = DatabaseManager(db_host="localhost", db_user="test", db_password="test", db_name="bee_kahve_db")
+        self.database_manager = DatabaseManager(db_host="localhost", db_user="test", db_password="test", db_name="bee_kahve_db")
         pass
 
     def register(self, user: User):
@@ -41,8 +41,6 @@ class Manager:
             return Response(status=status ,message="Login is not successful.")
 
 
-
-
     def get_menu(self):
         contents = 0 #response of db class
         # status, menu = self.database_manager.get_menu()
@@ -66,7 +64,7 @@ class Manager:
 
 
     def place_order(self, order : Order):
-        #status = self.database_manager.place_order(order)
+        status = self.database_manager.place_order(order)
         status = True
         if status:
             return Response(status=status ,message="Order is placed successfully.")
@@ -106,7 +104,10 @@ class Manager:
         
 
     def rate(self, product_id, rate):
-        # status = self.database_manager.rate(product_id, rate)
+        # current_rate, rate_count = self.database_manager.get_rate(product_id)
+        # updated_rate = (current_rate * rate_count + rate) / (rate_count + 1)
+        # status = self.database_manager.update_rate(product_id, updated_rate, rate_count + 1)
+        
         status = True
         if status:
             return Response(status=status ,message="Rate is updated successfully.")

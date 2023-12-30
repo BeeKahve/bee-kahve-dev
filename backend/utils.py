@@ -40,7 +40,7 @@ class LineItem(BaseModel):
     milk_choice : str = None
     extra_shot_choice : bool = None 
     caffein_choice : bool = None
-    
+
 
 class Order(BaseModel):
     customer_id : int = None
@@ -101,3 +101,33 @@ class Address(BaseModel):
 class Rate(BaseModel):
     product_id : int = None
     rate : int = None
+
+
+class Stock(BaseModel):
+    small_cup_count : int = None
+    medium_cup_count : int = None
+    large_cup_count : int = None
+    espresso_amount : float = None
+    decaff_espresso_amount : float = None
+    whole_milk_amount : float = None
+    reduced_fat_milk_amount : float = None
+    lactose_free_milk_amount : float = None
+    oat_milk_amount : float = None
+    almond_milk_amount : float = None
+    chocolate_syrup_amount : float = None
+    white_chocolate_syrup_amount : float = None
+    caramel_syrup_amount : float = None
+    sugar_amount : float = None
+    ice_amount : float = None
+
+class ProductIngredient(BaseModel):
+    espresso_amount : float = None
+    milk_amount : float = None
+    foam_amount : float = None
+    chocolate_syrup_amount : float = None
+    caramel_syrup_amount : float = None
+    white_chocolate_syrup_amount : float = None
+    sugar_amount : float = None
+    ice_amount : float = None
+    price : float = None
+    
