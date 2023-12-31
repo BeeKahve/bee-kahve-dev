@@ -326,6 +326,9 @@
   background-color: orange;
 }
 
+.updateCoffee{
+  display: flex;
+}
 
 #addCoffeeForm{
   display: flex;
