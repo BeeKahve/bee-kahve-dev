@@ -79,6 +79,7 @@ class WebUserRegistration(BaseModel):   # for web register
     hashedValue : str = None
     name : str = None
     address : str = None
+    admin_id : int = None
     is_admin : bool = None
 
 class WebUser(BaseModel):  # for web login
@@ -151,12 +152,13 @@ class ProductIngredient(BaseModel):
     price : float = None
 
 class ProductFull(BaseModel):
-    admin_id : int = None
+    admin_id : int = 1
     coffee_name : str = None
     photo_path : str = None
     small_cup_only : bool = None
     price : float = None
-    rate : float = None
+    rate : float = 0
+    rate_count : int = 0
     espresso_amount : float = None
     milk_amount : float = None
     foam_amount : float = None
@@ -165,4 +167,4 @@ class ProductFull(BaseModel):
     white_chocolate_syrup_amount : float = None
     sugar_amount : float = None
     ice_amount : float = None
-    
+    is_product_disabled : bool = 0
