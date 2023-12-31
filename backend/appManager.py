@@ -56,8 +56,6 @@ class Manager:
 
     def get_menu(self): # Gets the menu from db
         status, menu = self.database_manager.get_menu()
-        menu = ProductMenu()
-        status = True
         if status:
             return Response(body=menu, status=status ,message="Menu is fetched successfully.")
         else:
