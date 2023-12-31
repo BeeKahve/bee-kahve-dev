@@ -382,14 +382,14 @@ class DatabaseManager:
             return False, None, None
 
     # check
-    def add_product(self, product: ProductFull):
-        query_insert_product = "INSERT INTO Products (admin_id, coffee_name, photo_path, small_cup_only, price, rate, espresso_amount, milk_amount, foam_amount, chocolate_syrup_amount, caramel_syrup_amount, white_chocolate_syrup_amount, sugar_amount, ice_amount) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        values_insert_product = (product.admin_id,
-                                 product.coffee_name,
+    def add_product(self, product: ProductFull): # admin_id not used
+        query_insert_product = "INSERT INTO Products (coffee_name, photo_path, small_cup_only, price, rate, rate_count, espresso_amount, milk_amount, foam_amount, chocolate_syrup_amount, caramel_syrup_amount, white_chocolate_syrup_amount, sugar_amount, ice_amount) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        values_insert_product = (product.coffee_name,
                                  product.photo_path,
                                  product.small_cup_only,
                                  product.price,
                                  product.rate,
+                                 product.rate_count,
                                  product.espresso_amount,
                                  product.milk_amount,
                                  product.foam_amount,

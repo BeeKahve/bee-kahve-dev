@@ -157,7 +157,8 @@ class ProductFull(BaseModel):
     photo_path : str = None
     small_cup_only : bool = None
     price : float = None
-    rate : float = None
+    rate : float = 0
+    rate_count : int = 0
     espresso_amount : float = None
     milk_amount : float = None
     foam_amount : float = None
