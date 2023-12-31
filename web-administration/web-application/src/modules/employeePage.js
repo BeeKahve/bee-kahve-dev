@@ -55,9 +55,9 @@ const EmployeePage = () => {
     // Logic for confirming order
   };
 
-  const handleCancelOrder = () => {
-    // Logic for canceling order
-  };
+//   const handleCancelOrder = () => {
+//     // Logic for canceling order
+//   };
 
   const handleUpdateStatus = () => {
     // Redirect to /updateStatus when Update Order Status button is clicked
