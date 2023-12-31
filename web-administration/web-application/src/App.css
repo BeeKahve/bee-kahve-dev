@@ -248,3 +248,105 @@
 .add-coffee-form button:hover {
   background-color: #e0a800;
 }
+
+
+.menu-stock-header {
+  cursor: pointer;
+  padding: 10px;
+  transition: background-color 0.3s;
+}
+
+.menu-stock-header:hover {
+  background-color: #ddd; /* Change the background color on hover */
+}
+
+.menu-stock-header.active {
+  background-color: #F1DB11; /* Change the background color for the active menu */
+  color: white; /* Change text color for the active menu */
+  border: 2px solid #F1DB11; /* Add border for the active menu */
+}
+
+.modify-stock{
+  /* border: 5px solid red; */
+  width: 100%;
+}
+
+.modify-stock form{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.modify-stock form input{
+  /* border: 5px solid red; */
+  width: 100px;
+  margin-right: 20px;
+}
+
+.modify-stock form button{
+  width: 150px;
+  height: 40px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.modify-stock form .ant-form-item {
+  width: 30%;
+}
+
+.modify-stock form .ant-row label:first-child{
+  margin-right: 100%;
+  font-size: 20px;
+  font-weight: bold;
+  color: orange;
+}
+
+.modify-stock form .ant-row {
+  /* width: 40%; */
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+
+.exit-account{
+  overflow: auto;
+  height: 70px;
+  margin-top: 40vh;
+  background-color: red;
+}
+
+.exit-account h4{
+  /* height: 30px; */
+  font-size: 15px;
+}
+
+.exit-account:hover{
+  background-color: orange;
+}
+
+
+#addCoffeeForm{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+#addCoffeeForm .ant-form-item{
+  width: 45%;
+  margin: 10px;
+}
+
+
+
+#addCoffeeForm .ant-form-item .ant-col{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#addCoffeeForm .ant-form-item .ant-col button{
+  width: 100%;
+  height: 100%; 
+}

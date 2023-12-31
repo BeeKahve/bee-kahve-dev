@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Import Link from react-router-dom
 import axios from 'axios';
+import {sha512} from 'crypto-hash';
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -22,21 +23,35 @@ const SignIn = () => {
       },
     };
 
-    const body = JSON.stringify({ email, password });
-    console.log(body);
-
     // Normally should enter here, and check the username pass is correct or not, and then should go to admin page
     // Now for development purpose, bypass it
-    // try {
-    //   const res = await axios.post('http://51.20.117.162:8000/login', body, config);
-    //   console.log(res);
-    //   setLoading(false);
-    // } catch (err) {
-    //   console.log(err);
-    //   setLoading(false);
-    // }
+
+    
+    let isAdmin = false
+
+    console.log(employeeAdmin)
+    if(employeeAdmin === "admin"){
+      isAdmin = true
+    }
+    const hashedValue = await sha512(password)
+    const body = JSON.stringify({ isAdmin, email, hashedValue });
+    localStorage.setItem('token', hashedValue); // SHOULD BE DELEETD
+    console.log(body);
+
+    try {
+      const res = await axios.post('http://51.20.117.162:8000/login', body, config);
+      console.log(res);
+      if(res.data.email === 'admin@itu.edu.tr'){
+        localStorage.setItem('token', hashedValue);
+      }
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
     //  navigate(`/adminPage?adminName=${res.data.adminName}`);
     navigate(`/adminPage`);
+    // navigate(`/employeePage`)
   };
 
   return (
