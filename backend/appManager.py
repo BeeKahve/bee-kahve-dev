@@ -27,76 +27,143 @@ class Manager:
             return Response(status=status ,message="User can not fetched.")
 
     def web_register(self, user: WebUserRegistration):
-        # register_status = self.database_manager.web_register(user)
-        register_status = True
-        if register_status:
-            return Response(status=register_status ,message="User is registered successfully.")
-        else:
-            return Response(status=register_status ,message="User is not registered.")
-
+        registerResponse = self.database_manager.web_register(user)
+        # if register_status:
+        #     return Response(status=register_status ,message="User is registered successfully.")
+        # else:
+        #     return Response(status=register_status ,message="User is not registered.")
+        return registerResponse
+    
     def register(self, user: User):
-        # register_status = self.database_manager.register(user)
-        register_status = True
-        if register_status:
-            return Response(status=register_status ,message="User is registered successfully.")
-        else:
-            return Response(status=register_status ,message="User is not registered.")
-
+        registerResponse = self.database_manager.customer_register(user)
+        # if registerResponse:
+        #     return Response(status=registerResponse ,message="User is registered successfully.")
+        # else:
+        #     return Response(status=registerResponse ,message="User is not registered.")
+        return registerResponse
 
     def login(self, credentials: Login): ##
-        # status = self.database_manager.login(credentials)
-        status = True
+        status = self.database_manager.login(credentials)
         if status:
-            # status, user = self.database_manager.get_user(credentials)
-            user = User()
+            status, user = self.database_manager.get_customer(credentials)
             if status:
-                response = Response(status=status ,message="Login is successful.")
-                response.body = user
-                return response
+                return Response(body=user, status=status ,message="Login is successful.")
             else:
                 return Response(status=status ,message="User can not fetched.")
         else:
-            return Response(status=status ,message="Login is not successful.")
+            return Response(status=status ,message="User can not found.")
 
 
-    def get_menu(self):
-        contents = 0 #response of db class
-        # status, menu = self.database_manager.get_menu()
+    def get_menu(self): # Gets the menu from db
+        status, menu = self.database_manager.get_menu()
         menu = ProductMenu()
         status = True
         if status:
             return Response(body=menu, status=status ,message="Menu is fetched successfully.")
         else:
-            return Response(status=status ,message="Menu is not fetched.")
+            return Response(status=status ,message="Menu can not fetched.")
         
 
-    def get_product(self, product_id):
-        # gets the contents of the product from db
+    def get_product(self, product_id): # Gets the product for UI
+
         status, product = self.database_manager.get_product(product_id)
         if status:
             return Response(body=product, status=status ,message="Product is fetched successfully.")
         else:
-            return Response(status=status ,message="Product is not fetched.")
+            return Response(status=status ,message="Product can not fetched.")
+
+
+    def get_coefficient(self, size_choice):
+        if size_choice == "small":
+            return 1
+        elif size_choice == "medium":
+            return 1.5
+        elif size_choice == "large":
+            return 2
+        else:
+            return 0
 
 
     def place_order(self, order : Order):
 
-        #TODO Stock check and update
-        order_dict = self.get_dict(order)
+        # calculate total ingrediants
+        total_ingrediants = Stock().dict()
+        for ingredient in total_ingrediants:
+            total_ingrediants[ingredient] = 0
+        
+        for item in order.line_items:
+            ingredients = self.database_manager.get_product_ingredient(item.product_id).dict()
+            for ingredient in ingredients:
+                if ingredient == "milk_amount":
+                    if item.milk_choice == "whole_milk":
+                        total_ingrediants["whole_milk_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                    elif item.milk_choice == "reduced_fat_milk":
+                        total_ingrediants["reduced_fat_milk_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                    elif item.milk_choice == "lactose_free_milk":
+                        total_ingrediants["lactose_free_milk_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                    elif item.milk_choice == "oat_milk":
+                        total_ingrediants["oat_milk_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                    elif item.milk_choice == "almond_milk":
+                        total_ingrediants["almond_milk_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                    else:
+                        return Response(status=False ,message="Milk choice is not valid.")
+                
+                elif ingredient == "espresso_amount":
+                    if item.caffein_choice == False:
+                        total_ingrediants["decaff_espresso_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                    elif item.caffein_choice == True:
+                        total_ingrediants["espresso_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                    else:
+                        return Response(status=False ,message="Caffein choice is not valid.")
+                        
+                elif ingredient == "foam_amount":
+                    total_ingrediants[item.milk_choice+"_amount"] += 0.2 * ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                
+                elif ingredient == "price":
+                    pass      
+                
+                else:
+                    try:
+                        total_ingrediants[ingredient] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                    except Exception as e:
+                        print("Error: ", e)
+                        return Response(status=False ,message="Ingredient is not valid.")
+                
+                total_ingrediants[item.size_choice+"_cup_count"] += 1
+        
+        # check stock
+        status, stock = self.database_manager.get_stock() #TODO admin_id or stock_id
+        stock_dict = stock.dict()
+        for ingredient in total_ingrediants:
+            if stock_dict[ingredient] < total_ingrediants[ingredient]:
+                return Response(status=False ,message="Stock is not enough for {}.".format(ingredient))
+        
+        # update stock
+        for ingredient in total_ingrediants:
+            stock_dict[ingredient] -= total_ingrediants[ingredient]
+        
+        status = self.database_manager.update_stock(Stock(**stock_dict)) #TODO admin_id or stock_id
+        if not status:
+            return Response(status=False ,message="Stock can not updated.")
 
+        # place order
         status = self.database_manager.place_order(order)
-        status = True
+        if not status:
+            return Response(status=False ,message="Stock updated, but order can not placed.")
+        
+        # update loyalty count
+        total_coffee_count = len(order.line_items)
+        status = self.database_manager.add_to_loyalty_count(order.customer_id, total_coffee_count)
+
         if status:
-            return Response(status=status ,message="Order is placed successfully.")
+            return Response(status=status ,message="Stock updated, order is placed successfully.")
         else:
-            return Response(status=status ,message="Order is not placed.")
+            return Response(status=status ,message="Stock updated, order is placed, an error occured in loyalty update!!")
 
 
     def get_status(self, order_id = 0):
         # if necessary check the db
-        # status, order_status = self.database_manager.get_status(order_id)
-        order_status = StatusResponse(order_status=self.order_status[0])
-        status = True
+        status, order_status = self.database_manager.get_status(order_id)
         if status:
             return Response(body=order_status, status=status ,message="Status is fetched successfully.")
         else:
@@ -104,61 +171,58 @@ class Manager:
 
 
     def get_history(self, customer_id):
-        # collect data from db
-        # status, history = self.database_manager.get_history(customer_id)
-        history = Orders()
+        status, history = self.database_manager.get_history(customer_id)
         status = True
         if status:
             return Response(body=history, status=status ,message="History is fetched successfully.")
         else:
             return Response(status=status ,message="History is not fetched.")
-    
+
 
     def update_address(self, customer_id, address):
-        # status = self.database_manager.update_address(customer_id, address)
-        status = True
+        status = self.database_manager.update_address(customer_id, address)
         if status:
             return Response(status=status ,message="Address is updated successfully.")
         else:
             return Response(status=status ,message="Address is not updated.")
-        
+
 
     def rate(self, product_id, rate):
-        # current_rate, rate_count = self.database_manager.get_rate(product_id)
-        # updated_rate = (current_rate * rate_count + rate) / (rate_count + 1)
-        # status = self.database_manager.update_rate(product_id, updated_rate, rate_count + 1)
+        status, current_rate, rate_count = self.database_manager.get_rate(product_id)
+        if not status:
+            return Response(status=status ,message="Rate could not fetched.")
         
-        status = True
+        updated_rate = (current_rate * rate_count + rate) / (rate_count + 1)
+        status = self.database_manager.update_rate(product_id, updated_rate, rate_count + 1)
+        
         if status:
             return Response(status=status ,message="Rate is updated successfully.")
         else:
             return Response(status=status ,message="Rate is not updated.")
 
-    def get_stock(self, admin_id):
-        # status, stock = self.database_manager.get_stock(stock_id)
-        stock = Stock()
-        status = True
+
+    def get_stock(self, stock_id=None):
+        status, stock = self.database_manager.get_stock() #TODO admin_id or stock_id
         if status:
             return Response(body=stock, status=status ,message="Stock is fetched successfully.")
         else:
             return Response(status=status ,message="Stock is not fetched.")
-    
+
+
     def update_stock(self, stock, admin_id=None):
         # items = self.get_dict(stock)
         # for item in items:
         #     if items[item] != None and items[item] != 0:
         #         self.database_manager.update_stock_item(admin_id, item, items[item])
         
-        # status = self.database_manager.update_stock(admin_id, stock)
-        status = True
+        status = self.database_manager.update_stock(stock)
         if status:
             return Response(status=status ,message="Stock is updated successfully.")
         else:
             return Response(status=status ,message="Stock is not updated.")
         
     def add_product(self, product):
-        # status = self.database_manager.add_product(product)
-        status = True
+        status = self.database_manager.add_product(product)
         if status:
             return Response(status=status ,message="Product is added successfully.")
         else:
