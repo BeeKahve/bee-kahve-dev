@@ -53,7 +53,7 @@ CREATE TABLE Customers (
 );
 
 CREATE TABLE Products (
-	product_id INT PRIMARY KEY,
+	product_id INT AUTO_INCREMENT PRIMARY KEY,
 	coffee_name VARCHAR(50) UNIQUE NOT NULL,
 	photo_path VARCHAR(200) NOT NULL,
 	espresso_amount FLOAT NOT NULL,
