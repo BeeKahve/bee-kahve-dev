@@ -8,16 +8,16 @@ const AddCoffee = () => {
 //   const [imageUrl, setImageUrl] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Check if the user has a valid token
-    const token = localStorage.getItem('token');
+//   useEffect(() => {
+//     // Check if the user has a valid token
+//     const token = localStorage.getItem('token');
 
-    if (token === 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
-        normFile()
-    } else {
-      navigate('/signInPage');
-    }
-  }, []);
+//     if (token === 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
+//         normFile()
+//     } else {
+//       navigate('/signInPage');
+//     }
+//   }, []);
 
 
     // State variables for checkboxes
@@ -48,68 +48,56 @@ const AddCoffee = () => {
     setActiveMenu('Modify Stock');
   };
 
-    const onFinish = async (values) => {
-        try {
-            if (values.espresso_amount === 0 || values.espresso_amount === undefined) {
-                message.error('The amount for espresso must be entered!');
-                return;
-            }
-            if (values.milk_amount === undefined) {
-                values.milk_amount = 0;
-            }
-            if (values.foam_amount === undefined) {
-                values.foam_amount = 0;
-            }
-            if (values.chocolate_syrup_amount === undefined) {
-                values.chocolate_syrup_amount = 0;
-            }
-            if (values.white_chocolate_syrup_amount === undefined) {
-                values.white_chocolate_syrup_amount = 0;
-            }
-            if (values.caramel_syrup_amount === undefined) {
-                values.caramel_syrup_amount = 0;
-            }
+  const onFinish = async (values) => {
+    try {
+      const {
+        name,
+        image,
+        espresso_amount,
+        milk_amount,
+        foam_amount,
+        chocolate_syrup_amount,
+        caramel_syrup_amount,
+        white_chocolate_syrup_amount,
+        sugar_checkbox,
+        sugar_amount,
+        ice_checkbox,
+        ice_amount,
+        size,
+        priceSmall,
+      } = values;
 
-            const totalPercentage =
-                values.espresso_amount +
-                values.milk_amount +
-                values.foam_amount +
-                values.chocolate_syrup_amount +
-                values.caramel_syrup_amount +
-                values.white_chocolate_syrup_amount;
+      const payload = {
+        admin_id: 1, // Assuming admin_id is 1 for the current admin
+        coffee_name: name,
+        photo_path: image,
+        small_cup_only: size.includes('small') && !size.includes('medium') && !size.includes('large'),
+        price: Number(priceSmall),
+        espresso_amount,
+        milk_amount: milk_amount || 0,
+        foam_amount: foam_amount || 0,
+        chocolate_syrup_amount: chocolate_syrup_amount || 0,
+        caramel_syrup_amount: caramel_syrup_amount || 0,
+        white_chocolate_syrup_amount: white_chocolate_syrup_amount || 0,
+        sugar_amount: sugar_checkbox ? sugar_amount || 0 : 0,
+        ice_amount: ice_checkbox ? ice_amount || 0 : 0,
+      };
 
-            if (totalPercentage !== 100) {
-                message.error('Total percentage of ingredients must be equal to 100.');
-                return;
-            }
+      console.log(payload);
+      
+      // Use your API endpoint instead of the placeholder URL
+      const response = await axios.post('http://51.20.117.162:8000/add_product', payload);
 
-            const payload = {
-                ...values,
-                priceSmall: Number(values.priceSmall),
-            };
-
-            const response = await axios.post('/api/addCoffee', payload);
-            console.log(response)
-
-            navigate('/adminPage');
-        }   
-        catch (error) {
-            console.error('Error submitting form:', error);
-            message.error('Failed to submit the form. Please try again.');
-        }
-    };
+      console.log(response);
+      navigate('/adminPage');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      message.error('Failed to submit the form. Please try again.');
+    }
+  };
 
   const onBackClick = () => {
     navigate('/adminPage');
-  };
-
-  const checkImageDimensions = (file) => {
-    const { width, height } = file;
-    if (width < 100 || height < 100) {
-      message.error('Image dimensions should be at least 100x100 pixels.');
-      return false;
-    }
-    return true;
   };
 
   const customRequest = ({ file, onSuccess }) => {
@@ -171,25 +159,13 @@ const AddCoffee = () => {
             wrapperCol={{ span: 16 }}
           >
             <Form.Item
-              label="Image"
+              label="Image (URL)"
               name="image"
-              valuePropName="fileList"
-              getValueFromEvent={normFile}
               rules={[
                 { required: true, message: 'Please upload an image!' },
-                {
-                  validator: (_, value) => {
-                    if (value && value.length === 1 && checkImageDimensions(value[0])) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('Image dimensions are too small!'));
-                  },
-                },
               ]}
             >
-              <Upload customRequest={customRequest} listType="picture" maxCount={1}>
-                <Button>Upload Image</Button>
-              </Upload>
+                 <Input />
             </Form.Item>
             <Form.Item
               label="Coffee Name"
