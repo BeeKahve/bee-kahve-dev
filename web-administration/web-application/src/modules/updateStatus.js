@@ -1,12 +1,12 @@
-// employeePage.js
+// updateStatus.js
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form, Input } from 'antd';
+import { Button, Table, Modal, Form } from 'antd';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const { Column } = Table;
 
-const EmployeePage = () => {
+const UpdateStatus = () => {
   const [orderList, setOrderList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
@@ -36,11 +36,6 @@ const EmployeePage = () => {
     }
   };
 
-  const handleExitAccount = () => {
-    localStorage.removeItem('token');
-    navigate('/signInPage');
-  };
-
   const showModal = (title, order) => {
     setIsModalVisible(true);
     setModalTitle(title);
@@ -51,27 +46,35 @@ const EmployeePage = () => {
     setIsModalVisible(false);
   };
 
-  const handleConfirmOrder = () => {
-    // Logic for confirming order
+  const handleReadyOrder = () => {
+    // Logic for marking order as ready
+    handleCancel(); // Close the modal after action
   };
 
-//   const handleCancelOrder = () => {
-//     // Logic for canceling order
-//   };
+  const handleExitAccount = () => {
+    localStorage.removeItem('token');
+    navigate('/signInPage');
+  };
 
-  const handleUpdateStatus = () => {
-    // Redirect to /updateStatus when Update Order Status button is clicked
-    navigate('/updateStatus');
+  const handleDeliveredOrder = async () => {
+    try {
+      // Update the order status to 'Delivered' and send back to the server
+      await axios.put(`/api/orders/${selectedOrder._id}`, { status: 'Delivered' });
+      handleCancel(); // Close the modal after action
+      fetchOrderList(); // Refresh the order list
+    } catch (error) {
+      console.error('Error updating order status:', error);
+    }
   };
 
   return (
-    <div className="employeePage">
+    <div className="updateStatus">
       <div className="left-sidebar">
         <h1 style={{ color: 'white', marginLeft: '20%' }}>Employee</h1>
-        <div className={`menu-stock-header active`} onClick={fetchOrderList}>
+        <div className={`menu-stock-header`} onClick={() => navigate('/employeePage')}>
           <h4 style={{ color: 'black' }}>Confirm Order</h4>
         </div>
-        <div className={`menu-stock-header`} onClick={handleUpdateStatus}>
+        <div className={`menu-stock-header active`} onClick={fetchOrderList}>
           <h4 style={{ color: 'black' }}>Update Order Status</h4>
         </div>
         <Button className="exit-account" type="danger" onClick={() => handleExitAccount()}>
@@ -107,11 +110,11 @@ const EmployeePage = () => {
               key="action"
               render={(text, record) => (
                 <span>
-                  <Button type="primary" onClick={() => showModal('Confirm Order', record)}>
-                    Confirm
+                  <Button type="primary" onClick={() => showModal('Ready Order', record)}>
+                    Ready
                   </Button>
-                  <Button type="danger" onClick={() => showModal('Cancel Order', record)}>
-                    Cancel
+                  <Button type="primary" onClick={() => showModal('Delivered Order', record)}>
+                    Delivered
                   </Button>
                 </span>
               )}
@@ -122,12 +125,12 @@ const EmployeePage = () => {
 
       <Modal title={modalTitle} visible={isModalVisible} onCancel={handleCancel} footer={null}>
         {/* Form for Order Modal */}
-        <Form onFinish={handleConfirmOrder}>
+        <Form onFinish={modalTitle === 'Ready Order' ? handleReadyOrder : handleDeliveredOrder}>
           {/* Form fields go here */}
           {/* You can customize the form fields based on your requirements */}
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Confirm Order
+              {modalTitle === 'Ready Order' ? 'Mark as Ready' : 'Mark as Delivered'}
             </Button>
           </Form.Item>
         </Form>
@@ -136,4 +139,4 @@ const EmployeePage = () => {
   );
 };
 
-export default EmployeePage;
+export default UpdateStatus;
