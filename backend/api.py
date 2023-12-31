@@ -92,7 +92,7 @@ async def update_stock(stock : Stock) -> Response:
     return manager.update_stock(stock)
 
 @app.get("/add_product")
-async def add_product(product : Product) -> Response:
+async def add_product(product : ProductFull) -> Response:
     return manager.add_product(product)
 
 if __name__ == "__main__":
