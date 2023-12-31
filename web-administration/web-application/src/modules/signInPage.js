@@ -28,14 +28,14 @@ const SignIn = () => {
 
     
     let isAdmin = false
+    const hashedValue = await sha512(password)
 
-    console.log(employeeAdmin)
     if(employeeAdmin === "admin"){
       isAdmin = true
+      localStorage.setItem('token', hashedValue); // SHOULD BE DELEETD
     }
-    const hashedValue = await sha512(password)
+
     const body = JSON.stringify({ isAdmin, email, hashedValue });
-    localStorage.setItem('token', hashedValue); // SHOULD BE DELEETD
     console.log(body);
 
     try {
@@ -50,7 +50,14 @@ const SignIn = () => {
       setLoading(false);
     }
     //  navigate(`/adminPage?adminName=${res.data.adminName}`);
-    navigate(`/adminPage`);
+    if(isAdmin){ // DELETE
+      navigate(`/adminPage`);
+    }
+    else{
+      navigate(`/employeePage`)
+    }
+    
+    // navigate(`/employeePage`)
     // navigate(`/employeePage`)
   };
 

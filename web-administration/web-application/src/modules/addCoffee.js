@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const AddCoffee = () => {
   const [form] = Form.useForm();
-  const [imageUrl, setImageUrl] = useState(null);
+//   const [imageUrl, setImageUrl] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,55 +48,56 @@ const AddCoffee = () => {
     setActiveMenu('Modify Stock');
   };
 
-  const onFinish = async (values) => {
-    try {
-      if (values.espresso_amount === 0 || values.espresso_amount === undefined) {
-        message.error('The amount for espresso must be entered!');
-        return;
-      }
-      if (values.milk_amount === undefined) {
-        values.milk_amount = 0;
-      }
-      if (values.foam_amount === undefined) {
-        values.foam_amount = 0;
-      }
-      if (values.chocolate_syrup_amount === undefined) {
-        values.chocolate_syrup_amount = 0;
-      }
-      if (values.white_chocolate_syrup_amount === undefined) {
-        values.white_chocolate_syrup_amount = 0;
-      }
-      if (values.caramel_syrup_amount === undefined) {
-        values.caramel_syrup_amount = 0;
-      }
+    const onFinish = async (values) => {
+        try {
+            if (values.espresso_amount === 0 || values.espresso_amount === undefined) {
+                message.error('The amount for espresso must be entered!');
+                return;
+            }
+            if (values.milk_amount === undefined) {
+                values.milk_amount = 0;
+            }
+            if (values.foam_amount === undefined) {
+                values.foam_amount = 0;
+            }
+            if (values.chocolate_syrup_amount === undefined) {
+                values.chocolate_syrup_amount = 0;
+            }
+            if (values.white_chocolate_syrup_amount === undefined) {
+                values.white_chocolate_syrup_amount = 0;
+            }
+            if (values.caramel_syrup_amount === undefined) {
+                values.caramel_syrup_amount = 0;
+            }
 
-      const totalPercentage =
-        values.espresso_amount +
-        values.milk_amount +
-        values.foam_amount +
-        values.chocolate_syrup_amount +
-        values.caramel_syrup_amount +
-        values.white_chocolate_syrup_amount;
+            const totalPercentage =
+                values.espresso_amount +
+                values.milk_amount +
+                values.foam_amount +
+                values.chocolate_syrup_amount +
+                values.caramel_syrup_amount +
+                values.white_chocolate_syrup_amount;
 
-      if (totalPercentage !== 100) {
-        message.error('Total percentage of ingredients must be equal to 100.');
-        return;
-      }
+            if (totalPercentage !== 100) {
+                message.error('Total percentage of ingredients must be equal to 100.');
+                return;
+            }
 
-      const payload = {
-        ...values,
-        priceSmall: Number(values.priceSmall),
-      };
+            const payload = {
+                ...values,
+                priceSmall: Number(values.priceSmall),
+            };
 
-        console.log(payload)
-      const response = await axios.post('/api/addCoffee', payload);
+            const response = await axios.post('/api/addCoffee', payload);
+            console.log(response)
 
-      navigate('/adminPage');
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      message.error('Failed to submit the form. Please try again.');
-    }
-  };
+            navigate('/adminPage');
+        }   
+        catch (error) {
+            console.error('Error submitting form:', error);
+            message.error('Failed to submit the form. Please try again.');
+        }
+    };
 
   const onBackClick = () => {
     navigate('/adminPage');
@@ -116,15 +117,6 @@ const AddCoffee = () => {
     formData.append('file', file);
     const placeholderUrl = 'https://via.placeholder.com/150';
     onSuccess(placeholderUrl);
-  };
-
-  const handleSugarCheckboxChange = (checked) => {
-    console.log(form.getFieldValue('sugar_checkbox'))
-    form.setFieldsValue({ sugar_amount: checked ? undefined : null });
-  };
-
-  const handleIceCheckboxChange = (checked) => {
-    form.setFieldsValue({ ice_amount: checked ? undefined : null });
   };
 
   return (
