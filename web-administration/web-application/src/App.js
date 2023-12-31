@@ -11,6 +11,7 @@ import AddCoffee from './modules/addCoffee';
 import ModifyStock from './modules/modifyStock';
 import UpdateStatus from './modules/updateStatus';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import UpdateCoffee from './modules/updateCoffee';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Route path="/modifyStock" element={<ModifyStock />} />
         <Route path="/employeePage" element={<EmployeePage />} />
         <Route path="/updateStatus" element={<UpdateStatus />} />
+        <Route path="/updateCoffee" element={<UpdateCoffee />} />
       </Routes>
     </Router>
   );
