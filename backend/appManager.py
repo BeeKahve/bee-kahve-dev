@@ -14,6 +14,9 @@ class Manager:
     def __init__(self):
         self.database_manager = DatabaseManager(db_host="localhost", db_user="test", db_password="test", db_name="bee_kahve_db")
         pass
+
+    def get_dict(self, obj):
+        return obj.dict()
     
     def web_login(self, credentials: WebLogin):
         status, user = self.database_manager.get_webuser(credentials)
@@ -79,6 +82,7 @@ class Manager:
     def place_order(self, order : Order):
 
         #TODO Stock check and update
+        order_dict = self.get_dict(order)
 
         status = self.database_manager.place_order(order)
         status = True
@@ -139,7 +143,12 @@ class Manager:
         else:
             return Response(status=status ,message="Stock is not fetched.")
     
-    def update_stock(self, admin_id, stock):
+    def update_stock(self, stock, admin_id=None):
+        # items = self.get_dict(stock)
+        # for item in items:
+        #     if items[item] != None and items[item] != 0:
+        #         self.database_manager.update_stock_item(admin_id, item, items[item])
+        
         # status = self.database_manager.update_stock(admin_id, stock)
         status = True
         if status:

@@ -154,3 +154,7 @@ class DatabaseManager:
         
         return None
     
+        def update_stock_item(self, admin_id, item_name, item_value):
+            # TODO : update single item in stock
+            pass
+    

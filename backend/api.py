@@ -88,7 +88,7 @@ async def get_stock(admin_id : int) -> Stock:
     return manager.get_stock(admin_id).body
 
 @app.post("/update_stock")
-async def update_stock(stock : dict) -> Response:
+async def update_stock(stock : Stock) -> Response:
     return manager.update_stock(stock)
 
 @app.get("/add_product")
