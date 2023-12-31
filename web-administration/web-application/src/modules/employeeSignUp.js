@@ -44,7 +44,7 @@ const EmployeeSignUp = () => {
 
       if (res.data.message === "Success") {
         setSuccessMessage("Account successfully created!");
-        navigate('/signInPage');
+        // navigate('/signInPage');
       } else {
         setErrorMessage(`Error creating account: ${res.data.message}`);
         setSuccessMessage('');

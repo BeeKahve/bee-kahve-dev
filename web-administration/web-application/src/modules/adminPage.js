@@ -7,15 +7,12 @@ const { Column } = Table;
 
 const AdminPage = () => {
   let [coffeeList, setCoffeeList] = useState([]);
-  // const [isModalVisible, setIsModalVisible] = useState(false);
-  // const [modalTitle, setModalTitle] = useState('');
   const [selectedCoffee, setSelectedCoffee] = useState({});
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-
     if (token === 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
       fetchCoffeeList();
     } else {
@@ -54,7 +51,6 @@ const AdminPage = () => {
     navigate('/signInPage');
   };
 
-
   const [selectedRowKey, setSelectedRowKey] = useState(null);
 
   const handleRowClick = (record) => {
@@ -72,7 +68,7 @@ const AdminPage = () => {
   
   const handleUpdateCoffee = () => {
     if (selectedCoffee.product_id) {
-      navigate(`/updateCoffee/${selectedCoffee.product_id}`);
+      navigate(`/updateCoffee`, { state: { selectedCoffee: selectedCoffee } });
     }
   };
 
