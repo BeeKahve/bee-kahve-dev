@@ -225,8 +225,9 @@ class DatabaseManager:
                         ice_amount=stock[15])
     
     # check
-    def update_stock(self, stock):
-        query_update_stock = "UPDATE Stocks SET small_cup_count = %s, medium_cup_count = %s, large_cup_count = %s, espresso_amount = %s, decaff_espresso_amount = %s, whole_milk_amount = %s, reduced_fat_milk_amount = %s, lactose_free_milk_amount = %s, oat_milk_amount = %s, almond_milk_amount = %s, chocolate_syrup_amount = %s, white_chocolate_syrup_amount = %s, caramel_syrup_amount = %s, sugar_amount = %s, ice_amount = %s"
+    def update_stock(self, stock : Stock):
+        stock_id = 1
+        query_update_stock = "UPDATE Stocks SET small_cup_count = %s, medium_cup_count = %s, large_cup_count = %s, espresso_amount = %s, decaff_espresso_amount = %s, whole_milk_amount = %s, reduced_fat_milk_amount = %s, lactose_free_milk_amount = %s, oat_milk_amount = %s, almond_milk_amount = %s, chocolate_syrup_amount = %s, white_chocolate_syrup_amount = %s, caramel_syrup_amount = %s, sugar_amount = %s, ice_amount = %s WHERE stock_id = %s"
         values_update_stock = (stock.small_cup_count,
                                stock.medium_cup_count,
                                stock.large_cup_count,
@@ -241,7 +242,8 @@ class DatabaseManager:
                                stock.white_chocolate_syrup_amount,
                                stock.caramel_syrup_amount,
                                stock.sugar_amount,
-                               stock.ice_amount)
+                               stock.ice_amount,
+                               stock_id)
 
         if self.database.execute_query(query_update_stock, values_update_stock):
             return True
@@ -406,7 +408,7 @@ class DatabaseManager:
     
 
     # check
-    def get_active_orders(self, admin_id):
+    def get_active_orders(self, admin_id=1):
 
         query_orders = "SELECT * FROM Orders WHERE order_status IN %s"
         orders = self.database.fetch_data(query_orders, (self.active_order_status,))
@@ -435,6 +437,88 @@ class DatabaseManager:
                             orders=orders_list,
                             order_count=len(orders_list))
     
+    # check
+    def get_waiting_orders(self, admin_id):
+        query_orders = "SELECT * FROM Orders WHERE order_status = %s"
+        orders = self.database.fetch_data(query_orders, ("waiting",))
+        orders_list = []
+        for order in orders:
+            query_line_items = "SELECT * FROM Line_Items WHERE order_id = %s"
+            line_items = self.database.fetch_data(query_line_items, (order[0],))
+            line_items_list = []
+            for line_item in line_items:
+                query_product = "SELECT * FROM Products WHERE product_id = %s"
+                product = self.database.fetch_data(query_product, (line_item[2],))[0]
+                line_items_list.append(LineItem(product_id=product[0],
+                                                name=product[1],
+                                                photo_path=product[2],
+                                                price=product[12],
+                                                size_choice=line_item[3],
+                                                milk_choice=line_item[4],
+                                                extra_shot_choice=line_item[5],
+                                                caffein_choice=line_item[6]))
+            orders_list.append(Order(customer_id=order[1],
+                                     order_id=order[0],
+                                     line_items=line_items_list,
+                                     order_date=order[2],
+                                     order_status=order[3]))
+        return True, Orders(customer_name="",
+                            orders=orders_list,
+                            order_count=len(orders_list))
+
+
+    # check
+    def get_full_product(self, product_id):
+        query_product = "SELECT * FROM Products WHERE product_id = %s"  # list of tuples. each tuple is a product
+        product = self.database.fetch_data(query_product, (product_id,))
+        
+        if product == []:
+            return False, None
+
+        product = product[0]
+        return True, ProductFull(coffee_name=product[1],
+                                 photo_path=product[2],
+                                 small_cup_only=product[11],
+                                 price=product[12],
+                                 rate=product[13],
+                                 rate_count=product[14],
+                                 espresso_amount=product[3],
+                                 milk_amount=product[4],
+                                 foam_amount=product[5],
+                                 chocolate_syrup_amount=product[6],
+                                 caramel_syrup_amount=product[7],
+                                 white_chocolate_syrup_amount=product[8],
+                                 sugar_amount=product[9],
+                                 ice_amount=product[10],
+                                 is_product_disabled=product[15])
+
+
+    # check
+    def update_product(self, product_id, product: ProductFull):
+        query_update_product = "UPDATE Products SET coffee_name = %s, photo_path = %s, small_cup_only = %s, price = %s, rate = %s, rate_count = %s, espresso_amount = %s, milk_amount = %s, foam_amount = %s, chocolate_syrup_amount = %s, caramel_syrup_amount = %s, white_chocolate_syrup_amount = %s, sugar_amount = %s, ice_amount = %s, is_product_disabled = %s WHERE product_id = %s"
+        values_update_product = (product.coffee_name,
+                                 product.photo_path,
+                                 product.small_cup_only,
+                                 product.price,
+                                 product.rate,
+                                 product.rate_count,
+                                 product.espresso_amount,
+                                 product.milk_amount,
+                                 product.foam_amount,
+                                 product.chocolate_syrup_amount,
+                                 product.caramel_syrup_amount,
+                                 product.white_chocolate_syrup_amount,
+                                 product.sugar_amount,
+                                 product.ice_amount,
+                                 product.is_product_disabled,
+                                 product_id)
+
+        if self.database.execute_query(query_update_product, values_update_product):
+            return True
+        else:
+            return False
+        
+
 
     # Returns None if an insertion failed, "waiting" otherwise.
     def place_order(self, order : Order):

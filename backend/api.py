@@ -101,7 +101,17 @@ async def add_product(product : ProductFull) -> Response:
 async def get_active_orders(admin_id : int) -> Orders:
     return manager.get_active_orders(admin_id).body
 
+@app.get("/get_waiting_orders")
+async def get_waiting_orders(admin_id : int) -> Orders:
+    return manager.get_waiting_orders(admin_id).body
 
+@app.get("/get_full_product")
+async def get_full_product(product_id : int) -> ProductFull:
+    return manager.get_full_product(product_id).body
+
+@app.post("/update_product")
+async def update_product(product_id : int, product : ProductFull) -> Response:
+    return manager.update_product(product_id,product)
 
 if __name__ == "__main__":
     uvicorn.run(app,host="0.0.0.0", port=8000)

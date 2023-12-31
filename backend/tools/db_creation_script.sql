@@ -37,7 +37,7 @@ CREATE TABLE Employees (
 	employee_id INT AUTO_INCREMENT PRIMARY KEY,
 	employee_name VARCHAR(50) NOT NULL,
 	employee_email VARCHAR(50) UNIQUE NOT NULL,
-	employee_password VARCHAR(50) NOT NULL,
+	employee_password VARCHAR(200) NOT NULL,
 	admin_id INT NOT NULL,
 	FOREIGN KEY (admin_id) REFERENCES Admins(admin_id),
 	is_employee_active TINYINT(1) DEFAULT 1

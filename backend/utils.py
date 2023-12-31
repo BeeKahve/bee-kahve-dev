@@ -152,7 +152,7 @@ class ProductIngredient(BaseModel):
     price : float = None
 
 class ProductFull(BaseModel):
-    admin_id : int = None
+    admin_id : int = 1
     coffee_name : str = None
     photo_path : str = None
     small_cup_only : bool = None
@@ -167,4 +167,4 @@ class ProductFull(BaseModel):
     white_chocolate_syrup_amount : float = None
     sugar_amount : float = None
     ice_amount : float = None
-    
+    is_product_disabled : bool = 0

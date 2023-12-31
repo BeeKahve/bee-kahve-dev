@@ -238,6 +238,26 @@ class Manager:
             return Response(body=orders, status=status ,message="Active orders are fetched successfully.")
         else:
             return Response(status=status ,message="Active orders are not fetched.")
+
+    def get_waiting_orders(self, admin_id):
+        status, orders = self.database_manager.get_waiting_orders(admin_id)
+        if status:
+            return Response(body=orders, status=status ,message="Waiting orders are fetched successfully.")
+        else:
+            return Response(status=status ,message="Waiting orders are not fetched.")
+
+    def get_full_product(self, product_id):
+        status, product = self.database_manager.get_full_product(product_id)
+        if status:
+            return Response(body=product, status=status ,message="Product is fetched successfully.")
+        else:
+            return Response(status=status ,message="Product is not fetched.")
         
-    #jwt token
+    def update_product(self, product_id, product):
+        status = self.database_manager.update_product(product_id, product)
+        if status:
+            return Response(status=status ,message="Product is updated successfully.")
+        else:
+            return Response(status=status ,message="Product can not updated.")
     
+    #jwt token
