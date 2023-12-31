@@ -79,6 +79,7 @@ class WebUserRegistration(BaseModel):   # for web register
     hashedValue : str = None
     name : str = None
     address : str = None
+    admin_id : int = None
     is_admin : bool = None
 
 class WebUser(BaseModel):  # for web login

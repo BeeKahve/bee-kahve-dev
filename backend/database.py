@@ -112,16 +112,16 @@ class DatabaseManager:
                 return False, None
 
     # check
-    def web_register(self, user : WebUserRegistration):
+    def web_register(self, user: WebUserRegistration):
         is_admin = user.is_admin
 
         if is_admin:
             query_admin = "SELECT * FROM Admins WHERE admin_email = %s"
             admin = self.database.fetch_data(query_admin, (user.email,))
-            
+
             if admin != []:
                 return Response(status=False, message="Email already exists")
-            
+
             query_insert_admin = "INSERT INTO Admins (admin_name, admin_email, admin_password, admin_address) VALUES (%s, %s, %s, %s)"
             values_insert_admin = (user.name, user.email, user.hashedValue, user.address)
 
@@ -129,16 +129,16 @@ class DatabaseManager:
                 return Response(status=True, message="Success")
             else:
                 return Response(status=False, message="Error inserting admin")
-        
+
         else:
             query_employee = "SELECT * FROM Employees WHERE employee_email = %s"
             employee = self.database.fetch_data(query_employee, (user.email,))
-            
+
             if employee != []:
                 return Response(status=False, message="Email already exists")
-            
-            query_insert_employee = "INSERT INTO Employees (employee_name, employee_email, employee_password) VALUES (%s, %s, %s)"
-            values_insert_employee = (user.name, user.email, user.hashedValue)
+
+            query_insert_employee = "INSERT INTO Employees (employee_name, employee_email, employee_password, admin_id) VALUES (%s, %s, %s, %s)"
+            values_insert_employee = (user.name, user.email, user.hashedValue, user.admin_id)
 
             if self.database.execute_query(query_insert_employee, values_insert_employee):
                 return Response(status=True, message="Success")
