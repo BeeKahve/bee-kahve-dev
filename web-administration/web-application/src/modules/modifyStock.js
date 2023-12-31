@@ -12,7 +12,14 @@ const ModifyStock = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchStockData();
+    // Check if the user has a valid token
+    const token = localStorage.getItem('token');
+
+    if (token === 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
+      fetchStockData();
+    } else {
+      navigate('/signInPage');
+    }
   }, []);
 
   const fetchStockData = async () => {
