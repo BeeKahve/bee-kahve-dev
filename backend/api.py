@@ -34,11 +34,11 @@ app.add_middleware(
 async def root():
     return RedirectResponse(url="/docs")
 
-@app.get("/web_login")
+@app.post("/web_login")
 async def web_login(credentials : WebLogin) -> WebUser:
     return manager.web_login(credentials).body
 
-@app.get("/web_register")
+@app.post("/web_register")
 async def web_register(user : WebUserRegistration) -> Response:
     return manager.web_register(user)
 

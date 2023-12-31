@@ -82,17 +82,17 @@ class DatabaseManager:
             
             if admin == []:
                 return False, None
-            
+
             admin = admin[0]
-            if credentials.hashedValue == admin[5]:
+            if credentials.hashedValue == admin[4]:
                 return True, WebUser(user_id=admin[0],
                                      is_admin=True,
                                      name=1,
-                                     email=admin[4],
-                                     address=admin[6],
+                                     email=admin[3],
+                                     address=admin[5],
                                      stock_id=admin[2])
             else:
-                False, None
+                return False, None
         
         else:
             query_employee = "SELECT * FROM Employees WHERE employee_email = %s"
@@ -107,6 +107,8 @@ class DatabaseManager:
                                      is_admin=False,
                                      name=employee[1],
                                      email=employee[2])
+            else:
+                return False, None
 
     
     def get_product(self, product_id):
