@@ -2,6 +2,7 @@ from utils import *
 import mysql.connector
 
 class Database:
+
     def __init__(self, host, user, password, database):
         self.connection = mysql.connector.connect(
             host=host,
@@ -45,10 +46,10 @@ class Database:
 
 # order.order_id comes unique from ui, not auto incremented in db
 class DatabaseManager:
-    order_status = {
-        0 : "waiting"
-    }
-
+    active_order_status = [
+        "preparing",
+        "on_the_way",
+    ]
     
     def __init__(self, db_host, db_user, db_password, db_name):
         self.database = Database(db_host, db_user, db_password, db_name)
@@ -298,6 +299,15 @@ class DatabaseManager:
             return False, None
         return True, StatusResponse(order_status=order_status)
 
+    # check
+    def set_status(self, order_id, status):
+        query_update_status = "UPDATE Orders SET order_status = %s WHERE order_id = %s"
+        values_update_status = (status, order_id)
+
+        if self.database.execute_query(query_update_status, values_update_status):
+            return True
+        else:
+            return False
     
     # check
     def add_to_loyalty_count(self, customer_id, loyalty_count):
@@ -393,8 +403,39 @@ class DatabaseManager:
             return True
         else:
             return False
-        
     
+
+    # check
+    def get_active_orders(self, admin_id):
+
+        query_orders = "SELECT * FROM Orders WHERE order_status IN %s"
+        orders = self.database.fetch_data(query_orders, (self.active_order_status,))
+        orders_list = []
+        for order in orders:
+            query_line_items = "SELECT * FROM Line_Items WHERE order_id = %s"
+            line_items = self.database.fetch_data(query_line_items, (order[0],))
+            line_items_list = []
+            for line_item in line_items:
+                query_product = "SELECT * FROM Products WHERE product_id = %s"
+                product = self.database.fetch_data(query_product, (line_item[2],))[0]
+                line_items_list.append(LineItem(product_id=product[0],
+                                                name=product[1],
+                                                photo_path=product[2],
+                                                price=product[12],
+                                                size_choice=line_item[3],
+                                                milk_choice=line_item[4],
+                                                extra_shot_choice=line_item[5],
+                                                caffein_choice=line_item[6]))
+            orders_list.append(Order(customer_id=order[1],
+                                     order_id=order[0],
+                                     line_items=line_items_list,
+                                     order_date=order[2],
+                                     order_status=order[3]))
+        return True, Orders(customer_name="",
+                            orders=orders_list,
+                            order_count=len(orders_list))
+    
+
     # Returns None if an insertion failed, "waiting" otherwise.
     def place_order(self, order : Order):
         query_orders = "INSERT INTO Orders (customer_id, order_date, order_status) VALUES (%s, %s, %s)"

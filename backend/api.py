@@ -46,6 +46,9 @@ async def web_register(user : WebUserRegistration) -> Response:
 async def login(credentials : Login) -> Customer:
     return manager.login(credentials).body
 
+@app.post("/register")
+async def register(user : User) -> Response:
+    return manager.register(user)
 
 @app.get("/get_menu")
 async def get_menu() -> ProductMenu:
@@ -66,6 +69,9 @@ async def place_order(order : Order) -> Response:
 async def get_status(order_id : int) -> StatusResponse:
     return manager.get_status(order_id).body
 
+@app.get("/set_status")
+async def set_status(order_id : int, status : str) -> Response:
+    return manager.set_status(order_id, status)
 
 @app.get("/order_history")
 async def get_history(customer_id : int) -> Orders:
@@ -74,10 +80,6 @@ async def get_history(customer_id : int) -> Orders:
 @app.post("/update_address")
 async def update_adress(address : Address) -> Response:
     return manager.update_address(address.customer_id, address.address)
-
-@app.post("/register")
-async def register(user : User) -> Response:
-    return manager.register(user)
 
 @app.post("/rate")
 async def rate(rate : Rate) -> Response:
@@ -91,9 +93,15 @@ async def get_stock(admin_id : int) -> Stock:
 async def update_stock(stock : Stock) -> Response:
     return manager.update_stock(stock)
 
-@app.get("/add_product")
+@app.post("/add_product")
 async def add_product(product : ProductFull) -> Response:
     return manager.add_product(product)
+
+@app.post("/get_active_orders")
+async def get_active_orders(admin_id : int) -> Orders:
+    return manager.get_active_orders(admin_id).body
+
+
 
 if __name__ == "__main__":
     uvicorn.run(app,host="0.0.0.0", port=8000)

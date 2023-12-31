@@ -169,6 +169,12 @@ class Manager:
         else:
             return Response(status=status ,message="Status is not fetched.")
 
+    def set_status(self, order_id, status):
+        status = self.database_manager.set_status(order_id, status)
+        if status:
+            return Response(status=status ,message="Status is updated successfully.")
+        else:
+            return Response(status=status ,message="Status is not updated.")
 
     def get_history(self, customer_id):
         status, history = self.database_manager.get_history(customer_id)
@@ -228,6 +234,12 @@ class Manager:
         else:
             return Response(status=status ,message="Product is not added.")
         
-    
+    def get_active_orders(self, admin_id):
+        status, orders = self.database_manager.get_active_orders(admin_id)
+        if status:
+            return Response(body=orders, status=status ,message="Active orders are fetched successfully.")
+        else:
+            return Response(status=status ,message="Active orders are not fetched.")
+        
     #jwt token
     
