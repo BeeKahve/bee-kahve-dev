@@ -9,9 +9,28 @@ const AddCoffee = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const navigate = useNavigate();
 
+  const [activeMenu, setActiveMenu] = useState('Modify Menu');
+
+  const handleExitAccount = () => {
+    localStorage.removeItem('token');
+    navigate('/signInPage')
+  }
+
+  const handleModifyMenu = () => {
+    navigate('/adminPage');
+    setActiveMenu('Modify Menu');
+  };
+
+  const handleModifyStock = () => {
+    navigate('/modifyStock');
+    setActiveMenu('Modify Stock');
+  };
+
   const onFinish = async (values) => {
     try {
-      const response = await axios.post('/api/addCoffee', values);
+        console.log(values)
+        const response = await axios.post('/api/addCoffee', values);
+
       navigate('/adminPage');
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -48,16 +67,29 @@ const AddCoffee = () => {
 
   return (
     <div className="adminPage">
-      <div className="left-sidebar">
+        <div className="left-sidebar">
+        {/* ... (existing code) */}
         <h1 style={{ color: 'white', marginLeft: '30%' }}>ADMIN</h1>
-        <div className="menu-stock-header" style={{ backgroundColor: '#F1DB11' }}>
-          <h4 style={{ color: 'black' }}>Modify Menu and Stock</h4>
+        <div
+          className={`menu-stock-header ${activeMenu === 'Modify Menu' ? 'active' : ''}`}
+          onClick={handleModifyMenu}
+        >
+          <h4 style={{ color: 'black' }}>Modify Menu</h4>
         </div>
+        <div
+          className={`menu-stock-header ${activeMenu === 'Modify Stock' ? 'active' : ''}`}
+          onClick={handleModifyStock}
+        >
+          <h4 style={{ color: 'black' }}>Modify Stock</h4>
+        </div>
+        <Button className='exit-account' type="danger" onClick={() => handleExitAccount()}>
+              <h4>Exit Account</h4>
+        </Button>
       </div>
 
       <div className="right-content">
-        <div className="upper-content" style={{ height: '15%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <h1 style={{ color: 'white' }}>Hello Admin</h1>
+      <div className="upper-content" style={{ height: '15%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '80vw'}}>
+          <h1 style={{ color: 'black' }}>Hello Admin</h1>
           <div className="brand" style={{ fontSize: '1.5em' }}>
             <span style={{ color: '#F1DB11' }}>Bee'</span> Kahve
           </div>

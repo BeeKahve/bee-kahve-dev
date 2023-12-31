@@ -11,12 +11,21 @@ const AdminPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [selectedCoffee, setSelectedCoffee] = useState({});
-  const [adminName, setAdminName] = useState('Admin'); // Replace with the actual admin name
+  const [adminName, setAdminName] = useState('NovruzTest'); // Replace with the actual admin name
 
   const navigate = useNavigate();
 
+
   useEffect(() => {
-    fetchCoffeeList();
+    // Check if the user has a valid token
+    const token = localStorage.getItem('token');
+
+    if (token === 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
+      fetchCoffeeList();
+    } else {
+      fetchCoffeeList();
+      navigate('/signInPage');
+    }
   }, []);
 
   const fetchCoffeeList = async () => {
@@ -43,6 +52,24 @@ const AdminPage = () => {
     navigate('/addCoffee');
   };
 
+  const [activeMenu, setActiveMenu] = useState('Modify Menu');
+
+  const handleModifyMenu = () => {
+    navigate('/adminPage');
+    setActiveMenu('Modify Menu');
+  };
+
+  const handleModifyStock = () => {
+    setActiveMenu('Modify Stock');
+    navigate('/modifyStock');
+    
+  };
+
+  const handleExitAccount = () => {
+    localStorage.removeItem('token');
+    navigate('/signInPage')
+  }
+
   const handleSubmit = async (values) => {
     try {
       if (modalTitle === 'Add Coffee') {
@@ -60,14 +87,27 @@ const AdminPage = () => {
   return (
     <div className="adminPage">
       <div className="left-sidebar">
+        {/* ... (existing code) */}
         <h1 style={{ color: 'white', marginLeft: '30%' }}>ADMIN</h1>
-        <div className="menu-stock-header" style={{ backgroundColor: '#F1DB11' }}>
-          <h4 style={{ color: 'black' }}>Modify Menu and Stock</h4>
+        <div
+          className={`menu-stock-header ${activeMenu === 'Modify Menu' ? 'active' : ''}`}
+          onClick={handleModifyMenu}
+        >
+          <h4 style={{ color: 'black' }}>Modify Menu</h4>
         </div>
+        <div
+          className={`menu-stock-header ${activeMenu === 'Modify Stock' ? 'active' : ''}`}
+          onClick={handleModifyStock}
+        >
+          <h4 style={{ color: 'black' }}>Modify Stock</h4>
+        </div>
+        <Button className='exit-account' type="danger" onClick={() => handleExitAccount()}>
+              <h4>Exit Account</h4>
+        </Button>
+        
       </div>
-
       <div className="right-content">
-        <div className="upper-content" style={{ height: '15%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div className="upper-content" style={{ height: '15%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '80vw'}}>
           <h1 style={{ color: 'black' }}>Hello {adminName}</h1>
           <div className="brand" style={{ fontSize: '1.5em' }}>
             <span style={{ color: '#F1DB11' }}>Bee'</span> Kahve
