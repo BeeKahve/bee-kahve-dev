@@ -55,7 +55,7 @@ CREATE TABLE Customers (
 CREATE TABLE Products (
 	product_id INT PRIMARY KEY,
 	coffee_name VARCHAR(50) UNIQUE NOT NULL,
-	photo_path VARCHAR(50) NOT NULL,
+	photo_path VARCHAR(200) NOT NULL,
 	espresso_amount FLOAT NOT NULL,
 	milk_amount FLOAT,
 	foam_amount FLOAT,
