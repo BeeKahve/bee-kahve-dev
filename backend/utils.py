@@ -40,7 +40,6 @@ class LineItem(BaseModel):
     milk_choice : str = None
     extra_shot_choice : bool = None 
     caffein_choice : bool = None
-    # add extra choices (sugar, syrup etc)
 
 
 class Order(BaseModel):
@@ -69,6 +68,26 @@ class StatusResponse(BaseModel):
     order_id : int = None
     order_status : str = None
 
+class WebLogin(BaseModel):
+    email : str = None
+    hashedValue : str = None
+    is_admin : bool = None
+
+class WebUserRegistration(BaseModel):   # for web register
+    user_id : str = None
+    email : str = None
+    hashedValue : str = None
+    name : str = None
+    address : str = None
+    is_admin : bool = None
+
+class WebUser(BaseModel):  # for web login
+    user_id : str = None
+    is_admin : bool = None
+    name : str = None
+    email : str = None
+    address : str = None
+    stock_id : int = None
 
 class Login(BaseModel):
     email : str = None
@@ -79,7 +98,6 @@ class User(BaseModel):  # for register
     password : str = None
     name : str = None
     address : str = None
-    is_customer : bool = True
 
 class UserResponse(BaseModel):
     user_id : int = None
@@ -90,5 +108,61 @@ class UserResponse(BaseModel):
     loyalty_count : int = None
 
 class Response(BaseModel):
+    body : BaseModel = BaseModel()
     status : bool = True
     message : str = "Success"
+
+
+class Address(BaseModel):
+    customer_id : int = None
+    address : str = None
+
+class Rate(BaseModel):
+    product_id : int = None
+    rate : int = None
+
+
+class Stock(BaseModel):
+    small_cup_count : int = None
+    medium_cup_count : int = None
+    large_cup_count : int = None
+    espresso_amount : float = None
+    decaff_espresso_amount : float = None
+    whole_milk_amount : float = None
+    reduced_fat_milk_amount : float = None
+    lactose_free_milk_amount : float = None
+    oat_milk_amount : float = None
+    almond_milk_amount : float = None
+    chocolate_syrup_amount : float = None
+    white_chocolate_syrup_amount : float = None
+    caramel_syrup_amount : float = None
+    sugar_amount : float = None
+    ice_amount : float = None
+
+class ProductIngredient(BaseModel):
+    espresso_amount : float = None
+    milk_amount : float = None
+    foam_amount : float = None
+    chocolate_syrup_amount : float = None
+    caramel_syrup_amount : float = None
+    white_chocolate_syrup_amount : float = None
+    sugar_amount : float = None
+    ice_amount : float = None
+    price : float = None
+
+class ProductFull(BaseModel):
+    admin_id : int = None
+    coffee_name : str = None
+    photo_path : str = None
+    small_cup_only : bool = None
+    price : float = None
+    rate : float = None
+    espresso_amount : float = None
+    milk_amount : float = None
+    foam_amount : float = None
+    chocolate_syrup_amount : float = None
+    caramel_syrup_amount : float = None
+    white_chocolate_syrup_amount : float = None
+    sugar_amount : float = None
+    ice_amount : float = None
+    
