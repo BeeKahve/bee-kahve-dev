@@ -424,30 +424,35 @@ class DatabaseManager:
         query_orders = "SELECT * FROM Orders WHERE order_status IN %s"
         orders = self.database.fetch_data(query_orders, (self.active_order_status,))
         orders_list = []
-        for order in orders:
-            query_line_items = "SELECT * FROM Line_Items WHERE order_id = %s"
-            line_items = self.database.fetch_data(query_line_items, (order[0],))
-            line_items_list = []
-            for line_item in line_items:
-                query_product = "SELECT * FROM Products WHERE product_id = %s"
-                product = self.database.fetch_data(query_product, (line_item[2],))[0]
-                line_items_list.append(LineItem(product_id=product[0],
-                                                name=product[1],
-                                                photo_path=product[2],
-                                                price=product[12],
-                                                size_choice=line_item[3],
-                                                milk_choice=line_item[4],
-                                                extra_shot_choice=line_item[5],
-                                                caffein_choice=line_item[6]))
-            orders_list.append(Order(customer_id=order[1],
-                                     order_id=order[0],
-                                     line_items=line_items_list,
-                                     order_date=order[2],
-                                     order_status=order[3]))
-        return True, Orders(customer_name="",
-                            orders=orders_list,
-                            order_count=len(orders_list))
-    
+        try:
+            for order in orders:
+                query_line_items = "SELECT * FROM Line_Items WHERE order_id = %s"
+                line_items = self.database.fetch_data(query_line_items, (order[0],))
+                line_items_list = []
+                for line_item in line_items:
+                    query_product = "SELECT * FROM Products WHERE product_id = %s"
+                    product = self.database.fetch_data(query_product, (line_item[2],))[0]
+                    line_items_list.append(LineItem(product_id=product[0],
+                                                    name=product[1],
+                                                    photo_path=product[2],
+                                                    price=product[12],
+                                                    size_choice=line_item[3],
+                                                    milk_choice=line_item[4],
+                                                    extra_shot_choice=line_item[5],
+                                                    caffein_choice=line_item[6]))
+                orders_list.append(Order(customer_id=order[1],
+                                        order_id=order[0],
+                                        line_items=line_items_list,
+                                        order_date=order[2],
+                                        order_status=order[3]))
+            return True, Orders(customer_name="",
+                                orders=orders_list,
+                                order_count=len(orders_list))
+        except:
+            print("error")
+            return False, None
+
+
     # check
     def get_waiting_orders(self, admin_id):
         query_orders = "SELECT * FROM Orders WHERE order_status = %s"
