@@ -421,7 +421,7 @@ class DatabaseManager:
     # check
     def get_active_orders(self, admin_id=1):
 
-        query_orders = "SELECT * FROM Orders WHERE order_status IN (%s, %s))"
+        query_orders = "SELECT * FROM Orders WHERE order_status IN (%s, %s)"
         orders = self.database.fetch_data(query_orders, (self.active_order_status[0], self.active_order_status[1]))
         orders_list = []
         try:
