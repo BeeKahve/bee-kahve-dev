@@ -51,4 +51,34 @@ class MyValidators {
     }
     return null;
   }
+
+  static String? cardNumberValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a card number';
+    }
+    if (!RegExp(r'\b[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}\b').hasMatch(value)) {
+      return 'Please enter a valid card number';
+    }
+    return null;
+  }
+
+  static String? dateValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a date';
+    }
+    if (!RegExp(r'\b(0[1-9]|1[0-2])/2[4-9]\b').hasMatch(value)) {
+      return 'Please enter a valid date';
+    }
+    return null;
+  }
+
+  static String? cvvValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a CVV';
+    }
+    if (!RegExp(r'\b[0-9]{3}\b').hasMatch(value)) {
+      return 'Please enter a valid CVV';
+    }
+    return null;
+  }
 }
