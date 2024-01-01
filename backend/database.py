@@ -148,9 +148,9 @@ class DatabaseManager:
     # check
     def customer_register(self, user : User):
         query_user = "SELECT * FROM Customers WHERE customer_email = %s"
-        user = self.database.fetch_data(query_user, (user.email,))
+        test_user = self.database.fetch_data(query_user, (user.email,))
         
-        if user != []:
+        if test_user != []:
             return Response(status=False, message="Email already exists")
         
         query_insert_user = "INSERT INTO Customers (customer_name, customer_email, customer_password, customer_address) VALUES (%s, %s, %s, %s)"
