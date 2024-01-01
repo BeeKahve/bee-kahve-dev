@@ -1,6 +1,5 @@
 from utils import *
 import mysql.connector
-import datetime
 
 
 class Database:
@@ -538,8 +537,6 @@ class DatabaseManager:
 
     # Returns None if an insertion failed, "waiting" otherwise.
     def place_order(self, order : Order):
-        order.order_date = str(datetime.datetime.now())[:-4]
-
         query_orders = "INSERT INTO Orders (customer_id, order_date, order_status) VALUES (%s, %s, %s)"
         values_orders = (order.customer_id, order.order_date, order.order_status)
 

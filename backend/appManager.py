@@ -1,5 +1,6 @@
 from utils import *
 from database import DatabaseManager
+import datetime
 
 """
 fotoğraflar nasıl tutulacak
@@ -140,6 +141,7 @@ class Manager:
             return Response(status=False ,message="Stock can not updated.")
 
         # place order
+        order.order_date = str(datetime.datetime.now())[:-4]
         status = self.database_manager.place_order(order)
         if not status:
             return Response(status=False ,message="Stock updated, but order can not placed.")
