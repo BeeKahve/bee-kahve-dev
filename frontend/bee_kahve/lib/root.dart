@@ -1,13 +1,16 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/cart/cart.dart';
 import 'package:bee_kahve/screens/home.dart';
 import 'package:bee_kahve/screens/profile/profile.dart';
 import 'package:flutter/material.dart';
 
 class RootScreen extends StatefulWidget {
-  final int currentScreen; // Add currentScreen parameter
+  final int currentScreen;
+  final User? user; // Add currentScreen parameter
 
-  const RootScreen({Key? key, required this.currentScreen}) : super(key: key);
+  const RootScreen({Key? key, required this.currentScreen, this.user})
+      : super(key: key);
 
   @override
   State<RootScreen> createState() => _RootScreenState();
@@ -18,17 +21,24 @@ class _RootScreenState extends State<RootScreen> {
   late int currentScreen; // Remove int currentScreen = 0;
   late PageController controller;
 
+  User? user;
   @override
   void initState() {
     super.initState();
     currentScreen =
         widget.currentScreen; // Update currentScreen from widget parameter
-    screens = const [
-      HomeScreen(),
-      CartScreen(),
-      ProfileScreen(),
+    screens = [
+      HomeScreen(user: widget.user),
+      const CartScreen(),
+      const ProfileScreen(),
     ];
     controller = PageController(initialPage: currentScreen);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose(); // Dispose of the PageController
+    super.dispose();
   }
 
   @override

@@ -421,33 +421,38 @@ class DatabaseManager:
     # check
     def get_active_orders(self, admin_id=1):
 
-        query_orders = "SELECT * FROM Orders WHERE order_status IN %s"
-        orders = self.database.fetch_data(query_orders, (self.active_order_status,))
+        query_orders = "SELECT * FROM Orders WHERE order_status IN (%s, %s)"
+        orders = self.database.fetch_data(query_orders, (self.active_order_status[0], self.active_order_status[1]))
         orders_list = []
-        for order in orders:
-            query_line_items = "SELECT * FROM Line_Items WHERE order_id = %s"
-            line_items = self.database.fetch_data(query_line_items, (order[0],))
-            line_items_list = []
-            for line_item in line_items:
-                query_product = "SELECT * FROM Products WHERE product_id = %s"
-                product = self.database.fetch_data(query_product, (line_item[2],))[0]
-                line_items_list.append(LineItem(product_id=product[0],
-                                                name=product[1],
-                                                photo_path=product[2],
-                                                price=product[12],
-                                                size_choice=line_item[3],
-                                                milk_choice=line_item[4],
-                                                extra_shot_choice=line_item[5],
-                                                caffein_choice=line_item[6]))
-            orders_list.append(Order(customer_id=order[1],
-                                     order_id=order[0],
-                                     line_items=line_items_list,
-                                     order_date=order[2],
-                                     order_status=order[3]))
-        return True, Orders(customer_name="",
-                            orders=orders_list,
-                            order_count=len(orders_list))
-    
+        try:
+            for order in orders:
+                query_line_items = "SELECT * FROM Line_Items WHERE order_id = %s"
+                line_items = self.database.fetch_data(query_line_items, (order[0],))
+                line_items_list = []
+                for line_item in line_items:
+                    query_product = "SELECT * FROM Products WHERE product_id = %s"
+                    product = self.database.fetch_data(query_product, (line_item[2],))[0]
+                    line_items_list.append(LineItem(product_id=product[0],
+                                                    name=product[1],
+                                                    photo_path=product[2],
+                                                    price=product[12],
+                                                    size_choice=line_item[3],
+                                                    milk_choice=line_item[4],
+                                                    extra_shot_choice=line_item[5],
+                                                    caffein_choice=line_item[6]))
+                orders_list.append(Order(customer_id=order[1],
+                                        order_id=order[0],
+                                        line_items=line_items_list,
+                                        order_date=order[2],
+                                        order_status=order[3]))
+            return True, Orders(customer_name="",
+                                orders=orders_list,
+                                order_count=len(orders_list))
+        except:
+            print("error")
+            return False, None
+
+
     # check
     def get_waiting_orders(self, admin_id):
         query_orders = "SELECT * FROM Orders WHERE order_status = %s"
@@ -540,26 +545,25 @@ class DatabaseManager:
         query_orders = "INSERT INTO Orders (customer_id, order_date, order_status) VALUES (%s, %s, %s)"
         values_orders = (order.customer_id, order.order_date, order.order_status)
 
-        query_order_id = "SELECT order_id FROM Orders WHERE customer_id = %s AND order_date = %s"
-        order.order_id = self.database.fetch_data(query_order_id, (order.customer_id, order.order_date))
-
         if self.database.execute_query(query_orders, values_orders):
             failure = False
 
-            status_response = StatusResponse(order_status=order.order_status)
+            query_order_id = "SELECT order_id FROM Orders WHERE customer_id = %s AND order_date = %s"
+            order.order_id = self.database.fetch_data(query_order_id, (order.customer_id, order.order_date))[0][0]
+
+            if not order.order_id:
+                return False
+            #status_response = StatusResponse(order_status=order.order_status)
 
             line_items = order.line_items
             for line_item in line_items:
-                query_product_price = "SELECT price FROM Products WHERE product_id = %s"
-                product_price = self.database.fetch_data(query_product_price, (line_item.product_id,))[0][0]
                 query_line_items = "INSERT INTO Line_Items (order_id, product_id, size_choice, milk_choice, extra_shot_choice, caffein_choice, price) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                values_line_items = (order.order_id, line_item.product_id, line_item.size_choice, line_item.milk_choice, line_item.extra_shot_choice, line_item.caffein_choice, product_price)
+                values_line_items = (order.order_id, line_item.product_id, line_item.size_choice, line_item.milk_choice, line_item.extra_shot_choice, line_item.caffein_choice, line_item.price)
 
                 if not self.database.execute_query(query_line_items, values_line_items):
-                    failure = True
+                    return False
             
-            if not failure:
-                return status_response
+            return not failure
         
-        return None
+        return False
     
