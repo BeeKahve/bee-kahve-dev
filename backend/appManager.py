@@ -211,12 +211,12 @@ class Manager:
     def update_stock(self, stock, admin_id=1):
         items = self.get_dict(stock)
         for item in items:
-            if item == "sugar_amount":
-                item = "white_sugar_amount"
-                items[item] = items["sugar_amount"]
-            
             if items[item] != None:
-                status = self.database_manager.update_stock_item(admin_id, item, items[item])
+                if item == "sugar_amount":
+                    send_item = "white_sugar_amount"
+                else:
+                    send_item = item
+                status = self.database_manager.update_stock_item(admin_id, send_item, items[item])
                 if not status:
                     return Response(status=status ,message=f"Stock is not updated,{item}.")
         
