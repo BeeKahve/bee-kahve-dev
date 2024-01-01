@@ -123,6 +123,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const Row(
+            children: [
+              Text(
+                "Bee",
+                style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.yellow),
+              ),
+              Text(
+                "Kahve",
+                style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textColor),
+              ),
+            ],
+          ),
+        ),
         body: Padding(
           padding: const EdgeInsets.all(14.0),
           child: SingleChildScrollView(
@@ -130,27 +151,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  height: 50,
-                ),
-                const Row(
-                  children: [
-                    Text(
-                      "Bee'",
-                      style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.yellow),
-                    ),
-                    Text(
-                      "Kahve",
-                      style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textColor),
-                    ),
-                  ],
-                ),
                 const SizedBox(
                   height: 20,
                 ),
