@@ -374,16 +374,19 @@ class DatabaseManager:
     
     # check
     def get_rate(self, product_id):
-        try:
-            query_rate = "SELECT rate, rate_count FROM Products WHERE product_id = %s"
-            result = self.database.fetch_data(query_rate, (product_id,))[0]
-            rate = result[0]
-            rate_count = result[1]
-            return True, rate, rate_count
-        except Exception as e:
-            print(f"Error fetching rate: {e}")
-            return False, None, None
+        query_rate = "SELECT rate, rate_count FROM Products WHERE product_id = %s"
+        result = self.database.fetch_data(query_rate, (product_id,))
 
+        if result == []:
+            return False, None, None
+        
+        result = result[0]
+
+        rate = result[0]
+        rate_count = result[1]
+
+        return True, rate, rate_count
+    
     # check
     def add_product(self, product: ProductFull): # admin_id not used
         query_insert_product = "INSERT INTO Products (coffee_name, photo_path, small_cup_only, price, rate, rate_count, espresso_amount, milk_amount, foam_amount, chocolate_syrup_amount, caramel_syrup_amount, white_chocolate_syrup_amount, sugar_amount, ice_amount) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
