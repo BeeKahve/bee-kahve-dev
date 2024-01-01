@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 const ModifyStock = () => {
   const [stockData, setStockData] = useState({});
   const [updatedItems, setUpdatedItems] = useState({});
-  const [adminName, setAdminName] = useState('AdminT'); // Replace with the actual admin name
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -18,7 +17,8 @@ const ModifyStock = () => {
     if (token === 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
       fetchStockData();
     } else {
-      navigate('/signInPage');
+      fetchStockData();
+      // navigate('/signInPage'); //CHANGE THIS
     }
   }, []);
 
@@ -117,7 +117,7 @@ const ModifyStock = () => {
       </div>
       <div className="right-content">
         <div className="upper-content" style={{ height: '15%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '80vw'}}>
-          <h1 style={{ color: 'black' }}>Hello {adminName}</h1>
+          <h1 style={{ color: 'black' }}>Hello Admin</h1>
           <div className="brand" style={{ fontSize: '1.5em' }}>
             <span style={{ color: '#F1DB11' }}>Bee'</span> Kahve
           </div>

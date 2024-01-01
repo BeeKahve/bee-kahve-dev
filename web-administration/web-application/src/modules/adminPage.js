@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form, Input } from 'antd';
+import { Button, Table } from 'antd'; // Modal, Form, Input
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,7 +16,8 @@ const AdminPage = () => {
     if (token === 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
       fetchCoffeeList();
     } else {
-      navigate('/signInPage');
+      fetchCoffeeList();
+      // navigate('/signInPage'); //CHANGE THIS
     }
   }, [navigate]);
 
