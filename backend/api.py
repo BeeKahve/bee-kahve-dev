@@ -113,5 +113,9 @@ async def get_full_product(product_id : int) -> ProductFull:
 async def update_product(product_id : int, product : ProductFull) -> Response:
     return manager.update_product(product_id,product)
 
+@app.get("/delete_product")
+async def delete_product(product_id : int) -> Response:
+    return manager.delete_product(product_id)
+
 if __name__ == "__main__":
     uvicorn.run(app,host="0.0.0.0", port=8000)
