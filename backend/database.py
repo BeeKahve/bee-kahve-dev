@@ -1,5 +1,7 @@
 from utils import *
 import mysql.connector
+import datetime
+
 
 class Database:
 
@@ -57,7 +59,13 @@ class DatabaseManager:
 
     def get_product_ingredient(self, product_id):
         query_product = "SELECT * FROM Products WHERE product_id = %s"  # list of tuples. each tuple is a product
-        product = self.database.fetch_data(query_product, (product_id,))[0]
+        product = self.database.fetch_data(query_product, (product_id,))
+
+        if product == []:
+            return None
+        
+        product = product[0]
+
         # [(1, 'Coffee Name', 'Photo path', 40.0, 100.0, None, None, None, None, 0, 60.0, 0.0, 0, 0)][0]
         return ProductIngredient(espresso_amount=product[3],
                                  milk_amount=product[4],
@@ -530,8 +538,13 @@ class DatabaseManager:
 
     # Returns None if an insertion failed, "waiting" otherwise.
     def place_order(self, order : Order):
+        order.order_date = str(datetime.datetime.now())[:-4]
+
         query_orders = "INSERT INTO Orders (customer_id, order_date, order_status) VALUES (%s, %s, %s)"
         values_orders = (order.customer_id, order.order_date, order.order_status)
+
+        query_order_id = "SELECT order_id FROM Orders WHERE order_date = %s"
+        order.order_id = self.database.fetch_data(query_order_id, (order.order_date,))
 
         if self.database.execute_query(query_orders, values_orders):
             failure = False
