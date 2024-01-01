@@ -190,7 +190,7 @@ class DatabaseManager:
     # stock operations
     def update_stock_item(self, admin_id, item_name, item_value):
 
-        query_update_stock_item = f"UPDATE Stocks SET {item_name} = %s WHERE admin_id = %s"
+        query_update_stock_item = f"UPDATE Stocks SET {item_name} = %s WHERE stock_id = %s"
         values_update_stock_item = (item_value, admin_id)
 
         if self.database.execute_query(query_update_stock_item, values_update_stock_item):
