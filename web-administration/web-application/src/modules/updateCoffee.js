@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Form, Input, Checkbox, Slider, message } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -8,19 +8,10 @@ const UpdateCoffee = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { selectedCoffee } = location.state || {};
-
   const [sugarChecked, setSugarChecked] = useState(false);
   const [iceChecked, setIceChecked] = useState(false);
 
-  useEffect(() => {
-    if (!selectedCoffee) {
-      navigate('/adminPage');
-    } else {
-      fetchCoffeeDetails();
-    }
-  }, []); // Removed selectedCoffee from the dependency array to ensure it only runs on mount
-
-  const fetchCoffeeDetails = async () => {
+  const fetchCoffeeDetails = useCallback(async () => {
     try {
       const response = await axios.get(`http://51.20.117.162:8000/get_full_product?product_id=${selectedCoffee.product_id}`);
       console.log(response);
@@ -56,7 +47,20 @@ const UpdateCoffee = () => {
     } catch (error) {
       console.error('Error fetching coffee details:', error);
     }
-  };
+  }, [form, selectedCoffee]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token !== 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
+      navigate('/signInPage');
+    } 
+    else if (!selectedCoffee) {
+      navigate('/adminPage');
+    } else {
+      fetchCoffeeDetails();
+    }
+  }, [selectedCoffee, navigate, fetchCoffeeDetails]); // Removed selectedCoffee from the dependency array to ensure it only runs on mount
+
   const onFinish = async (values) => {
     try {
       const {
@@ -170,7 +174,7 @@ const UpdateCoffee = () => {
           <Button type="primary" onClick={onBackClick}>
             {'\u2190'}
           </Button>
-          <h2 style={{ textAlign: 'center' }}>Update {selectedCoffee.name}</h2>
+          {selectedCoffee && ( <h2 style={{ textAlign: 'center' }}>Update {selectedCoffee.name}</h2>)}
           <Form
             form={form}
             name="addCoffeeForm"
