@@ -4,7 +4,7 @@ import 'package:bee_kahve/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:bee_kahve/screens/products/product_details.dart';
 import 'dart:convert';
-import 'package:bee_kahve/models/menu_product_mode.dart';
+import 'package:bee_kahve/models/menu_product_model.dart';
 import 'package:http/http.dart' as http;
 import '../models/menu_model.dart';
 
