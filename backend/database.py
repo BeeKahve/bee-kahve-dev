@@ -540,12 +540,14 @@ class DatabaseManager:
         query_orders = "INSERT INTO Orders (customer_id, order_date, order_status) VALUES (%s, %s, %s)"
         values_orders = (order.customer_id, order.order_date, order.order_status)
 
-        query_order_id = "SELECT order_id FROM Orders WHERE customer_id = %s AND order_date = %s"
-        order.order_id = self.database.fetch_data(query_order_id, (order.customer_id, order.order_date))[0][0]
-
         if self.database.execute_query(query_orders, values_orders):
             failure = False
 
+            query_order_id = "SELECT order_id FROM Orders WHERE customer_id = %s AND order_date = %s"
+            order.order_id = self.database.fetch_data(query_order_id, (order.customer_id, order.order_date))[0][0]
+
+            if not order.order_id:
+                return False
             #status_response = StatusResponse(order_status=order.order_status)
 
             line_items = order.line_items
