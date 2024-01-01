@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Input, Checkbox, Upload, message, Slider } from 'antd';
+import { Button, Form, Input, Checkbox, message, Slider } from 'antd'; // Upload
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const AddCoffee = () => {
   const [form] = Form.useForm();
-//   const [imageUrl, setImageUrl] = useState(null);
   const navigate = useNavigate();
 
-//   useEffect(() => {
-//     // Check if the user has a valid token
-//     const token = localStorage.getItem('token');
+  useEffect(() => {
+    // Check if the user has a valid token
+    const token = localStorage.getItem('token');
 
-//     if (token === 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
-//         normFile()
-//     } else {
-//       navigate('/signInPage');
-//     }
-//   }, []);
+    if (token !== 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
+      navigate('/signInPage');
+    } 
+  }, [navigate]);
 
 
     // State variables for checkboxes
@@ -25,13 +22,6 @@ const AddCoffee = () => {
     const [iceChecked, setIceChecked] = useState(false);
 
   const [activeMenu, setActiveMenu] = useState('Modify Menu');
-
-  const normFile = (e) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
 
   const handleExitAccount = () => {
     localStorage.removeItem('token');
@@ -71,7 +61,7 @@ const AddCoffee = () => {
         admin_id: 1, // Assuming admin_id is 1 for the current admin
         coffee_name: name,
         photo_path: image,
-        small_cup_only: size.includes('small') && !size.includes('medium') && !size.includes('large'),
+        small_cup_only: size.includes('small'),
         price: Number(priceSmall),
         espresso_amount,
         milk_amount: milk_amount || 0,
@@ -98,13 +88,6 @@ const AddCoffee = () => {
 
   const onBackClick = () => {
     navigate('/adminPage');
-  };
-
-  const customRequest = ({ file, onSuccess }) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    const placeholderUrl = 'https://via.placeholder.com/150';
-    onSuccess(placeholderUrl);
   };
 
   return (
@@ -237,12 +220,9 @@ const AddCoffee = () => {
             <Form.Item
               label="Size"
               name="size"
-              rules={[{ required: true, message: 'Please select a size!' }]}
             >
               <Checkbox.Group>
-                <Checkbox value="small">Small</Checkbox>
-                <Checkbox value="medium">Medium</Checkbox>
-                <Checkbox value="large">Large</Checkbox>
+                <Checkbox value="small">Small Only</Checkbox>
               </Checkbox.Group>
             </Form.Item>
             <Form.Item
