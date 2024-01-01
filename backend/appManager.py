@@ -208,7 +208,7 @@ class Manager:
             return Response(status=status ,message="Stock is not fetched.")
 
 
-    def update_stock(self, stock, admin_id=None):
+    def update_stock(self, stock, admin_id=1):
         items = self.get_dict(stock)
         for item in items:
             if item == "sugar_amount":
