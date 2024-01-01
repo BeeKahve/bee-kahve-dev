@@ -536,7 +536,7 @@ class DatabaseManager:
         if self.database.execute_query(query_orders, values_orders):
             failure = False
 
-            status_response = StatusResponse(order_status=self.order_status[0])
+            status_response = StatusResponse(order_status=order.order_status)
 
             line_items = order.line_items
             for line_item in line_items:
