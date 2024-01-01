@@ -517,7 +517,11 @@ class DatabaseManager:
             return True
         else:
             return False
-        
+    
+
+    def delete_product(self, product_id):
+        query_product = "DELETE FROM Products WHERE product_id = %s"
+        return self.database.execute_query(query_product, (product_id,))
 
 
     # Returns None if an insertion failed, "waiting" otherwise.
