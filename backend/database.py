@@ -314,7 +314,7 @@ class DatabaseManager:
     
     # check
     def add_to_loyalty_count(self, customer_id, loyalty_count):
-        query_update_loyalty = "UPDATE Customers SET loyalty_count = loyalty_count + %s WHERE customer_id = %s"
+        query_update_loyalty = "UPDATE Customers SET loyalty_coffee_count = loyalty_coffee_count + %s WHERE customer_id = %s"
         values_update_loyalty = (loyalty_count, customer_id)
 
         if self.database.execute_query(query_update_loyalty, values_update_loyalty):
