@@ -450,6 +450,7 @@ class DatabaseManager:
                                 order_count=len(orders_list))
         except:
             print("error")
+            return False, None
 
 
     # check
