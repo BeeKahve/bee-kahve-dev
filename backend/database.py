@@ -190,7 +190,7 @@ class DatabaseManager:
     # stock operations
     def update_stock_item(self, admin_id, item_name, item_value):
 
-        query_update_stock_item = f"UPDATE Stocks SET {item_name} = %s WHERE admin_id = %s"
+        query_update_stock_item = f"UPDATE Stocks SET {item_name} = %s WHERE stock_id = %s"
         values_update_stock_item = (item_value, admin_id)
 
         if self.database.execute_query(query_update_stock_item, values_update_stock_item):
@@ -222,12 +222,12 @@ class DatabaseManager:
                         white_chocolate_syrup_amount=stock[12],
                         caramel_syrup_amount=stock[13],
                         sugar_amount=stock[14],
-                        ice_amount=stock[15])
+                        ice_amount=stock[16])
     
     # check
     def update_stock(self, stock : Stock):
         stock_id = 1
-        query_update_stock = "UPDATE Stocks SET small_cup_count = %s, medium_cup_count = %s, large_cup_count = %s, espresso_amount = %s, decaff_espresso_amount = %s, whole_milk_amount = %s, reduced_fat_milk_amount = %s, lactose_free_milk_amount = %s, oat_milk_amount = %s, almond_milk_amount = %s, chocolate_syrup_amount = %s, white_chocolate_syrup_amount = %s, caramel_syrup_amount = %s, sugar_amount = %s, ice_amount = %s WHERE stock_id = %s"
+        query_update_stock = "UPDATE Stocks SET small_cup_count = %s, medium_cup_count = %s, large_cup_count = %s, espresso_amount = %s, decaff_espresso_amount = %s, whole_milk_amount = %s, reduced_fat_milk_amount = %s, lactose_free_milk_amount = %s, oat_milk_amount = %s, almond_milk_amount = %s, chocolate_syrup_amount = %s, white_chocolate_syrup_amount = %s, caramel_syrup_amount = %s, white_sugar_amount = %s, ice_amount = %s WHERE stock_id = %s"
         values_update_stock = (stock.small_cup_count,
                                stock.medium_cup_count,
                                stock.large_cup_count,
@@ -274,32 +274,33 @@ class DatabaseManager:
     
     # check
     def get_menu(self):
-        try:
-            query_menu = "SELECT * FROM Products"
-            products = self.database.fetch_data(query_menu)
-            menu_products = []
-            for product in products:
-                menu_products.append(MenuProduct(product_id=product[0],
-                                                name=product[1],
-                                                photo_path=product[2],
-                                                rate=product[13],
-                                                price=product[12]))
-                
-        except Exception as e:
-            print(f"Error fetching menu: {e}")
+        query_menu = "SELECT * FROM Products"
+        products = self.database.fetch_data(query_menu)
+
+        if products == []:
             return False, None
+
+        menu_products = []
+        for product in products:
+            menu_products.append(MenuProduct(product_id=product[0],
+                                            name=product[1],
+                                            photo_path=product[2],
+                                            rate=product[13],
+                                            price=product[12]))
+            
         return True, ProductMenu(menuProducts=menu_products, product_count=len(menu_products))
     
     
     # check
     def get_status(self, order_id):
-        try:
-            query_order = "SELECT order_status FROM Orders WHERE order_id = %s"
-            order_status = self.database.fetch_data(query_order, (order_id,))[0][0]
-        except Exception as e:
-            print(f"Error fetching order status: {e}")
+        query_order = "SELECT order_status FROM Orders WHERE order_id = %s"
+        order_status = self.database.fetch_data(query_order, (order_id,))[0][0]
+
+        if order_status == []:
             return False, None
+        
         return True, StatusResponse(order_status=order_status)
+
 
     # check
     def set_status(self, order_id, status):
@@ -373,16 +374,19 @@ class DatabaseManager:
     
     # check
     def get_rate(self, product_id):
-        try:
-            query_rate = "SELECT rate, rate_count FROM Products WHERE product_id = %s"
-            result = self.database.fetch_data(query_rate, (product_id,))[0]
-            rate = result[0]
-            rate_count = result[1]
-            return True, rate, rate_count
-        except Exception as e:
-            print(f"Error fetching rate: {e}")
-            return False, None, None
+        query_rate = "SELECT rate, rate_count FROM Products WHERE product_id = %s"
+        result = self.database.fetch_data(query_rate, (product_id,))
 
+        if result == []:
+            return False, None, None
+        
+        result = result[0]
+
+        rate = result[0]
+        rate_count = result[1]
+
+        return True, rate, rate_count
+    
     # check
     def add_product(self, product: ProductFull): # admin_id not used
         query_insert_product = "INSERT INTO Products (coffee_name, photo_path, small_cup_only, price, rate, rate_count, espresso_amount, milk_amount, foam_amount, chocolate_syrup_amount, caramel_syrup_amount, white_chocolate_syrup_amount, sugar_amount, ice_amount) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
@@ -517,7 +521,11 @@ class DatabaseManager:
             return True
         else:
             return False
-        
+    
+
+    def delete_product(self, product_id):
+        query_product = "DELETE FROM Products WHERE product_id = %s"
+        return self.database.execute_query(query_product, (product_id,))
 
 
     # Returns None if an insertion failed, "waiting" otherwise.
@@ -528,7 +536,7 @@ class DatabaseManager:
         if self.database.execute_query(query_orders, values_orders):
             failure = False
 
-            status_response = StatusResponse(order_status=self.order_status[0])
+            status_response = StatusResponse(order_status=order.order_status)
 
             line_items = order.line_items
             for line_item in line_items:

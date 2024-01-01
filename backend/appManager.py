@@ -6,11 +6,6 @@ fotoğraflar nasıl tutulacak
 """
 
 class Manager:
-    order_status = {
-        0 : "waiting"
-    }
-    
-
     def __init__(self):
         self.database_manager = DatabaseManager(db_host="localhost", db_user="test", db_password="test", db_name="bee_kahve_db")
         pass
@@ -83,7 +78,7 @@ class Manager:
 
 
     def place_order(self, order : Order):
-
+        
         # calculate total ingrediants
         total_ingrediants = Stock().dict()
         for ingredient in total_ingrediants:
@@ -213,13 +208,19 @@ class Manager:
             return Response(status=status ,message="Stock is not fetched.")
 
 
-    def update_stock(self, stock, admin_id=None):
-        # items = self.get_dict(stock)
-        # for item in items:
-        #     if items[item] != None and items[item] != 0:
-        #         self.database_manager.update_stock_item(admin_id, item, items[item])
+    def update_stock(self, stock, admin_id=1):
+        items = self.get_dict(stock)
+        for item in items:
+            if items[item] != None:
+                if item == "sugar_amount":
+                    send_item = "white_sugar_amount"
+                else:
+                    send_item = item
+                status = self.database_manager.update_stock_item(admin_id, send_item, items[item])
+                if not status:
+                    return Response(status=status ,message=f"Stock is not updated,{item}.")
         
-        status = self.database_manager.update_stock(stock)
+        # status = self.database_manager.update_stock(stock)
         if status:
             return Response(status=status ,message="Stock is updated successfully.")
         else:
@@ -260,4 +261,11 @@ class Manager:
         else:
             return Response(status=status ,message="Product can not updated.")
     
+    def delete_product(self, product_id):
+        status = self.database_manager.delete_product(product_id)
+        if status:
+            return Response(status=status ,message="Product is deleted successfully.")
+        else:
+            return Response(status=status ,message="Product can not be deleted.")
+
     #jwt token

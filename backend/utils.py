@@ -47,7 +47,7 @@ class Order(BaseModel):
     order_id : int = None
     line_items : List[LineItem] = None
     order_date : str = None
-    order_status : str = None
+    order_status : str = "waiting"
 
 
 class Orders(BaseModel):

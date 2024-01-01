@@ -3,7 +3,7 @@ DROP DATABASE IF EXISTS bee_kahve_db;
 CREATE DATABASE bee_kahve_db;
 USE bee_kahve_db;
 
-CREATE TABLE Stock (
+CREATE TABLE Stocks (
 	stock_id INT AUTO_INCREMENT PRIMARY KEY,
 	small_cup_count INT NOT NULL,
 	medium_cup_count INT NOT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE Line_Items (
 	price FLOAT NOT NULL
 );
 
-INSERT INTO Stock (small_cup_count, medium_cup_count, large_cup_count, espresso_amount, decaff_espresso_amount,
+INSERT INTO Stocks (small_cup_count, medium_cup_count, large_cup_count, espresso_amount, decaff_espresso_amount,
 	whole_milk_amount, reduced_fat_milk_amount, lactose_free_milk_amount, oat_milk_amount, almond_milk_amount,
 	chocolate_syrup_amount, white_chocolate_syrup_amount, caramel_syrup_amount,
 	white_sugar_amount, brown_sugar_amount, ice_amount)
