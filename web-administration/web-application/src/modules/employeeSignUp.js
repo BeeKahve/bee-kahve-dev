@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import {sha512} from 'crypto-hash';
+import { sha512 } from 'crypto-hash';
 import { useNavigate } from 'react-router-dom';
+import { css } from '@emotion/react';
+import { BarLoader } from 'react-spinners';
+
+const override = css`
+  display: block;
+  margin: 0 auto;
+  border-color: red;
+`;
 
 const EmployeeSignUp = () => {
   const [name, setName] = useState('');
@@ -18,42 +26,42 @@ const EmployeeSignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (password !== confirmPassword) {
       setPasswordMatchError(true);
       setErrorMessage('');
       return;
     }
 
-    setLoading(true);
-
+    
     const config = {
       headers: {
-        'accept': 'application/json',
+        accept: 'application/json',
         'Content-Type': 'application/json',
       },
     };
 
-    const hashedValue = await sha512(password)
-    let admin_id = 1
-    let is_admin = false
+    const hashedValue = await sha512(password);
+    let admin_id = 1;
+    let is_admin = false;
     const body = JSON.stringify({ name, email, hashedValue, admin_id, is_admin });
 
     try {
+      setLoading(true);
       const res = await axios.post('http://51.20.117.162:8000/web_register', body, config);
 
-      if (res.data.message === "Success") {
-        setSuccessMessage("Account successfully created!");
-        // navigate('/signInPage');
+      if (res.data.message === 'Success') {
+        setSuccessMessage('Account successfully created!');
+        navigate('/signInPage');
       } else {
         setErrorMessage(`Error creating account: ${res.data.message}`);
         setSuccessMessage('');
       }
-      setLoading(false);
     } catch (err) {
       console.error(err);
-      setErrorMessage("Failed to create account. Please try again.");
+      setErrorMessage('Failed to create an account. Please try again.');
       setSuccessMessage('');
+    } finally {
       setLoading(false);
     }
   };
@@ -62,6 +70,12 @@ const EmployeeSignUp = () => {
     <div className="container">
       <div className="signin-image"></div>
       <div className="signup-form">
+        {loading && (
+          <div className="loading-spinner">
+            <BarLoader css={override} loading={loading} size={150} color={'#36D7B7'} />
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -109,7 +123,7 @@ const EmployeeSignUp = () => {
           )}
 
           <button type="submit" disabled={loading}>
-            Create Account
+            {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 
