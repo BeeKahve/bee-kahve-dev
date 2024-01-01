@@ -293,13 +293,14 @@ class DatabaseManager:
     
     # check
     def get_status(self, order_id):
-        try:
-            query_order = "SELECT order_status FROM Orders WHERE order_id = %s"
-            order_status = self.database.fetch_data(query_order, (order_id,))[0][0]
-        except Exception as e:
-            print(f"Error fetching order status: {e}")
+        query_order = "SELECT order_status FROM Orders WHERE order_id = %s"
+        order_status = self.database.fetch_data(query_order, (order_id,))[0][0]
+
+        if order_status == []:
             return False, None
+        
         return True, StatusResponse(order_status=order_status)
+
 
     # check
     def set_status(self, order_id, status):
