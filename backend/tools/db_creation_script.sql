@@ -27,7 +27,7 @@ CREATE TABLE Admins (
 	admin_id INT AUTO_INCREMENT PRIMARY KEY,
 	admin_name VARCHAR(50) NOT NULL,
 	stock_id INT UNIQUE,
-	FOREIGN KEY (stock_id) REFERENCES Stock(stock_id),
+	FOREIGN KEY (stock_id) REFERENCES Stocks(stock_id),
 	admin_email VARCHAR(50) UNIQUE NOT NULL,
 	admin_password VARCHAR(255) NOT NULL,
 	admin_address VARCHAR(255)

@@ -1,6 +1,7 @@
 from utils import *
 import mysql.connector
 
+
 class Database:
 
     def __init__(self, host, user, password, database):
@@ -57,7 +58,13 @@ class DatabaseManager:
 
     def get_product_ingredient(self, product_id):
         query_product = "SELECT * FROM Products WHERE product_id = %s"  # list of tuples. each tuple is a product
-        product = self.database.fetch_data(query_product, (product_id,))[0]
+        product = self.database.fetch_data(query_product, (product_id,))
+
+        if product == []:
+            return None
+        
+        product = product[0]
+
         # [(1, 'Coffee Name', 'Photo path', 40.0, 100.0, None, None, None, None, 0, 60.0, 0.0, 0, 0)][0]
         return ProductIngredient(espresso_amount=product[3],
                                  milk_amount=product[4],
@@ -148,9 +155,9 @@ class DatabaseManager:
     # check
     def customer_register(self, user : User):
         query_user = "SELECT * FROM Customers WHERE customer_email = %s"
-        user = self.database.fetch_data(query_user, (user.email,))
+        test_user = self.database.fetch_data(query_user, (user.email,))
         
-        if user != []:
+        if test_user != []:
             return Response(status=False, message="Email already exists")
         
         query_insert_user = "INSERT INTO Customers (customer_name, customer_email, customer_password, customer_address) VALUES (%s, %s, %s, %s)"
@@ -314,7 +321,7 @@ class DatabaseManager:
     
     # check
     def add_to_loyalty_count(self, customer_id, loyalty_count):
-        query_update_loyalty = "UPDATE Customers SET loyalty_count = loyalty_count + %s WHERE customer_id = %s"
+        query_update_loyalty = "UPDATE Customers SET loyalty_coffee_count = loyalty_coffee_count + %s WHERE customer_id = %s"
         values_update_loyalty = (loyalty_count, customer_id)
 
         if self.database.execute_query(query_update_loyalty, values_update_loyalty):
@@ -532,6 +539,9 @@ class DatabaseManager:
     def place_order(self, order : Order):
         query_orders = "INSERT INTO Orders (customer_id, order_date, order_status) VALUES (%s, %s, %s)"
         values_orders = (order.customer_id, order.order_date, order.order_status)
+
+        query_order_id = "SELECT order_id FROM Orders WHERE customer_id = %s AND order_date = %s"
+        order.order_id = self.database.fetch_data(query_order_id, (order.customer_id, order.order_date))
 
         if self.database.execute_query(query_orders, values_orders):
             failure = False
