@@ -1,10 +1,12 @@
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/consts/validator.dart';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/root.dart';
 import 'package:bee_kahve/screens/auth/signup.dart';
+import 'package:bee_kahve/screens/home.dart';
 import 'package:flutter/material.dart';
-
-import '../profile/profile.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -32,14 +34,76 @@ class _SignInScreenState extends State<SignInScreen> {
       super.dispose();
     }
   }
-  Future<void> _signin()async{
+  Future<void> _signin() async {
     final isValid = _formkey.currentState!.validate();
     FocusScope.of(context).unfocus();
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const RootScreen()));
 
+     if (isValid) {
+      final String email = _emailController.text;
+      final String password = _passwordController.text;
+
+      // Create the request body
+      final Map<String, dynamic> requestBody = {
+        'email': email,
+        'password': password,
+      };
+
+      try {
+        final response = await http.post(
+          Uri.parse('http://51.20.117.162:8000/login'),
+          body: json.encode(requestBody),
+          headers: {'Content-Type': 'application/json'},
+        );
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final jsonResponse = json.decode(response.body);
+
+          // Check if login was successful
+         if (jsonResponse['customer_id'] != null) {
+            // Login successful
+            // Create a User instance
+            User user = User.fromJson(jsonResponse);
+
+            // Handle success as needed
+            print('Login successful');
+            print('Customer ID: ${user.customerId}');
+            print('Name: ${user.name}');
+            print('Email: ${user.email}');
+            print('Address: ${user.address}');
+            print('Loyalty Count: ${user.loyaltyCount}');
+
+            setState(() {
+              user = user;
+            });
+            // Example: Navigate to the profile screen after successful login
+            // ignore: use_build_context_synchronously
+            Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => HomeScreen(user: user),
+            ),
+            ); 
+            // ignore: use_build_context_synchronously
+            Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => RootScreen(user: user),
+            ), 
+            );
+          } else {
+            // Login failed
+            // Handle failure, e.g., display an error message
+            print('Login failed. Please check your credentials.');
+          }
+        } else {
+          // Login failed
+          // Handle failure, e.g., display an error message
+          print('Login failed. Status code: ${response.statusCode}');
+        }
+      } catch (e) {
+        // Handle other exceptions, such as network issues
+        print('Error during login: $e');
+      }
+    } 
   }
   @override
   Widget build(BuildContext context) {
@@ -113,6 +177,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                             onPressed: () async {
                               await _signin();
+                              /* Navigator.push(
+                                  context, MaterialPageRoute(builder: (context) => const HomeScreen())); */
                             },
                           child: const Text("Sign in", style: TextStyle(color: AppColors.darkColor),),
 
