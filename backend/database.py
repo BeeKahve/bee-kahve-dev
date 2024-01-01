@@ -558,7 +558,7 @@ class DatabaseManager:
                 if not self.database.execute_query(query_line_items, values_line_items):
                     failure = True
             
-            return failure
+            return not failure
         
         return False
     
