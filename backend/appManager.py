@@ -209,12 +209,18 @@ class Manager:
 
 
     def update_stock(self, stock, admin_id=None):
-        # items = self.get_dict(stock)
-        # for item in items:
-        #     if items[item] != None and items[item] != 0:
-        #         self.database_manager.update_stock_item(admin_id, item, items[item])
+        items = self.get_dict(stock)
+        for item in items:
+            if item == "sugar_amount":
+                item = "white_sugar_amount"
+                items[item] = items["sugar_amount"]
+            
+            if items[item] != None:
+                status = self.database_manager.update_stock_item(admin_id, item, items[item])
+                if not status:
+                    return Response(status=status ,message=f"Stock is not updated,{item}.")
         
-        status = self.database_manager.update_stock(stock)
+        # status = self.database_manager.update_stock(stock)
         if status:
             return Response(status=status ,message="Stock is updated successfully.")
         else:
