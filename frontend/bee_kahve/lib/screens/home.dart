@@ -4,6 +4,7 @@ import 'package:bee_kahve/screens/profile/update_address.dart';
 import 'package:bee_kahve/widgets/products/product_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
+import 'package:bee_kahve/screens/products/product_details.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -164,12 +165,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisCount: 2,
                   ),
                   itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 5.0,
-                        horizontal: 5.0,
-                      ),
-                      child: Container(
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ProductDetailsScreen()));
+                        //To do navigate product detail screen
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 5.0,
+                          horizontal: 5.0,
+                        ),
+                        child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
                             border: Border.all(
@@ -178,14 +188,28 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(20.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0,
+                              vertical: 10.0,
+                            ),
                             child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Image.asset("assets/images/cappuccino.jpg"),
-                                Text("Random Text ${index + 1}"),
+                                Image.asset(
+                                  "assets/images/cappuccino.jpg",
+                                  width:
+                                      MediaQuery.of(context).size.width / 3.0,
+                                  height: 100.0,
+                                ),
+                                Text(
+                                  "Random Textaaaa  ${(index + 1) * 500}",
+                                  textAlign: TextAlign.center,
+                                ),
                               ],
                             ),
-                          )),
+                          ),
+                        ),
+                      ),
                     );
                   },
                 ),

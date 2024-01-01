@@ -28,14 +28,15 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  flutter:
+
+    sdk: flutter
   dynamic_height_grid_view: ^0.0.4
   cupertino_icons: ^1.0.6
   fancy_shimmer_image: ^2.0.3
   timelines: ^0.1.0
   flutter_rating_bar: ^4.0.1
-  flutter:
-
-    sdk: flutter
+  mask_text_input_formatter: ^2.7.0
 
 
 

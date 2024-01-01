@@ -1,3 +1,7 @@
+// Novruz Amirov: 150200903
+// Software Engineerin - BLG 411E - 2023/2024 - Semester Project
+// App.js where all pages combines and routings are handled properly
+
 import './App.css';
 import EmployeePage from './modules/employeePage';
 import SignIn from './modules/signInPage';
@@ -5,9 +9,10 @@ import EmployeeSignUp from './modules/employeeSignUp'; // Adjust the path accord
 import AdminPage from './modules/adminPage'
 import AddCoffee from './modules/addCoffee';
 import ModifyStock from './modules/modifyStock';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import UpdateStatus from './modules/updateStatus';
-// import { Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import UpdateCoffee from './modules/updateCoffee';
+
 
 function App() {
   return (
@@ -21,6 +26,7 @@ function App() {
         <Route path="/modifyStock" element={<ModifyStock />} />
         <Route path="/employeePage" element={<EmployeePage />} />
         <Route path="/updateStatus" element={<UpdateStatus />} />
+        <Route path="/updateCoffee" element={<UpdateCoffee />} />
       </Routes>
     </Router>
   );

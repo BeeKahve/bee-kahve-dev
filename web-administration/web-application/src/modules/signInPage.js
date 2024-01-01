@@ -23,42 +23,40 @@ const SignIn = () => {
       },
     };
 
-    // Normally should enter here, and check the username pass is correct or not, and then should go to admin page
-    // Now for development purpose, bypass it
-
     
-    let isAdmin = false
+    let is_admin = false
     const hashedValue = await sha512(password)
 
     if(employeeAdmin === "admin"){
-      isAdmin = true
-      localStorage.setItem('token', hashedValue); // SHOULD BE DELEETD
+      is_admin = true
     }
 
-    const body = JSON.stringify({ isAdmin, email, hashedValue });
-    console.log(body);
+    const body = JSON.stringify({ is_admin, email, hashedValue });
+    console.log(body)
 
     try {
-      const res = await axios.post('http://51.20.117.162:8000/login', body, config);
-      console.log(res);
-      if(res.data.email === 'admin@itu.edu.tr'){
+      const res = await axios.post('http://51.20.117.162:8000/web_login', body, config);
+      console.log(res)
+      if(res.data.email !== null){
         localStorage.setItem('token', hashedValue);
+      }
+      if(is_admin && localStorage.getItem('token') === 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba'){ // DELETE
+        navigate(`/adminPage`);
+      }
+      else if (!is_admin && res.data.email !== null){ // SHOULD BE CHANGED
+        navigate(`/employeePage`, { state: { employeeName: res.data.name } });
+      }
+      else{
+        navigate(`/signInPage`)
       }
       setLoading(false);
     } catch (err) {
       console.log(err);
       setLoading(false);
     }
-    //  navigate(`/adminPage?adminName=${res.data.adminName}`);
-    if(isAdmin){ // DELETE
-      navigate(`/adminPage`);
-    }
-    else{
-      navigate(`/employeePage`)
-    }
+
     
-    // navigate(`/employeePage`)
-    // navigate(`/employeePage`)
+    
   };
 
   return (

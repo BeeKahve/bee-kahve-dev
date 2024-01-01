@@ -1,42 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Form, Input, Checkbox, message, Slider } from 'antd'; // Upload
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Button, Form, Input, Checkbox, Slider, message } from 'antd';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
-const AddCoffee = () => {
+const UpdateCoffee = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { selectedCoffee } = location.state || {};
+  const [sugarChecked, setSugarChecked] = useState(false);
+  const [iceChecked, setIceChecked] = useState(false);
+
+  const fetchCoffeeDetails = useCallback(async () => {
+    try {
+      const response = await axios.get(`http://51.20.117.162:8000/get_full_product?product_id=${selectedCoffee.product_id}`);
+      console.log(response);
+      const coffeeDetails = response.data;
+  
+      // Populate the form with coffee details
+      console.log(coffeeDetails)
+      form.setFieldsValue({
+        name: coffeeDetails.coffee_name,
+        image: coffeeDetails.photo_path,
+        espresso_amount: coffeeDetails.espresso_amount,
+        milk_amount: coffeeDetails.milk_amount,
+        foam_amount: coffeeDetails.foam_amount,
+        chocolate_syrup_amount: coffeeDetails.chocolate_syrup_amount,
+        caramel_syrup_amount: coffeeDetails.caramel_syrup_amount,
+        white_chocolate_syrup_amount: coffeeDetails.white_chocolate_syrup_amount,
+        sugar_checkbox: coffeeDetails.sugar_amount > 0,
+        sugar_amount: coffeeDetails.sugar_amount,
+        ice_checkbox: coffeeDetails.ice_amount > 0,
+        ice_amount: coffeeDetails.ice_amount,
+        size: coffeeDetails.small_cup_only
+          ? ['small']
+          : coffeeDetails.medium_cup_available
+          ? ['medium']
+          : coffeeDetails.large_cup_available
+          ? ['large']
+          : [],
+        priceSmall: coffeeDetails.price,
+      });
+  
+      setSugarChecked(coffeeDetails.sugar_amount > 0);
+      setIceChecked(coffeeDetails.ice_amount > 0); 
+    } catch (error) {
+      console.error('Error fetching coffee details:', error);
+    }
+  }, [form, selectedCoffee]);
 
   useEffect(() => {
-    // Check if the user has a valid token
     const token = localStorage.getItem('token');
-
     if (token !== 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
       navigate('/signInPage');
     } 
-  }, [navigate]);
-
-
-    // State variables for checkboxes
-    const [sugarChecked, setSugarChecked] = useState(false);
-    const [iceChecked, setIceChecked] = useState(false);
-
-  const [activeMenu, setActiveMenu] = useState('Modify Menu');
-
-  const handleExitAccount = () => {
-    localStorage.removeItem('token');
-    navigate('/signInPage');
-  };
-
-  const handleModifyMenu = () => {
-    navigate('/adminPage');
-    setActiveMenu('Modify Menu');
-  };
-
-  const handleModifyStock = () => {
-    navigate('/modifyStock');
-    setActiveMenu('Modify Stock');
-  };
+    else if (!selectedCoffee) {
+      navigate('/adminPage');
+    } else {
+      fetchCoffeeDetails();
+    }
+  }, [selectedCoffee, navigate, fetchCoffeeDetails]); // Removed selectedCoffee from the dependency array to ensure it only runs on mount
 
   const onFinish = async (values) => {
     try {
@@ -61,7 +84,7 @@ const AddCoffee = () => {
         admin_id: 1, // Assuming admin_id is 1 for the current admin
         coffee_name: name,
         photo_path: image,
-        small_cup_only: size.includes('small'),
+        small_cup_only: size.includes('small') && !size.includes('medium') && !size.includes('large'),
         price: Number(priceSmall),
         espresso_amount,
         milk_amount: milk_amount || 0,
@@ -73,16 +96,29 @@ const AddCoffee = () => {
         ice_amount: ice_checkbox ? ice_amount || 0 : 0,
       };
 
-      console.log(payload);
-      
-      // Use your API endpoint instead of the placeholder URL
-      const response = await axios.post('http://51.20.117.162:8000/add_product', payload);
+      // Use your API endpoint for updating instead of the placeholder URL
+      const response = await axios.post(`http://51.20.117.162:8000/update_product?product_id=${selectedCoffee.product_id}`, payload);
 
       console.log(response);
+      message.success('Coffee updated successfully!');
       navigate('/adminPage');
     } catch (error) {
-      console.error('Error submitting form:', error);
-      message.error('Failed to submit the form. Please try again.');
+      console.error('Error updating coffee:', error);
+      message.error('Failed to update coffee. Please try again.');
+    }
+  };
+
+  const onRemoveCoffee = async () => {
+    try {
+      // Use your API endpoint for removing instead of the placeholder URL
+      const response = await axios.delete(`http://51.20.117.162:8000/remove_product/${selectedCoffee.product_id}`);
+
+      console.log(response);
+      message.success('Coffee removed successfully!');
+      navigate('/adminPage');
+    } catch (error) {
+      console.error('Error removing coffee:', error);
+      message.error('Failed to remove coffee. Please try again.');
     }
   };
 
@@ -90,9 +126,26 @@ const AddCoffee = () => {
     navigate('/adminPage');
   };
 
+  const [activeMenu, setActiveMenu] = useState('Modify Menu');
+
+  const handleModifyMenu = () => {
+    navigate('/adminPage');
+    setActiveMenu('Modify Menu');
+  };
+
+  const handleModifyStock = () => {
+    setActiveMenu('Modify Stock');
+    navigate('/modifyStock');
+  };
+
+  const handleExitAccount = () => {
+    localStorage.removeItem('token');
+    navigate('/signInPage');
+  };
+
   return (
-    <div className="adminPage">
-      <div className="left-sidebar">
+    <div className="updateCoffee adminPage">
+     <div className="left-sidebar">
         <h1 style={{ color: 'white', marginLeft: '30%' }}>ADMIN</h1>
         <div
           className={`menu-stock-header ${activeMenu === 'Modify Menu' ? 'active' : ''}`}
@@ -106,34 +159,22 @@ const AddCoffee = () => {
         >
           <h4 style={{ color: 'black' }}>Modify Stock</h4>
         </div>
-        <Button className="exit-account" type="danger" onClick={() => handleExitAccount()}>
+        <Button className='exit-account' type="danger" onClick={() => handleExitAccount()}>
           <h4>Exit Account</h4>
         </Button>
       </div>
-
       <div className="right-content">
-        <div
-          className="upper-content"
-          style={{
-            height: '15%',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: '80vw',
-          }}
-        >
+      <div className="upper-content" style={{ height: '15%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '80vw'}}>
           <h1 style={{ color: 'black' }}>Hello Admin</h1>
           <div className="brand" style={{ fontSize: '1.5em' }}>
             <span style={{ color: '#F1DB11' }}>Bee'</span> Kahve
           </div>
         </div>
-
         <div className="lower-content" style={{ height: '85%' }}>
           <Button type="primary" onClick={onBackClick}>
             {'\u2190'}
           </Button>
-          <h2 style={{ textAlign: 'center' }}>Add Coffee</h2>
+          {selectedCoffee && ( <h2 style={{ textAlign: 'center' }}>Update {selectedCoffee.name}</h2>)}
           <Form
             form={form}
             name="addCoffeeForm"
@@ -220,9 +261,12 @@ const AddCoffee = () => {
             <Form.Item
               label="Size"
               name="size"
+              rules={[{ required: true, message: 'Please select a size!' }]}
             >
               <Checkbox.Group>
-                <Checkbox value="small">Small Only</Checkbox>
+                <Checkbox value="small">Small</Checkbox>
+                <Checkbox value="medium">Medium</Checkbox>
+                <Checkbox value="large">Large</Checkbox>
               </Checkbox.Group>
             </Form.Item>
             <Form.Item
@@ -234,10 +278,13 @@ const AddCoffee = () => {
             >
               <Input type="number" />
             </Form.Item>
-            <h5>Note: You do not need to enter the medium or large cup price. If they exist, checkbox them, and the price will be followed for medium 1.3x and for large 1.7x.</h5>
+            {/* Include the rest of the form fields here */}
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
-                Submit 
+                Update Coffee
+              </Button>
+              <Button type="danger" style={{ marginLeft: '8px' }} onClick={onRemoveCoffee}>
+                Remove Coffee
               </Button>
             </Form.Item>
           </Form>
@@ -247,4 +294,4 @@ const AddCoffee = () => {
   );
 };
 
-export default AddCoffee;
+export default UpdateCoffee;
