@@ -222,12 +222,12 @@ class DatabaseManager:
                         white_chocolate_syrup_amount=stock[12],
                         caramel_syrup_amount=stock[13],
                         sugar_amount=stock[14],
-                        ice_amount=stock[15])
+                        ice_amount=stock[16])
     
     # check
     def update_stock(self, stock : Stock):
         stock_id = 1
-        query_update_stock = "UPDATE Stocks SET small_cup_count = %s, medium_cup_count = %s, large_cup_count = %s, espresso_amount = %s, decaff_espresso_amount = %s, whole_milk_amount = %s, reduced_fat_milk_amount = %s, lactose_free_milk_amount = %s, oat_milk_amount = %s, almond_milk_amount = %s, chocolate_syrup_amount = %s, white_chocolate_syrup_amount = %s, caramel_syrup_amount = %s, sugar_amount = %s, ice_amount = %s WHERE stock_id = %s"
+        query_update_stock = "UPDATE Stocks SET small_cup_count = %s, medium_cup_count = %s, large_cup_count = %s, espresso_amount = %s, decaff_espresso_amount = %s, whole_milk_amount = %s, reduced_fat_milk_amount = %s, lactose_free_milk_amount = %s, oat_milk_amount = %s, almond_milk_amount = %s, chocolate_syrup_amount = %s, white_chocolate_syrup_amount = %s, caramel_syrup_amount = %s, white_sugar_amount = %s, ice_amount = %s WHERE stock_id = %s"
         values_update_stock = (stock.small_cup_count,
                                stock.medium_cup_count,
                                stock.large_cup_count,

@@ -86,8 +86,8 @@ async def rate(rate : Rate) -> Response:
     return manager.rate(rate.product_id, rate.rate)
 
 @app.get("/get_stock")
-async def get_stock(admin_id : int) -> Stock:
-    return manager.get_stock(admin_id).body
+async def get_stock(stock_id : int) -> Stock:
+    return manager.get_stock(stock_id).body
 
 @app.post("/update_stock")
 async def update_stock(stock : Stock) -> Response:
