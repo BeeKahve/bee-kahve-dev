@@ -274,20 +274,20 @@ class DatabaseManager:
     
     # check
     def get_menu(self):
-        try:
-            query_menu = "SELECT * FROM Products"
-            products = self.database.fetch_data(query_menu)
-            menu_products = []
-            for product in products:
-                menu_products.append(MenuProduct(product_id=product[0],
-                                                name=product[1],
-                                                photo_path=product[2],
-                                                rate=product[13],
-                                                price=product[12]))
-                
-        except Exception as e:
-            print(f"Error fetching menu: {e}")
+        query_menu = "SELECT * FROM Products"
+        products = self.database.fetch_data(query_menu)
+
+        if products == []:
             return False, None
+
+        menu_products = []
+        for product in products:
+            menu_products.append(MenuProduct(product_id=product[0],
+                                            name=product[1],
+                                            photo_path=product[2],
+                                            rate=product[13],
+                                            price=product[12]))
+            
         return True, ProductMenu(menuProducts=menu_products, product_count=len(menu_products))
     
     
