@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Table, Modal, Form } from 'antd'; // Input
+import { Button, Table } from 'antd'; // Input
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -7,9 +7,6 @@ const { Column } = Table;
 
 const EmployeePage = () => {
   const [orderList, setOrderList] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalTitle, setModalTitle] = useState('');
-  const [selectedOrder, setSelectedOrder] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
   const employeeName = location.state && location.state.employeeName;
@@ -19,8 +16,8 @@ const EmployeePage = () => {
   const fetchOrderList = useCallback(async () => {
     try {
       const response = await axios.get('http://51.20.117.162:8000/get_waiting_orders?admin_id=1');
-      console.log(response)
-      setOrderList(response.orders);
+      console.log(response.data.orders)
+      setOrderList(response.data.orders);
     } catch (error) {
       console.error('Error fetching order list:', error);
     }
@@ -53,23 +50,38 @@ const EmployeePage = () => {
     navigate('/signInPage');
   };
 
-  const showModal = (title, order) => {
-    setIsModalVisible(true);
-    setModalTitle(title);
-    setSelectedOrder(order);
+  const handleConfirmOrder = async (orderId) => {
+    try {
+      // Make a request to update the order status to 'preparing'
+      const response = await axios.get(`http://51.20.117.162:8000/set_status?order_id=${orderId}&status=preparing`);
+      console.log(response);
+
+      if (response.data.message === "Status is updated successfully.") {
+        fetchOrderList()
+      } 
+      
+    } catch (error) {
+      console.error('Error confirming order:', error);
+    }
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
+  const handleCancelOrder = async (orderId) => {
+    try {
+      // Make a request to update the order status to 'cancelled'
+      const response = await axios.get(`http://51.20.117.162:8000/set_status?order_id=${orderId}&status=cancelled`);
+      console.log(response)
+      
+      // Check the response and update the orderList accordingly
+      if (response.data.message === "Status is updated successfully.") {
+        fetchOrderList()
+      } 
+    } 
+    catch (error) {
+      console.error('Error cancelling order:', error);
+      // You can show an error message to the user if needed
+    }
   };
-
-  const handleConfirmOrder = () => {
-    // Logic for confirming order
-  };
-
-//   const handleCancelOrder = () => {
-//     // Logic for canceling order
-//   };
+  
 
   const handleUpdateStatus = () => {
     // Redirect to /updateStatus when Update Order Status button is clicked
@@ -101,28 +113,42 @@ const EmployeePage = () => {
         <div className="lower-content" style={{ height: '85%' }}>
           <h2>Order List</h2>
           {/* Table for Order List */}
-          <Table dataSource={orderList} rowKey="_id">
-            <Column title="Order ID" dataIndex="_id" key="_id" render={(text, record) => <h3>Order ID: {text}</h3>} />
-            <Column title="Products" dataIndex="products" key="products" render={(text, record) => (
-              <div>
-                {/* Render product details for each order */}
-                {text.map((product) => (
-                  <div key={product._id}>
-                    <img src={product.image} alt={product.name} style={{ width: 50, height: 50, marginRight: 8 }} />
-                    <span>{product.name} - Size: {product.size} - Price: {product.price}</span>
-                  </div>
-                ))}
-              </div>
-            )} />
+          <Table dataSource={orderList} rowKey="_id" className='confirm-orders'>
+            <Column title="Order ID" dataIndex="order_id" key="order_id" render={(text, record) => <h3>Order ID: {text}</h3>} />
+            <Column
+              title="Products"
+              dataIndex="line_items"
+              key="line_items"
+              render={(lineItems, record) => (
+                <div className='orders'>
+                  {lineItems.length > 0 ? (
+                    lineItems.map((product, index) => (
+                      <div className='order' key={index}>
+                        <div className='prod-name'>
+                          <p> {product.name} </p>
+                          <p> Size: {product.size_choice}</p>
+                          <p> Price: {product.price}</p>
+                        </div>
+
+                        <img src={product.photo_path} alt={product.name} style={{ width: 200, height: 200, marginRight: 8 }} />
+                        
+                      </div>
+                    ))
+                  ) : (
+                    <span>No products in this order</span>
+                  )}
+                </div>
+              )}
+            />
             <Column
               title="Action"
               key="action"
               render={(text, record) => (
                 <span>
-                  <Button type="primary" onClick={() => showModal('Confirm Order', record)}>
+                  <Button type="primary" onClick={() => handleConfirmOrder(record.order_id)}>
                     Confirm
                   </Button>
-                  <Button type="danger" onClick={() => showModal('Cancel Order', record)}>
+                  <Button type="danger" onClick={() => handleCancelOrder(record.order_id)}>
                     Cancel
                   </Button>
                 </span>
@@ -132,18 +158,7 @@ const EmployeePage = () => {
         </div>
       </div>
 
-      <Modal title={modalTitle} visible={isModalVisible} onCancel={handleCancel} footer={null}>
-        {/* Form for Order Modal */}
-        <Form onFinish={handleConfirmOrder}>
-          {/* Form fields go here */}
-          {/* You can customize the form fields based on your requirements */}
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Confirm Order
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+
     </div>
   );
 };
