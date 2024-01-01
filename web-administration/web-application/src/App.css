@@ -138,6 +138,24 @@
   height: 100vh;
 }
 
+.adminPage .right-content .lower-content{
+  border: 2px solid red;
+  /* display: flex;
+  justify-content: center; */
+  width: 100%;
+  /* height: 10vh; */
+  overflow: auto;
+}
+
+.adminPage .right-content .lower-content td{
+  text-align: center;
+}
+
+.adminPage .right-content .lower-content th{
+  text-align: center;
+}
+
+
 .left-sidebar {
   width: 20%;
   background-color: #383D47;
