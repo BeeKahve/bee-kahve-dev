@@ -541,7 +541,7 @@ class DatabaseManager:
         values_orders = (order.customer_id, order.order_date, order.order_status)
 
         query_order_id = "SELECT order_id FROM Orders WHERE customer_id = %s AND order_date = %s"
-        order.order_id = self.database.fetch_data(query_order_id, (order.customer_id, order.order_date))
+        order.order_id = self.database.fetch_data(query_order_id, (order.customer_id, order.order_date))[0][0]
 
         if self.database.execute_query(query_orders, values_orders):
             failure = False
@@ -550,13 +550,11 @@ class DatabaseManager:
 
             line_items = order.line_items
             for line_item in line_items:
-                query_product_price = "SELECT price FROM Products WHERE product_id = %s"
-                product_price = self.database.fetch_data(query_product_price, (line_item.product_id,))[0][0]
                 query_line_items = "INSERT INTO Line_Items (order_id, product_id, size_choice, milk_choice, extra_shot_choice, caffein_choice, price) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                values_line_items = (order.order_id, line_item.product_id, line_item.size_choice, line_item.milk_choice, line_item.extra_shot_choice, line_item.caffein_choice, product_price)
+                values_line_items = (order.order_id, line_item.product_id, line_item.size_choice, line_item.milk_choice, line_item.extra_shot_choice, line_item.caffein_choice, line_item.price)
 
                 if not self.database.execute_query(query_line_items, values_line_items):
-                    failure = True
+                    return False
             
             return not failure
         
