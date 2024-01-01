@@ -2,12 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { Button, Table } from 'antd'; // Modal, Form, Input
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { css } from '@emotion/react';
+import { BarLoader } from 'react-spinners';
+
+const override = css`
+  display: block;
+  margin: 0 auto;
+  border-color: red;
+`;
 
 const { Column } = Table;
 
 const AdminPage = () => {
   let [coffeeList, setCoffeeList] = useState([]);
   const [selectedCoffee, setSelectedCoffee] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -22,9 +31,11 @@ const AdminPage = () => {
 
   const fetchCoffeeList = async () => {
     try {
+      setLoading(true)
       const response = await axios.get('http://51.20.117.162:8000/get_menu');
-      setCoffeeList(response.data.menuProducts);
       console.log(response)
+      setCoffeeList(response.data.menuProducts);
+      setLoading(false)  
     } catch (error) {
       console.error('Error fetching coffee list:', error);
     }
@@ -48,6 +59,7 @@ const AdminPage = () => {
 
   const handleExitAccount = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('obj')
     navigate('/signInPage');
   };
 
@@ -58,7 +70,7 @@ const AdminPage = () => {
       // If the clicked row is already selected, clear the selection
       setSelectedRowKey(null);
       setSelectedCoffee({});
-      console.log(selectedCoffee)
+      // console.log(selectedCoffee)
     } else {
       // Set the clicked row as selected
       setSelectedRowKey(record.product_id);
@@ -101,34 +113,42 @@ const AdminPage = () => {
         </div>
         <div className="lower-content" style={{ height: '85%' }}>
         <h2>Coffee Menu</h2>
-        <Table
-          dataSource={coffeeList}
-          rowKey="product_id"
-          rowSelection={{
-            type: 'radio',
-            selectedRowKeys: [selectedRowKey],
-            onSelect: (record, selected, selectedRows) => {
-              if (selected) {
-                handleRowClick(record);
-              }
-            },
-          }}
-          onRow={(record) => ({
-            onClick: () => handleRowClick(record),
-          })}
-        >
-          <Column title="Name" dataIndex="name" key="name" />
-          <Column title="Price" dataIndex="price" key="price" />
-          {/* <Column title="Description" dataIndex="description" key="description" /> */}
-          <Column
-            title="Image"
-            dataIndex="image"
-            key="image"
-            render={(text, record) => (
-              <img src={record.photo_path} alt={record.name} style={{ maxWidth: '100px', maxHeight: '100px' }} />
-            )}
-          />
-        </Table>
+          {loading ? (
+            <BarLoader css={override} loading={loading} size={150} color={'#36D7B7'} />
+          ) : (
+            <Table
+              dataSource={coffeeList}
+              rowKey="product_id"
+              rowSelection={{
+                type: 'radio',
+                selectedRowKeys: [selectedRowKey],
+                onSelect: (record, selected, selectedRows) => {
+                  if (selected) {
+                    handleRowClick(record);
+                  }
+                },
+              }}
+              onRow={(record) => ({
+                onClick: () => handleRowClick(record),
+              })}
+            >
+              <Column title="Product_ID" dataIndex="product_id" key="product_id" />
+              <Column title="Name" dataIndex="name" key="name" />
+              <Column title="Price (TL)" dataIndex="price" key="price" />
+              
+              {loading ? (
+                <BarLoader css={override} loading={loading} size={150} color={'#36D7B7'} />
+              ) : (<Column
+                title="Image"
+                dataIndex="image"
+                key="image"
+                render={(text, record) => (
+                  <img src={record.photo_path} alt={record.name} style={{ maxWidth: '200px', maxHeight: '200px' }} />
+                )}
+              />)}
+              
+            </Table>
+          )}
         <div className="add-update-buttons">
           <Button type="primary" onClick={() => handleAddCoffee()}>
             Add Coffee

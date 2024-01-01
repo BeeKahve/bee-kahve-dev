@@ -23,7 +23,7 @@ const ModifyStock = () => {
 
   const fetchStockData = async () => {
     try {
-      const response = await axios.get('/api/stock'); // Adjust the API endpoint
+      const response = await axios.get('http://51.20.117.162:8000/get_stock?stock_id=1'); // Adjust the API endpoint
       setStockData(response.data);
       setLoading(false);
     } catch (error) {
@@ -81,7 +81,7 @@ const ModifyStock = () => {
 
       // Send the updated data to the database
       console.log(updatedData)
-      await axios.post('/api/updateStock', updatedData); // Adjust the API endpoint
+      await axios.post('http://51.20.117.162:8000/update_stock', updatedData); // Adjust the API endpoint
       
 
       Modal.success({

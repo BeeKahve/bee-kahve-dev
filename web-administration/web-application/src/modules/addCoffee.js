@@ -40,7 +40,7 @@ const AddCoffee = () => {
 
   const onFinish = async (values) => {
     try {
-      const {
+      let {
         name,
         image,
         espresso_amount,
@@ -53,15 +53,44 @@ const AddCoffee = () => {
         sugar_amount,
         ice_checkbox,
         ice_amount,
-        size,
+        small_cup_only,
         priceSmall,
       } = values;
+
+      if(isNaN(milk_amount)){
+        milk_amount = 0
+      }
+      if(isNaN(foam_amount)){
+        foam_amount = 0
+      }
+      if(isNaN(chocolate_syrup_amount)){
+        chocolate_syrup_amount = 0
+      }
+      if(isNaN(caramel_syrup_amount)){
+        caramel_syrup_amount = 0
+      }
+      if(isNaN(white_chocolate_syrup_amount)){
+        white_chocolate_syrup_amount = 0
+      }
+
+      const totalPercentage =
+      espresso_amount +
+      milk_amount +
+      foam_amount +
+      chocolate_syrup_amount +
+      caramel_syrup_amount +
+      white_chocolate_syrup_amount;
+
+    if (totalPercentage !== 100) {
+      message.error('The sum of espresso amount, milk, foam, chocolate syrup, caramel syrup, and white chocolate syrup must be exactly 100.');
+      return;
+    }
 
       const payload = {
         admin_id: 1, // Assuming admin_id is 1 for the current admin
         coffee_name: name,
         photo_path: image,
-        small_cup_only: size.includes('small'),
+        small_cup_only: small_cup_only,
         price: Number(priceSmall),
         espresso_amount,
         milk_amount: milk_amount || 0,
@@ -72,13 +101,12 @@ const AddCoffee = () => {
         sugar_amount: sugar_checkbox ? sugar_amount || 0 : 0,
         ice_amount: ice_checkbox ? ice_amount || 0 : 0,
       };
-
       console.log(payload);
       
       // Use your API endpoint instead of the placeholder URL
       const response = await axios.post('http://51.20.117.162:8000/add_product', payload);
+      console.log(response)
 
-      console.log(response);
       navigate('/adminPage');
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -217,19 +245,17 @@ const AddCoffee = () => {
           <Input type="number" />
         </Form.Item>
       )}
-            <Form.Item
-              label="Size"
-              name="size"
-            >
-              <Checkbox.Group>
-                <Checkbox value="small">Small Only</Checkbox>
-              </Checkbox.Group>
-            </Form.Item>
+              <Form.Item label="Size" name="small_cup_only">
+                <Checkbox>
+                  Small Only
+                </Checkbox>
+              </Form.Item>
+
             <Form.Item
               label="Price"
               name="priceSmall"
               rules={[
-                { required: true, message: 'Please enter the price for Small size!' },
+                { required: true, message: 'Please enter the price for Small small_cup_only!' },
               ]}
             >
               <Input type="number" />
