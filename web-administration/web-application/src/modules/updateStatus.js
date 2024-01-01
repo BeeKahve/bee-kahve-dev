@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Modal, Form } from 'antd';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useLocation} from 'react-router-dom';
 
 const { Column } = Table;
 
@@ -11,7 +11,9 @@ const UpdateStatus = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [selectedOrder, setSelectedOrder] = useState({});
-  const [employeeName, setEmployeeName] = useState('Employee Novruz'); // Replace with the actual employee name
+  const location = useLocation();
+  const employeeName = location.state && location.state.employeeName;
+
 
   const navigate = useNavigate();
 

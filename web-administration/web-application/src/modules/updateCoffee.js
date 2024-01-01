@@ -14,11 +14,12 @@ const UpdateCoffee = () => {
   const fetchCoffeeDetails = useCallback(async () => {
     try {
       const response = await axios.get(`http://51.20.117.162:8000/get_full_product?product_id=${selectedCoffee.product_id}`);
-      console.log(response);
       const coffeeDetails = response.data;
+      console.log(coffeeDetails)
   
       // Populate the form with coffee details
-      console.log(coffeeDetails)
+      // if(small_cup_only
+
       form.setFieldsValue({
         name: coffeeDetails.coffee_name,
         image: coffeeDetails.photo_path,
@@ -32,13 +33,7 @@ const UpdateCoffee = () => {
         sugar_amount: coffeeDetails.sugar_amount,
         ice_checkbox: coffeeDetails.ice_amount > 0,
         ice_amount: coffeeDetails.ice_amount,
-        size: coffeeDetails.small_cup_only
-          ? ['small']
-          : coffeeDetails.medium_cup_available
-          ? ['medium']
-          : coffeeDetails.large_cup_available
-          ? ['large']
-          : [],
+        size: coffeeDetails.small_cup_only,
         priceSmall: coffeeDetails.price,
       });
   
@@ -84,7 +79,7 @@ const UpdateCoffee = () => {
         admin_id: 1, // Assuming admin_id is 1 for the current admin
         coffee_name: name,
         photo_path: image,
-        small_cup_only: size.includes('small') && !size.includes('medium') && !size.includes('large'),
+        small_cup_only: size || 0,
         price: Number(priceSmall),
         espresso_amount,
         milk_amount: milk_amount || 0,
@@ -97,6 +92,7 @@ const UpdateCoffee = () => {
       };
 
       // Use your API endpoint for updating instead of the placeholder URL
+      console.log(payload)
       const response = await axios.post(`http://51.20.117.162:8000/update_product?product_id=${selectedCoffee.product_id}`, payload);
 
       console.log(response);
@@ -111,13 +107,14 @@ const UpdateCoffee = () => {
   const onRemoveCoffee = async () => {
     try {
       // Use your API endpoint for removing instead of the placeholder URL
-      const response = await axios.delete(`http://51.20.117.162:8000/remove_product/${selectedCoffee.product_id}`);
+      // console.log(`http://51.20.117.162:8000/delete_product?product_id=${selectedCoffee.product_id}`)
+      const response = await axios.get(`http://51.20.117.162:8000/delete_product?product_id=${selectedCoffee.product_id}`);
 
       console.log(response);
       message.success('Coffee removed successfully!');
       navigate('/adminPage');
     } catch (error) {
-      console.error('Error removing coffee:', error);
+      console.log('Error removing coffee:', error);
       message.error('Failed to remove coffee. Please try again.');
     }
   };
@@ -261,13 +258,8 @@ const UpdateCoffee = () => {
             <Form.Item
               label="Size"
               name="size"
-              rules={[{ required: true, message: 'Please select a size!' }]}
             >
-              <Checkbox.Group>
-                <Checkbox value="small">Small</Checkbox>
-                <Checkbox value="medium">Medium</Checkbox>
-                <Checkbox value="large">Large</Checkbox>
-              </Checkbox.Group>
+                <Checkbox value="small">Small Only</Checkbox>
             </Form.Item>
             <Form.Item
               label="Price"
