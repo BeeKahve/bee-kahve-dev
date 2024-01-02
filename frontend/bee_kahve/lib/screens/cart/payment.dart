@@ -1,7 +1,11 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/root.dart';
+import 'package:bee_kahve/screens/home.dart';
+import 'package:bee_kahve/screens/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:bee_kahve/consts/validator.dart';
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key});
@@ -11,6 +15,43 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPage extends State<PaymentPage> {
+  late final TextEditingController _cardNumberController;
+  late final TextEditingController _dateController;
+  late final TextEditingController _cvvController;
+  final _formkey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    _cardNumberController = TextEditingController();
+    _dateController = TextEditingController();
+    _cvvController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (mounted) {
+      _cardNumberController.dispose();
+      _dateController.dispose();
+      _cvvController.dispose();
+      super.dispose();
+    }
+  }
+
+  Future<void> _pay() async {
+    final isValid = _formkey.currentState!.validate();
+    FocusScope.of(context).unfocus();
+    if (isValid) {
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const RootScreen(
+                    currentScreen: 2,
+                  )));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,27 +72,32 @@ class _PaymentPage extends State<PaymentPage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  MaskTextInputFormatter(
-                    mask: "#### #### #### ####",
-                  )
-                ],
-                decoration: const InputDecoration(
-                  hintText: "Card Number",
-                  prefixIcon: Icon(Icons.credit_card),
+          child: Form(
+            key: _formkey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextFormField(
+                  textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    MaskTextInputFormatter(
+                      mask: "#### #### #### ####",
+                    )
+                  ],
+                  decoration: const InputDecoration(
+                    hintText: "Card Number",
+                    prefixIcon: Icon(Icons.credit_card),
+                  ),
+                  validator: (value) {
+                    return MyValidators.cardNumberValidator(value);
+                  },
                 ),
-              ),
-              const SizedBox(height: 16.0), // Add vertical spacing if needed
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
+                const SizedBox(height: 16.0), // Add vertical spacing if needed
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.datetime,
                         inputFormatters: [
@@ -60,70 +106,62 @@ class _PaymentPage extends State<PaymentPage> {
                             filter: {
                               '#': RegExp(r'[0-9]'),
                             },
-                            type: MaskAutoCompletionType.eager,
                           ),
                         ],
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: "Expiration Date",
                           prefixIcon: Icon(Icons.calendar_today),
                         ),
                         validator: (value) {
-                          if (value == null ||
-                              value.isEmpty ||
-                              value.length < 5) {
-                            return "write date";
-                          }
-                          final components = value.split("/");
-                          if (components.length == 2) {
-                            final month = int.tryParse(components[0]);
-                            final year = int.tryParse(components[1]);
-                            if (month == null || year == null) {
-                              return "wrong date";
-                            }
-                            if (month > 13 || year < 24 || year > 39) {
-                              return "wrong date";
-                            }
-                          }
-                        }),
-                  ),
-                  SizedBox(width: 16.0), // Add horizontal spacing if needed
-                  Expanded(
-                    child: TextField(
-                      textInputAction: TextInputAction.next,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(3),
-                      ],
-                      decoration: InputDecoration(
-                        hintText: "CVV",
-                        prefixIcon: Icon(Icons.numbers),
+                          return MyValidators.dateValidator(value);
+                        },
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16.0), // Add vertical spacing if needed
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40.0,
-                    vertical: 10.0,
-                  ),
-                  backgroundColor: AppColors.yellow,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
+                    SizedBox(width: 16.0), // Add horizontal spacing if needed
+                    Expanded(
+                      child: TextFormField(
+                        textInputAction: TextInputAction.next,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(3),
+                        ],
+                        decoration: InputDecoration(
+                          hintText: "CVV",
+                          prefixIcon: Icon(Icons.numbers),
+                        ),
+                        validator: (value) {
+                          return MyValidators.cvvValidator(value);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                child: const Text(
-                  "Pay",
-                  style: TextStyle(
-                    color: AppColors.darkColor,
+                const SizedBox(height: 16.0), // Add vertical spacing if needed
+                ElevatedButton(
+                  onPressed: () async {
+                    // Navigator.pop(context);
+                    await _pay();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40.0,
+                      vertical: 10.0,
+                    ),
+                    backgroundColor: AppColors.yellow,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
                   ),
-                ),
-              )
-            ],
+                  child: const Text(
+                    "Pay",
+                    style: TextStyle(
+                      color: AppColors.darkColor,
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

@@ -1,8 +1,4 @@
 import 'package:bee_kahve/screens/auth/signin.dart';
-import 'package:bee_kahve/screens/auth/signup.dart';
-import 'package:bee_kahve/screens/products/product_details.dart';
-import 'package:bee_kahve/screens/profile/profile.dart';
-import 'package:bee_kahve/screens/profile/update_address.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -37,9 +33,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const SignInScreen(),
-      routes: {
-        "/details": (context) => const ProductDetailsScreen(),
-      },
     );
   }
 }

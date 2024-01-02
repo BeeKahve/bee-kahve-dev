@@ -1,13 +1,17 @@
 import 'dart:developer';
 import 'package:bee_kahve/consts/app_color.dart';
-import 'package:bee_kahve/screens/profile/update_address.dart';
-import 'package:bee_kahve/widgets/products/product_widget.dart';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:flutter/material.dart';
-import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:bee_kahve/screens/products/product_details.dart';
+import 'dart:convert';
+import 'package:bee_kahve/models/menu_product_model.dart';
+import 'package:http/http.dart' as http;
+import '../models/menu_model.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final User? user;
+  const HomeScreen({Key? key, this.user}) : super(key: key);
+
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -15,25 +19,87 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late TextEditingController searchTextController;
+  late MenuModel coffeeMenu;
+  User? user;
+  bool _isMounted = false;
+
+  Future<MenuModel> getMenu() async {
+  try {
+    var response = await http.get(Uri.parse('http://51.20.117.162:8000/get_menu'));
+
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+
+      List<MenuProductModel> menuProducts = [];
+      if (jsonData['menuProducts'] is List) {
+        menuProducts = List<MenuProductModel>.from(jsonData['menuProducts'].map((item) => MenuProductModel(
+          productId: item['product_id'],
+          name: item['name'],
+          photoPath: item['photo_path'],
+          rate: item['rate'],
+          price: item['price'],
+        )));
+      }
+
+      MenuModel menu = MenuModel(
+        menuProducts: menuProducts,
+        productCount: jsonData['product_count'],
+      );
+
+      print(menu.productCount);
+      return menu;
+    } else {
+      // Handle the error if the server did not return a 200 OK response
+      print('Failed to load menu data: ${response.statusCode}');
+      return MenuModel(productCount: 0, menuProducts: []); // Return an empty menu model or handle it as needed
+    }
+  } catch (e) {
+    // Handle other exceptions, such as network issues
+    print('Error fetching menu data: $e');
+    return MenuModel(productCount: 0, menuProducts: []); // Return an empty menu model or handle it as needed
+  }
+}
+
+  int getCoffeesNeededForReward() {
+    const coffeesForReward = 5; // Set the number of coffees needed for a reward
+    return coffeesForReward - (user?.loyaltyCount ?? 0);
+  }
+  
   @override
   void initState() {
-    searchTextController = TextEditingController();
     super.initState();
+    searchTextController = TextEditingController();
+    coffeeMenu = MenuModel(productCount: 0, menuProducts: []);
+    fetchMenu();  // Make sure searchTextController is initialized before using it.
   }
 
   @override
   void dispose() {
-    if (mounted) {
-      searchTextController.dispose();
-      super.dispose();
+    _isMounted = false;
+    super.dispose();
+  }
+
+  Future<void> fetchMenu() async {
+    try {
+      MenuModel menu = await getMenu();
+      if (mounted) {
+        setState(() {
+          coffeeMenu = menu;
+        });
+      }
+    } catch (e) {
+      print('Error fetching menu data: $e');
+      // Handle the error as needed
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    int loyaltyCount = widget.user?.loyaltyCount ?? 0;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
+        
       },
       child: Scaffold(
         appBar: AppBar(
@@ -108,10 +174,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(
                   height: 15,
                 ),
-                const Center(
+                Center(
                     child: Text(
-                  "3 coffees left to get a reward drink",
-                  style: TextStyle(
+                   "${getCoffeesNeededForReward()} coffees left to get a reward drink",
+                  style: const TextStyle(
                       fontWeight: FontWeight.normal,
                       fontSize: 20,
                       color: AppColors.textColor),
@@ -119,31 +185,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(
                   height: 15,
                 ),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.coffee,
-                      size: 40,
-                      color: AppColors.yellow,
-                    ),
-                    Icon(
-                      Icons.coffee,
-                      size: 40,
-                      color: AppColors.yellow,
-                    ),
-                    Icon(
-                      Icons.coffee,
-                      size: 40,
-                    ),
-                    Icon(
-                      Icons.coffee,
-                      size: 40,
-                    ),
-                    Icon(
-                      Icons.coffee,
-                      size: 40,
-                    ),
+                    for (int i = 0; i < 5; i++)
+                      Icon(
+                        Icons.coffee,
+                        size: 40,
+                        color: loyaltyCount > i
+                            ? AppColors.yellow
+                            : AppColors.textColor,
+                      ),
                   ],
                 ),
                 const SizedBox(
@@ -159,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 GridView.builder(
                   physics: const BouncingScrollPhysics(),
-                  itemCount: 5,
+                  itemCount: coffeeMenu.productCount,
                   shrinkWrap: true,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -168,11 +220,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const ProductDetailsScreen()));
-                        //To do navigate product detail screen
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductDetailsScreen(productId: coffeeMenu.menuProducts[index].productId),
+                          ),
+                        );
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -195,14 +247,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Image.asset(
-                                  "assets/images/cappuccino.jpg",
+                                Image.network(
+                                  coffeeMenu.menuProducts[index].photoPath,
                                   width:
-                                      MediaQuery.of(context).size.width / 3.0,
-                                  height: 100.0,
+                                      MediaQuery.of(context).size.width / 4.0,
+                                  height: MediaQuery.of(context).size.width / 4.0,
                                 ),
                                 Text(
-                                  "Random Textaaaa  ${(index + 1) * 500}",
+                                  coffeeMenu.menuProducts[index].name,
                                   textAlign: TextAlign.center,
                                 ),
                               ],
@@ -213,69 +265,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-
-                // GridView.builder(
-                //   shrinkWrap: true,
-                //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                //     crossAxisCount: 2,
-                //     mainAxisSpacing: 12,
-                //     crossAxisSpacing: 12,
-                //     childAspectRatio: 0.8,
-                //   ),
-                //   itemBuilder: (context, index) {
-                //     return Container(
-                //       decoration: BoxDecoration(
-                //         color: Colors.white,
-                //         borderRadius: BorderRadius.circular(8),
-                //         boxShadow: [
-                //           BoxShadow(
-                //             color: Colors.grey.withOpacity(0.5),
-                //             spreadRadius: 2,
-                //             blurRadius: 5,
-                //             offset: const Offset(0, 3),
-                //           ),
-                //         ],
-                //       ),
-                //       child: Column(
-                //         children: [
-                //           Image.asset(
-                //             'assets/coffee_image_$index.png',
-                //             width: 100,
-                //             height: 100,
-                //           ),
-                //           const SizedBox(height: 8),
-                //           Text(
-                //             'Coffee $index',
-                //             style: const TextStyle(
-                //               fontWeight: FontWeight.bold,
-                //               fontSize: 16,
-                //               color: Colors.black,
-                //             ),
-                //           ),
-                //           const SizedBox(height: 4),
-                //           const Text(
-                //             'Price: \$5',
-                //             style: TextStyle(
-                //               fontSize: 14,
-                //               color: Colors.grey,
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     );
-                //   },
-                // ),
-
-                // Expanded(
-                //   child: DynamicHeightGridView(
-                //       mainAxisSpacing: 12,
-                //       crossAxisSpacing: 12,
-                //       builder: (context, index) {
-                //         return const ProductWidget();
-                //       },
-                //       itemCount: 200,
-                //       crossAxisCount: 2),
-                // )
               ],
             ),
           ),

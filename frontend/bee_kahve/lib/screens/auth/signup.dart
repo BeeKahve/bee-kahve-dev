@@ -1,6 +1,9 @@
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/consts/validator.dart';
+import 'package:bee_kahve/screens/auth/signin.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -37,11 +40,64 @@ class _SignUpScreenState extends State<SignUpScreen> {
       super.dispose();
     }
   }
-  Future<void> _signup()async{
-    final isValid = _formkey.currentState!.validate();
-    FocusScope.of(context).unfocus();
+ Future<void> _signup() async {
+  final isValid = _formkey.currentState!.validate();
+  FocusScope.of(context).unfocus();
 
+  if (isValid) {
+    final String name = _nameController.text;
+    final String email = _emailController.text;
+    final String password = _passwordController.text;
+    final String address = _addressController.text;
+
+    // Create the request body
+    final Map<String, dynamic> requestBody = {
+      'email': email,
+      'password': password,
+      'name': name,
+      'address': address,
+    };
+    print(requestBody);
+    try {
+      final response = await http.post(
+        Uri.parse('http://51.20.117.162:8000/register'),
+        body: json.encode(requestBody),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        // Parse the JSON response
+        final jsonResponse = json.decode(response.body);
+
+        // Check if the registration was successful
+        if (jsonResponse['status'] == true) {
+          // Registration successful
+          // Handle success as needed
+          print('Registration successful');
+          print('Message: ${jsonResponse['message']}');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    const SignInScreen()));
+        } else {
+          // Registration failed
+          // Handle failure, e.g., display an error message
+          print('Registration failed. Message: ${jsonResponse['message']}');
+        }
+      } else {
+        // Registration failed
+        // Handle failure, e.g., display an error message
+        print('Registration failed. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle other exceptions, such as network issues
+      print('Error during registration: $e');
+    }
   }
+}
+
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
