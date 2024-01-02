@@ -1,4 +1,7 @@
-// updateStatus.js
+// Novruz Amirov: 150200903
+// Software Engineerin - BLG 411E - 2023/2024 - Semester Project
+// updateStatus.js -> an employee page to update the status of the orders
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Table, Modal } from 'antd';
 import axios from 'axios';
@@ -12,13 +15,12 @@ const UpdateStatus = () => {
   const employeeName = location.state && location.state.employeeName;
   const navigate = useNavigate()
   const [clickedButtons, setClickedButtons] = useState({});
-  const [isCancelModalVisible, setIsCancelModalVisible] = useState(false); // Added state for Cancel modal
-  const [cancelOrderID, setCancelOrderID] = useState(null); // Added state to store order ID for cancel
+  const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
+  const [cancelOrderID, setCancelOrderID] = useState(null);
 
   const fetchOrderList = useCallback(async () => {
     try {
       const response = await axios.post('http://51.20.117.162:8000/get_active_orders?admin_id=1');
-      console.log(response)
       setOrderList(response.data.orders);
     } catch (error) {
       console.error('Error fetching order list:', error);
@@ -52,7 +54,6 @@ const UpdateStatus = () => {
 
   const handleButtonClick = async (order_id, status) => {
     if (status === 'cancelled') {
-      // Open the Cancel modal and store the order ID
       setIsCancelModalVisible(true);
       setCancelOrderID(order_id);
     } else {
@@ -69,9 +70,7 @@ const UpdateStatus = () => {
     }
   };
 
-
   const handleCancelModalOk = async () => {
-    // Continue with canceling the order after "Yes" is clicked in the modal
     try {
       await axios.get(`http://51.20.117.162:8000/set_status?order_id=${cancelOrderID}&status=cancelled`);
       fetchOrderList();
@@ -86,7 +85,6 @@ const UpdateStatus = () => {
   };
 
   const handleCancelModalCancel = () => {
-    // Close the modal if "No" is clicked
     setIsCancelModalVisible(false);
   };
 
@@ -114,12 +112,10 @@ const UpdateStatus = () => {
 
         <div className="lower-content" style={{ height: '85%' }}>
           <h2>Order List</h2>
-          {/* Table for Order List */}
           <Table dataSource={orderList} rowKey="_id">
             <Column title="Order ID" dataIndex="order_id" key="order_id" render={(text, record) => <h3>Order ID: {text}</h3>} />
             <Column title="Products" dataIndex="line_items" key="line_items" render={(text, record) => (
               <div>
-                {/* Render product details for each order */}
                 {text.map((product) => (
                   <div key={product.product_id}>
                     <img src={product.photo_path} alt={product.name} style={{ width: 150, height: 150, marginRight: 8 }} />

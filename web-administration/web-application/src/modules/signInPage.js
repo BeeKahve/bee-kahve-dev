@@ -1,3 +1,7 @@
+// Novruz Amirov: 150200903
+// Software Engineerin - BLG 411E - 2023/2024 - Semester Project
+// signInPage.js -> First page welcomes the user of the web page asks his credentials if exist
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -11,11 +15,8 @@ const override = css`
   border-color: red;
 `;
 
-
-
 const SignIn = () => {
   const navigate = useNavigate();
-
   const [employeeAdmin, setEmployeeAdmin] = useState('employee');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

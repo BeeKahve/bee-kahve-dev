@@ -1,3 +1,7 @@
+// Novruz Amirov: 150200903
+// Software Engineerin - BLG 411E - 2023/2024 - Semester Project
+// updateCoffee.js -> an admin page to update an existing product
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Form, Input, Checkbox, Slider, message } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -11,14 +15,12 @@ const UpdateCoffee = () => {
   const [sugarChecked, setSugarChecked] = useState(false);
   const [iceChecked, setIceChecked] = useState(false);
   const [smallSizeOnlyChecked, setSmallSizeOnlyChecked] = useState(false)
+  const [activeMenu, setActiveMenu] = useState('Modify Menu');
 
   const fetchCoffeeDetails = useCallback(async () => {
     try {
       const response = await axios.get(`http://51.20.117.162:8000/get_full_product?product_id=${selectedCoffee.product_id}`);
       const coffeeDetails = response.data;
-      console.log(coffeeDetails)
-  
-      // Populate the form with coffee details
 
       form.setFieldsValue({
         name: coffeeDetails.coffee_name,
@@ -54,7 +56,7 @@ const UpdateCoffee = () => {
     } else {
       fetchCoffeeDetails();
     }
-  }, [selectedCoffee, navigate, fetchCoffeeDetails]); // Removed selectedCoffee from the dependency array to ensure it only runs on mount
+  }, [selectedCoffee, navigate, fetchCoffeeDetails]);
 
   const onFinish = async (values) => {
     try {
@@ -77,6 +79,7 @@ const UpdateCoffee = () => {
 
       console.log(small_cup_only)
 
+      // to calculate total amount to be exactly 100%
       if(isNaN(milk_amount)){
         milk_amount = 0
       }
@@ -107,7 +110,7 @@ const UpdateCoffee = () => {
     }
 
       const payload = {
-        admin_id: 1, // Assuming admin_id is 1 for the current admin
+        admin_id: 1, 
         coffee_name: name,
         photo_path: image,
         small_cup_only: smallSizeOnlyChecked ? true : false,
@@ -122,12 +125,7 @@ const UpdateCoffee = () => {
         ice_amount: ice_checkbox ? ice_amount || 0 : 0,
       };
 
-      // Use your API endpoint for updating instead of the placeholder URL
-      console.log("ice amount: ", ice_amount)
-      console.log(payload)
-      const response = await axios.post(`http://51.20.117.162:8000/update_product?product_id=${selectedCoffee.product_id}`, payload);
-
-      console.log(response);
+      await axios.post(`http://51.20.117.162:8000/update_product?product_id=${selectedCoffee.product_id}`, payload);
       message.success('Coffee updated successfully!');
       navigate('/adminPage');
     } catch (error) {
@@ -138,11 +136,7 @@ const UpdateCoffee = () => {
 
   const onRemoveCoffee = async () => {
     try {
-      // Use your API endpoint for removing instead of the placeholder URL
-      // console.log(`http://51.20.117.162:8000/delete_product?product_id=${selectedCoffee.product_id}`)
-      const response = await axios.get(`http://51.20.117.162:8000/delete_product?product_id=${selectedCoffee.product_id}`);
-
-      console.log(response);
+      await axios.get(`http://51.20.117.162:8000/delete_product?product_id=${selectedCoffee.product_id}`);
       message.success('Coffee removed successfully!');
       navigate('/adminPage');
     } catch (error) {
@@ -155,7 +149,6 @@ const UpdateCoffee = () => {
     navigate('/adminPage');
   };
 
-  const [activeMenu, setActiveMenu] = useState('Modify Menu');
 
   const handleModifyMenu = () => {
     navigate('/adminPage');
@@ -218,7 +211,7 @@ const UpdateCoffee = () => {
                 { required: true, message: 'Please upload an image!' },
               ]}
             >
-                 <Input />
+              <Input />
             </Form.Item>
             <Form.Item
               label="Coffee Name"
@@ -304,7 +297,6 @@ const UpdateCoffee = () => {
             >
               <Input type="number" />
             </Form.Item>
-            {/* Include the rest of the form fields here */}
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
                 Update Coffee

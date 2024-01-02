@@ -1,3 +1,7 @@
+// Novruz Amirov: 150200903
+// Software Engineerin - BLG 411E - 2023/2024 - Semester Project
+// employeeSignUp.js -> to register an employee
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -26,15 +30,13 @@ const EmployeeSignUp = () => {
   const navigate = useNavigate();
 
   const checkPasswordComplexity = (pwd) => {
-    // Add your password complexity criteria here
+    // password complexity regex for at least 8 chars, 1 lower 1 upper and 1 digit
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     return regex.test(pwd);
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (password !== confirmPassword) {
       setPasswordMatchError(true);
       setPasswordComplexityError(false);
@@ -48,7 +50,6 @@ const EmployeeSignUp = () => {
       setErrorMessage('Password must be at least 8 characters, include at least one lowercase letter, one uppercase letter, and one digit.');
       return;
     }
-
     
     const config = {
       headers: {
@@ -97,7 +98,6 @@ const EmployeeSignUp = () => {
             <BarLoader css={override} loading={loading} size={150} color={'#36D7B7'} />
           </div>
         )}
-
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -139,28 +139,22 @@ const EmployeeSignUp = () => {
             onChange={(e) => setRegisterPass(e.target.value)}
             required
           />
-
           {passwordMatchError && (
             <p className="error-message">Password and Confirm Password do not match.</p>
           )}
-
           {passwordComplexityError && (
             <p className="error-message">Password must be at least 8 characters, include at least one lowercase letter, one uppercase letter, and one digit.</p>
           )}
-
           {successMessage && (
             <p className="success-message">{successMessage}</p>
           )}
-
           {errorMessage && (
             <p className="error-message">{errorMessage}</p>
           )}
-
           <button type="submit" disabled={loading}>
             {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
-
         <div className="signin-link">
           <Link to="/signInPage">Already have an account? Sign In</Link>
         </div>

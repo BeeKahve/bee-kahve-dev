@@ -1,3 +1,7 @@
+// Novruz Amirov: 150200903
+// Software Engineerin - BLG 411E - 2023/2024 - Semester Project
+// employeePage.js -> employee page, to accept and deny orders, and changing the status of orders
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Table } from 'antd'; // Input
 import axios from 'axios';
@@ -11,12 +15,9 @@ const EmployeePage = () => {
   const location = useLocation();
   const employeeName = location.state && location.state.employeeName;
 
-//   const [employeeName, setEmployeeName] = useState('Employee Novruz'); // Replace with the actual employee name
-
   const fetchOrderList = useCallback(async () => {
     try {
       const response = await axios.get('http://51.20.117.162:8000/get_waiting_orders?admin_id=1');
-      console.log(response.data.orders)
       setOrderList(response.data.orders);
     } catch (error) {
       console.error('Error fetching order list:', error);
@@ -68,21 +69,14 @@ const EmployeePage = () => {
   const handleCancelOrder = async (orderId) => {
     try {
       // Make a request to update the order status to 'cancelled'
-      const response = await axios.get(`http://51.20.117.162:8000/set_status?order_id=${orderId}&status=cancelled`);
-      console.log(response)
-      
-      // Check the response and update the orderList accordingly
-      if (response.data.message === "Status is updated successfully.") {
-        fetchOrderList()
-      } 
+      await axios.get(`http://51.20.117.162:8000/set_status?order_id=${orderId}&status=cancelled`);
+      fetchOrderList()
     } 
     catch (error) {
       console.error('Error cancelling order:', error);
-      // You can show an error message to the user if needed
     }
   };
   
-
   const handleUpdateStatus = () => {
     // Redirect to /updateStatus when Update Order Status button is clicked
     navigate(`/updateStatus`, { state: { employeeName: employeeName } });
@@ -112,7 +106,6 @@ const EmployeePage = () => {
 
         <div className="lower-content" style={{ height: '85%' }}>
           <h2>Order List</h2>
-          {/* Table for Order List */}
           <Table dataSource={orderList} rowKey="_id" className='confirm-orders'>
             <Column title="Order ID" dataIndex="order_id" key="order_id" render={(text, record) => <h3>Order ID: {text}</h3>} />
             <Column
@@ -129,9 +122,7 @@ const EmployeePage = () => {
                           <p> Size: {product.size_choice}</p>
                           <p> Price: {product.price}</p>
                         </div>
-
                         <img src={product.photo_path} alt={product.name} style={{ width: 200, height: 200, marginRight: 8 }} />
-                        
                       </div>
                     ))
                   ) : (
@@ -157,8 +148,6 @@ const EmployeePage = () => {
           </Table>
         </div>
       </div>
-
-
     </div>
   );
 };

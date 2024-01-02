@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from 'react';
+// Novruz Amirov: 150200903
+// Software Engineerin - BLG 411E - 2023/2024 - Semester Project
+// adminPage.js for admin, to modify stock and adds new products to menu
+
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Table } from 'antd'; // Modal, Form, Input
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -17,8 +21,20 @@ const AdminPage = () => {
   let [coffeeList, setCoffeeList] = useState([]);
   const [selectedCoffee, setSelectedCoffee] = useState({});
   const [loading, setLoading] = useState(false);
-
+  const [activeMenu, setActiveMenu] = useState('Modify Menu');
+  const [selectedRowKey, setSelectedRowKey] = useState(null);
   const navigate = useNavigate();
+
+  const fetchCoffeeList = useCallback(async () => {
+    try {
+      setLoading(true)
+      const response = await axios.get('http://51.20.117.162:8000/get_menu');
+      setCoffeeList(response.data.menuProducts);
+      setLoading(false)  
+    } catch (error) {
+      console.error('Error fetching coffee list:', error);
+    }
+  }, [setCoffeeList]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -27,25 +43,11 @@ const AdminPage = () => {
     } else {
       navigate('/signInPage'); 
     }
-  }, [navigate]);
-
-  const fetchCoffeeList = async () => {
-    try {
-      setLoading(true)
-      const response = await axios.get('http://51.20.117.162:8000/get_menu');
-      console.log(response)
-      setCoffeeList(response.data.menuProducts);
-      setLoading(false)  
-    } catch (error) {
-      console.error('Error fetching coffee list:', error);
-    }
-  };
+  }, [navigate, fetchCoffeeList]);
 
   const handleAddCoffee = () => {
     navigate('/addCoffee');
   };
-
-  const [activeMenu, setActiveMenu] = useState('Modify Menu');
 
   const handleModifyMenu = () => {
     navigate('/adminPage');
@@ -63,16 +65,11 @@ const AdminPage = () => {
     navigate('/signInPage');
   };
 
-  const [selectedRowKey, setSelectedRowKey] = useState(null);
-
   const handleRowClick = (record) => {
     if (selectedRowKey === record.product_id) {
-      // If the clicked row is already selected, clear the selection
       setSelectedRowKey(null);
       setSelectedCoffee({});
-      // console.log(selectedCoffee)
     } else {
-      // Set the clicked row as selected
       setSelectedRowKey(record.product_id);
       setSelectedCoffee(record);
     }
