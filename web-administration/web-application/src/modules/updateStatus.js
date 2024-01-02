@@ -1,6 +1,6 @@
 // updateStatus.js
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Table, Modal, Form } from 'antd';
+import { Button, Table, Modal } from 'antd';
 import axios from 'axios';
 import { useNavigate , useLocation} from 'react-router-dom';
 
@@ -8,12 +8,12 @@ const { Column } = Table;
 
 const UpdateStatus = () => {
   const [orderList, setOrderList] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalTitle, setModalTitle] = useState('');
-  const [selectedOrder, setSelectedOrder] = useState({});
   const location = useLocation();
   const employeeName = location.state && location.state.employeeName;
   const navigate = useNavigate()
+  const [clickedButtons, setClickedButtons] = useState({});
+  const [isCancelModalVisible, setIsCancelModalVisible] = useState(false); // Added state for Cancel modal
+  const [cancelOrderID, setCancelOrderID] = useState(null); // Added state to store order ID for cancel
 
   const fetchOrderList = useCallback(async () => {
     try {
@@ -45,36 +45,49 @@ const UpdateStatus = () => {
     }
   }, [fetchOrderList, navigate, employeeName]);
 
-
-  const showModal = (title, order) => {
-    setIsModalVisible(true);
-    setModalTitle(title);
-    setSelectedOrder(order);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleReadyOrder = () => {
-    // Logic for marking order as ready
-    handleCancel(); // Close the modal after action
-  };
-
   const handleExitAccount = () => {
     localStorage.removeItem('token');
     navigate('/signInPage');
   };
 
-  const handleDeliveredOrder = async () => {
-    try {
-      // Update the order status to 'Delivered' and send back to the server
-      await axios.put(`/api/orders/${selectedOrder._id}`, { status: 'Delivered' });
-      handleCancel(); // Close the modal after action
-      fetchOrderList(); // Refresh the order list
-    } catch (error) {
-      console.error('Error updating order status:', error);
+  const handleButtonClick = async (order_id, status) => {
+    if (status === 'cancelled') {
+      // Open the Cancel modal and store the order ID
+      setIsCancelModalVisible(true);
+      setCancelOrderID(order_id);
+    } else {
+      try {
+        await axios.get(`http://51.20.117.162:8000/set_status?order_id=${order_id}&status=${status}`);
+        fetchOrderList();
+        setClickedButtons((prevClickedButtons) => ({
+          ...prevClickedButtons,
+          [order_id]: status,
+        }));
+      } catch (error) {
+        console.error('Error updating order status:', error);
+      }
     }
+  };
+
+
+  const handleCancelModalOk = async () => {
+    // Continue with canceling the order after "Yes" is clicked in the modal
+    try {
+      await axios.get(`http://51.20.117.162:8000/set_status?order_id=${cancelOrderID}&status=cancelled`);
+      fetchOrderList();
+      setClickedButtons((prevClickedButtons) => ({
+        ...prevClickedButtons,
+        [cancelOrderID]: 'cancelled',
+      }));
+      setIsCancelModalVisible(false); // Close the modal
+    } catch (error) {
+      console.error('Error cancelling order:', error);
+    }
+  };
+
+  const handleCancelModalCancel = () => {
+    // Close the modal if "No" is clicked
+    setIsCancelModalVisible(false);
   };
 
   return (
@@ -109,7 +122,7 @@ const UpdateStatus = () => {
                 {/* Render product details for each order */}
                 {text.map((product) => (
                   <div key={product.product_id}>
-                    <img src={product.photo_path} alt={product.name} style={{ width: 100, height: 100, marginRight: 8 }} />
+                    <img src={product.photo_path} alt={product.name} style={{ width: 150, height: 150, marginRight: 8 }} />
                     <span>{product.name} - Size: {product.size} - Price: {product.price}</span>
                   </div>
                 ))}
@@ -119,32 +132,39 @@ const UpdateStatus = () => {
               title="Action"
               key="action"
               render={(text, record) => (
-                <span>
-                  <Button type="primary" onClick={() => showModal('Ready Order', record)}>
-                    Ready
-                  </Button>
-                  <Button type="primary" onClick={() => showModal('Delivered Order', record)}>
-                    Delivered
-                  </Button>
-                </span>
+                <div className='update-status-buttons'>
+               <Button
+                type={clickedButtons[record.order_id] === 'on_the_way' ? 'primary' : 'default'}
+                onClick={() => handleButtonClick(record.order_id, 'on_the_way')}
+              >
+                On The Way
+              </Button>
+              <Button
+                type={clickedButtons[record.order_id] === 'delivered' ? 'primary' : 'default'}
+                onClick={() => handleButtonClick(record.order_id, 'delivered')}
+              >
+                Delivered
+              </Button>
+              <Button
+                type={clickedButtons[record.order_id] === 'cancelled' ? 'primary' : 'default'}
+                onClick={() => handleButtonClick(record.order_id, 'cancelled')}
+              >
+                Cancel
+              </Button>
+                </div>
               )}
             />
           </Table>
+          <Modal
+        title="Cancel Order"
+        visible={isCancelModalVisible}
+        onOk={handleCancelModalOk}
+        onCancel={handleCancelModalCancel}
+      >
+        <p>Are you sure you want to cancel this order?</p>
+      </Modal>
         </div>
       </div>
-
-      <Modal title={modalTitle} visible={isModalVisible} onCancel={handleCancel} footer={null}>
-        {/* Form for Order Modal */}
-        <Form onFinish={modalTitle === 'Ready Order' ? handleReadyOrder : handleDeliveredOrder}>
-          {/* Form fields go here */}
-          {/* You can customize the form fields based on your requirements */}
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              {modalTitle === 'Ready Order' ? 'Mark as Ready' : 'Mark as Delivered'}
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
     </div>
   );
 };
