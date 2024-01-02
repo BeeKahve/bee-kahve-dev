@@ -6,6 +6,7 @@ import axios from 'axios';
 const AddCoffee = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const [smallSizeOnlyChecked, setSmallSizeOnlyChecked] = useState(false)
 
   useEffect(() => {
     // Check if the user has a valid token
@@ -14,12 +15,14 @@ const AddCoffee = () => {
     if (token !== 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
       navigate('/signInPage');
     } 
+
   }, [navigate]);
 
 
     // State variables for checkboxes
     const [sugarChecked, setSugarChecked] = useState(false);
     const [iceChecked, setIceChecked] = useState(false);
+    
 
   const [activeMenu, setActiveMenu] = useState('Modify Menu');
 
@@ -57,6 +60,8 @@ const AddCoffee = () => {
         priceSmall,
       } = values;
 
+      console.log(small_cup_only)
+
       if(isNaN(milk_amount)){
         milk_amount = 0
       }
@@ -90,7 +95,7 @@ const AddCoffee = () => {
         admin_id: 1, // Assuming admin_id is 1 for the current admin
         coffee_name: name,
         photo_path: image,
-        small_cup_only: small_cup_only,
+        small_cup_only: smallSizeOnlyChecked ? true : false,
         price: Number(priceSmall),
         espresso_amount,
         milk_amount: milk_amount || 0,
@@ -245,7 +250,7 @@ const AddCoffee = () => {
           <Input type="number" />
         </Form.Item>
       )}
-              <Form.Item label="Size" name="small_cup_only">
+              <Form.Item label="Size" name="small_cup_only" onChange={(e) => setSmallSizeOnlyChecked(e.target.checked)}>
                 <Checkbox>
                   Small Only
                 </Checkbox>
