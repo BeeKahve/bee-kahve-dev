@@ -421,3 +421,10 @@
   font-size: 15px;
   font-weight: bold;
 }
+
+.update-status-buttons{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 150px;
+}
