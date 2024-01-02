@@ -19,18 +19,33 @@ const EmployeeSignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [passwordMatchError, setPasswordMatchError] = useState(false);
+  const [passwordComplexityError, setPasswordComplexityError] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [registerPass, setRegisterPass] = useState('');
-
   const navigate = useNavigate();
+
+  const checkPasswordComplexity = (pwd) => {
+    // Add your password complexity criteria here
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    return regex.test(pwd);
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
       setPasswordMatchError(true);
+      setPasswordComplexityError(false);
       setErrorMessage('');
+      return;
+    }
+
+    if (!checkPasswordComplexity(password)) {
+      setPasswordMatchError(false);
+      setPasswordComplexityError(true);
+      setErrorMessage('Password must be at least 8 characters, include at least one lowercase letter, one uppercase letter, and one digit.');
       return;
     }
 
@@ -54,7 +69,6 @@ const EmployeeSignUp = () => {
         return;
       }
 
-    
       setLoading(true);
       const res = await axios.post('http://51.20.117.162:8000/web_register', body, config);
 
@@ -128,6 +142,10 @@ const EmployeeSignUp = () => {
 
           {passwordMatchError && (
             <p className="error-message">Password and Confirm Password do not match.</p>
+          )}
+
+          {passwordComplexityError && (
+            <p className="error-message">Password must be at least 8 characters, include at least one lowercase letter, one uppercase letter, and one digit.</p>
           )}
 
           {successMessage && (
