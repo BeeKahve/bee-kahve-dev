@@ -36,7 +36,7 @@ class CartBottomSheetWidget extends StatelessWidget {
                           overflow: TextOverflow.ellipsis),
                     ),
                     Text(
-                      "16.00\$",
+                      "600.00\₺",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppColors.yellow,
