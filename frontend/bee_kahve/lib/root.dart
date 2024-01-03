@@ -29,7 +29,7 @@ class _RootScreenState extends State<RootScreen> {
         widget.currentScreen; // Update currentScreen from widget parameter
     screens = [
       HomeScreen(user: widget.user),
-      const CartScreen(),
+      CartScreen(),
       const ProfileScreen(),
     ];
     controller = PageController(initialPage: currentScreen);
