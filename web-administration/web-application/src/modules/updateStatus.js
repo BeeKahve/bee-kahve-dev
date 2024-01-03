@@ -21,6 +21,7 @@ const UpdateStatus = () => {
   const fetchOrderList = useCallback(async () => {
     try {
       const response = await axios.post('http://51.20.117.162:8000/get_active_orders?admin_id=1');
+      console.log(response.data.orders)
       setOrderList(response.data.orders);
     } catch (error) {
       console.error('Error fetching order list:', error);
@@ -114,12 +115,23 @@ const UpdateStatus = () => {
           <h2>Order List</h2>
           <Table dataSource={orderList} rowKey="_id">
             <Column title="Order ID" dataIndex="order_id" key="order_id" render={(text, record) => <h3>Order ID: {text}</h3>} />
-            <Column title="Products" dataIndex="line_items" key="line_items" render={(text, record) => (
+            <Column title="Status" dataIndex="order_status" key="order_status" render={(text, record) => <h3>Status: {text}</h3>} />
+            <Column className='update-status-product' title="Image" dataIndex="line_items" key="line_items" render={(text, record) => (
               <div>
                 {text.map((product) => (
                   <div key={product.product_id}>
                     <img src={product.photo_path} alt={product.name} style={{ width: 150, height: 150, marginRight: 8 }} />
-                    <span>{product.name} - Size: {product.size} - Price: {product.price}</span>
+                  </div>
+                ))}
+              </div>
+            )} />
+            <Column title="Product" dataIndex="line_items" key="line_items" render={(text, record)  => (
+              <div>
+                {text.map((product) => (
+                  <div key={product.product_id}>
+                    <p>Name: {product.name}</p>
+                    <p>Size: {product.size}</p>
+                    <p>Price: {product.price}</p>
                   </div>
                 ))}
               </div>

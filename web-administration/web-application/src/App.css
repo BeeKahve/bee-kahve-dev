@@ -414,3 +414,15 @@
   justify-content: space-between;
   height: 150px;
 }
+
+.update-status-product{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
+.update-status-product span{
+  border: 2px solid red;
+
+}

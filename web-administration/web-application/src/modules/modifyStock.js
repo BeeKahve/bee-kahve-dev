@@ -87,6 +87,9 @@ const ModifyStock = () => {
       Modal.success({
         title: 'Stock Updated',
         content: 'Stock has been successfully updated.',
+        onOk: () => {
+          window.location.reload();
+        },
       });
     } catch (error) {
       console.error('Error updating stock:', error);
