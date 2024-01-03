@@ -80,11 +80,6 @@ class _SignInScreenState extends State<SignInScreen> {
             });
             // Example: Navigate to the profile screen after successful login
             // ignore: use_build_context_synchronously
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => HomeScreen(user: user),
-              ),
-            );
             // ignore: use_build_context_synchronously
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
