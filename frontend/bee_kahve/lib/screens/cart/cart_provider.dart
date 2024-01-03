@@ -12,8 +12,8 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeFromCart(int productId) {
-    _cartItems.removeWhere((product) => product.id == productId);
+  void removeFromCart(Coffee product) {
+    _cartItems.removeWhere((thisProduct) => thisProduct == product);
     notifyListeners();
   }
   void clearCart() {

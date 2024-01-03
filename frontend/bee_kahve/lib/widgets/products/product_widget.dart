@@ -17,9 +17,7 @@ class _ProductWidgetState extends State<ProductWidget> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
-        onTap: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductDetailsScreen()));
-          //To do navigate product detail screen
+        onTap: (){ 
         },
         child: Column(
           children: [
