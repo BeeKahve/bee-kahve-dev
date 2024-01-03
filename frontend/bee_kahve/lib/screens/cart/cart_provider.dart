@@ -7,7 +7,6 @@ class CartProvider with ChangeNotifier {
   Map<Coffee, int> get cartItems => _cartItems;
 
   void addToCart(Coffee product) {
-    // You can implement logic to handle duplicate items or update quantities here
     if (_cartItems.containsKey(product)) {
       _cartItems.update(product, (value) => value + 1);
     } else {
