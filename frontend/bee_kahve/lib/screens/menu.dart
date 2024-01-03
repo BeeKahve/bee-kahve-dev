@@ -17,13 +17,23 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   late TextEditingController searchTextController;
   late MenuModel coffeeMenu;
+  late List<MenuProductModel> displayedProducts;
 
   @override
   void initState() {
     super.initState();
     searchTextController = TextEditingController();
     coffeeMenu = MenuModel(productCount: 0, menuProducts: []);
+    displayedProducts = [];
     fetchMenu();
+  }
+
+  void searchCoffee(String searchTerm) {
+    setState(() {
+      displayedProducts = coffeeMenu.menuProducts
+          .where((product) => product.name.toLowerCase().contains(searchTerm.toLowerCase()))
+          .toList();
+    });
   }
 
   Future<void> fetchMenu() async {
@@ -53,6 +63,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
         setState(() {
           coffeeMenu = menu;
+          displayedProducts = coffeeMenu.menuProducts;
         });
       } else {
         print('Failed to load menu data: ${response.statusCode}');
@@ -112,7 +123,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 ),
               ),
               onSubmitted: (value) {
-                log("value of the controller text: ${searchTextController.text}");
+                searchCoffee(value);
               },
             ),
             const SizedBox(
