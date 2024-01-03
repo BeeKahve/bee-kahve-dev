@@ -74,7 +74,8 @@ const SignIn = () => {
 
     try {
       setLoading(true)
-      const res = await axios.post('http://51.20.117.162:8000/web_login', body, config);
+      // const res = await axios.post('http://51.20.117.162:8000/web_login', body, config);
+      const res = await axios.post('www.bee-kahve-dev.vercel.app/web_login', body, config);
       console.log(res)
 
       if (res.data.email !== null) {
