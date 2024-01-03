@@ -1,14 +1,14 @@
+import 'package:bee_kahve/models/user_model.dart';
+import 'package:bee_kahve/root.dart';
 import 'package:flutter/material.dart';
 import '../../consts/app_color.dart';
 
 class EmptyCartWidget extends StatelessWidget {
-  const EmptyCartWidget({
-    super.key,
-    required this.imagePath,
-    required this.title,
+  final User? user;
+  const EmptyCartWidget( {Key? key, this.user, required this.imagePath, required this.title,
     required this.subtitle,
-    required this.buttonText
-  });
+    required this.buttonText}) : super(
+    key: key);
 
   final String imagePath, title, subtitle, buttonText;
   @override
@@ -70,7 +70,14 @@ class EmptyCartWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pop(context);
+                 Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => RootScreen(currentScreen: 0, user: user),
+              ),
+            );
+              },
               child: Text(
                 buttonText,
                 style: const TextStyle(

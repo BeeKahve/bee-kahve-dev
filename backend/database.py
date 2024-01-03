@@ -55,6 +55,11 @@ class DatabaseManager:
     def __init__(self, db_host, db_user, db_password, db_name):
         self.database = Database(db_host, db_user, db_password, db_name)
 
+    def set_timeout_values(self):
+        self.database.execute_query("SET @@wait_timeout = 600000")
+        self.database.execute_query("SET @@interactive_timeout = 600000")
+        self.database.execute_query("SET @@global.wait_timeout = 600000")
+        self.database.execute_query("SET @@global.interactive_timeout = 600000")
 
     def get_product_ingredient(self, product_id):
         query_product = "SELECT * FROM Products WHERE product_id = %s"  # list of tuples. each tuple is a product
@@ -281,8 +286,8 @@ class DatabaseManager:
     
     # check
     def get_menu(self):
-        query_menu = "SELECT * FROM Products"
-        products = self.database.fetch_data(query_menu)
+        query_menu = "SELECT * FROM Products WHERE is_product_disabled = %s"
+        products = self.database.fetch_data(query_menu, (0,))
 
         if products == []:
             return False, None
@@ -536,8 +541,8 @@ class DatabaseManager:
     
 
     def delete_product(self, product_id):
-        query_product = "DELETE FROM Products WHERE product_id = %s"
-        return self.database.execute_query(query_product, (product_id,))
+        query_product = "UPDATE Products SET is_product_disabled = %s WHERE product_id = %s"
+        return self.database.execute_query(query_product, (1, product_id))
 
 
     # Returns None if an insertion failed, "waiting" otherwise.

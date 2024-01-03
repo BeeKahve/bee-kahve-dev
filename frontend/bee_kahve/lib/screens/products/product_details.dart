@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/models/menu_product_model.dart';
 import 'package:bee_kahve/models/product_model.dart';
+import 'package:bee_kahve/root.dart';
 import 'package:bee_kahve/screens/cart/cart_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +84,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     // Add the product to the cart using the cart provider
     CartProvider cartProvider = CartProvider();
     cartProvider.addToCart(productToAdd);
-
+    Navigator.pop(context);
+    Navigator.pop(context);
     // Additional logic (e.g., show a confirmation message)
   }
 
@@ -104,6 +106,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               style: const TextStyle(
                   fontWeight: FontWeight.normal,
                   fontSize: 16,
+                  color: AppColors.textColor),
+            ),
+          )
+        : const SizedBox.shrink();
+  }
+
+  Widget coffeeDetailsText(String text, bool isVisible) {
+    return isVisible
+        ? Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              text,
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                   color: AppColors.textColor),
             ),
           )
@@ -331,13 +348,22 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                       ),
                     const SizedBox(
-                      height: 25,
+                      height: 10,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            setState(() {
+                              _selectedSize = 'small';
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: _selectedSize == 'small'
+                                ? AppColors.yellow
+                                : null,
+                          ),
                           child: Text(
                             "Small\n${product?['price']?.toStringAsFixed(2) ?? ''}",
                             style: const TextStyle(color: AppColors.textColor),
@@ -345,7 +371,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            setState(() {
+                              _selectedSize = 'medium';
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: _selectedSize == 'medium'
+                                ? AppColors.yellow
+                                : null,
+                          ),
                           child: Text(
                             "Medium\n${(product?['price'] * 1.3)?.toStringAsFixed(2)}",
                             style: const TextStyle(color: AppColors.textColor),
@@ -353,7 +388,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            setState(() {
+                              _selectedSize = 'large';
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: _selectedSize == 'large'
+                                ? AppColors.yellow
+                                : null,
+                          ),
                           child: Text(
                             "Large\n${(product?['price'] * 1.7)?.toStringAsFixed(2)}",
                             style: const TextStyle(color: AppColors.textColor),
@@ -376,12 +420,25 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          await _addCart(product);
+                          if (_selectedSize == null ||
+                              _selectedSize == 'not selected' ||
+                              _selectedMilkType == null ||
+                              _selectedMilkType == 'Milk Options') {
+                            // Display an error message (you can use a SnackBar or any other suitable widget)
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Please choose both milk type and size before adding to the cart.'),
+                                duration: Duration(seconds: 3),
+                              ),
+                            );
+                          } else {
+                            // The user has chosen both milk type and size, proceed to add the product to the cart
+                            await _addCart(product);
+                          }
                         },
-                        child: const Text(
-                          "Add to Cart",
-                          style: TextStyle(color: AppColors.darkColor),
-                        ),
+                        child: const Text("Add to Cart",
+                            style: TextStyle(color: AppColors.darkColor)),
                       ),
                     ),
                   ],
