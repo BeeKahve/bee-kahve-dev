@@ -286,8 +286,8 @@ class DatabaseManager:
     
     # check
     def get_menu(self):
-        query_menu = "SELECT * FROM Products"
-        products = self.database.fetch_data(query_menu)
+        query_menu = "SELECT * FROM Products WHERE is_product_disabled = %s"
+        products = self.database.fetch_data(query_menu, (0,))
 
         if products == []:
             return False, None
@@ -541,8 +541,8 @@ class DatabaseManager:
     
 
     def delete_product(self, product_id):
-        query_product = "DELETE FROM Products WHERE product_id = %s"
-        return self.database.execute_query(query_product, (product_id,))
+        query_product = "UPDATE Products SET is_product_disabled = %s WHERE product_id = %s"
+        return self.database.execute_query(query_product, (1, product_id))
 
 
     # Returns None if an insertion failed, "waiting" otherwise.
