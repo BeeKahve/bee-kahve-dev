@@ -9,7 +9,7 @@ class RootScreen extends StatefulWidget {
   final int currentScreen;
   final User? user; // Add currentScreen parameter
 
-  const RootScreen({Key? key, required this.currentScreen, this.user})
+  const RootScreen({Key? key, this.currentScreen = 0, this.user})
       : super(key: key);
 
   @override
@@ -29,7 +29,7 @@ class _RootScreenState extends State<RootScreen> {
         widget.currentScreen; // Update currentScreen from widget parameter
     screens = [
       HomeScreen(user: widget.user),
-      const CartScreen(),
+      CartScreen(),
       const ProfileScreen(),
     ];
     controller = PageController(initialPage: currentScreen);
