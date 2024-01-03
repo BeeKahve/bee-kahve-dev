@@ -1,20 +1,27 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/root.dart';
-import 'package:bee_kahve/screens/home.dart';
-import 'package:bee_kahve/screens/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:bee_kahve/consts/validator.dart';
+import 'package:bee_kahve/screens/cart/cart_provider.dart';
+import 'package:bee_kahve/screens/products/product_details.dart';
+import 'package:bee_kahve/models/user_model.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class PaymentPage extends StatefulWidget {
-  const PaymentPage({super.key});
+  final User? user;
 
+  const PaymentPage({Key? key, this.user}) : super(key: key);
   @override
   State<PaymentPage> createState() => _PaymentPage();
 }
 
 class _PaymentPage extends State<PaymentPage> {
+  User? user;
   late final TextEditingController _cardNumberController;
   late final TextEditingController _dateController;
   late final TextEditingController _cvvController;
@@ -41,14 +48,63 @@ class _PaymentPage extends State<PaymentPage> {
     final isValid = _formkey.currentState!.validate();
     FocusScope.of(context).unfocus();
     if (isValid) {
-      Navigator.pop(context);
-      Navigator.pop(context);
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const RootScreen(
-                    currentScreen: 2,
-                  )));
+      CartProvider cartProvider = CartProvider();
+      final List<Map<String, dynamic>> listItems = [];
+
+      for (Coffee product in cartProvider.cartItems.keys) {
+        for (int i = 0; i < cartProvider.cartItems[product]!; i++) {
+          listItems.add({
+            "product_id": product.id,
+            "name": product.name,
+            "photo_path": product.photoPath,
+            "price": product.price,
+            "size_choice": product.size,
+            "milk_choice": product.milkType,
+            "extra_shot_choice": product.extraShot,
+            "caffein_choice": product.decaf,
+          });
+        }
+      }
+
+      final Map<String, dynamic> requestBody = {
+        'customer_id': user?.customerId,
+        'line_items': listItems,
+      };
+
+      try {
+        final response = await http.post(
+          Uri.parse('http://51.20.117.162:8000/place_order'),
+          body: json.encode(requestBody),
+          headers: {'Content-Type': 'application/json'},
+        );
+
+        if (response.statusCode == 200) {
+          final jsonResponse = json.decode(response.body);
+
+          if (jsonResponse['status'] == true) {
+            print("Order placed successfully");
+            print("Message: ${jsonResponse['message']}");
+            cartProvider.clearCart();
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const RootScreen(
+                          currentScreen: 2,
+                        )));
+          } else {
+            print(
+                "Order placement failed. Message: ${jsonResponse['message']}");
+          }
+        } else {
+          print('Order placement failed: Status code: ${response.statusCode}');
+          // Handle the error if the server did not return a 200 OK response
+        }
+      } catch (e) {
+        print('Error during order placement: $e');
+        // Handle other exceptions, such as network issues
+      }
     }
   }
 

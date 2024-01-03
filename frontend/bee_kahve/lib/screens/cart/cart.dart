@@ -45,7 +45,8 @@ class CartScreen extends StatelessWidget {
             return ListView.builder(
               itemCount: cartProvider.cartItems.length,
               itemBuilder: (context, index) {
-                return CartWidget(product: cartProvider.cartItems[index]);
+                return CartWidget(
+                    product: cartProvider.cartItems.keys.toList()[index]);
               },
             );
           }
@@ -56,7 +57,8 @@ class CartScreen extends StatelessWidget {
           if (cartProvider.cartItems.isNotEmpty) {
             return const CartBottomSheetWidget();
           } else {
-            return SizedBox.shrink(); // Return an empty widget if the cart is empty
+            return SizedBox
+                .shrink(); // Return an empty widget if the cart is empty
           }
         },
       ),
