@@ -17,7 +17,7 @@ class CartWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: FancyShimmerImage(
-                imageUrl: 'https://i.ibb.co/8r1Ny2n/20-Nike-Air-Force-1-07.png',
+                imageUrl: 'https://drive.google.com/uc?id=1XMGog5t20jutfjLY5IDCCL20iO-KdRw6',
                 width: size.height * 0.2,
                 height: size.height * 0.2,
 
@@ -33,7 +33,7 @@ class CartWidget extends StatelessWidget {
                       children: [
                         SizedBox(
                             width: size.width * 0.6,
-                            child: Text("Cappuccino" * 10)
+                            child: Text("Cappuccino")
                         ),
                         Column(
                           children: [
@@ -48,7 +48,7 @@ class CartWidget extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("16.00\$"),
+                        const Text("120.00\₺"),
                         OutlinedButton.icon(
                             onPressed: (){},
                             icon: const Icon(Icons.arrow_drop_down) ,

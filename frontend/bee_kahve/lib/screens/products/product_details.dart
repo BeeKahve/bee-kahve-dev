@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -101,10 +102,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ],
                     ),
                     const SizedBox(height: 20,),
-                    Image.network(
-                      product?['photo_path'] ?? '',
-                      height: 200,
-                      width: double.infinity,
+                    CachedNetworkImage(
+                      imageUrl: product?['photo_path'] ?? '',
+                      placeholder: (context, url) => const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                      width: double.infinity, // Set image width to full width
+                      height: MediaQuery.of(context).size.width / 2.0,
                     ),
                     const SizedBox(height: 20,),
                     Padding(
@@ -122,7 +125,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 20,),
-                     buildIngredientText("Contains milk", product?['contains_milk'] == true),
+                    buildIngredientText("Contains milk", product?['contains_milk'] == true),
                     buildIngredientText("Contains chocolate syrup", product?['contains_chocolate_syrup'] == true),
                     buildIngredientText("Contains white chocolate syrup", product?['contains_white_chocolate_syrup'] == true),
                     buildIngredientText("Contains caramel syrup", product?['contains_caramel_syrup'] == true),
