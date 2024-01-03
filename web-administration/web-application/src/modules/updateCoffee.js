@@ -136,7 +136,8 @@ const UpdateCoffee = () => {
 
   const onRemoveCoffee = async () => {
     try {
-      await axios.get(`http://51.20.117.162:8000/delete_product?product_id=${selectedCoffee.product_id}`);
+      const response = await axios.get(`http://51.20.117.162:8000/delete_product?product_id=${selectedCoffee.product_id}`);
+      console.log(response)
       message.success('Coffee removed successfully!');
       navigate('/adminPage');
     } catch (error) {
