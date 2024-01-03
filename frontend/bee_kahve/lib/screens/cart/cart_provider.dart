@@ -2,7 +2,7 @@ import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:flutter/material.dart';
 
 class CartProvider with ChangeNotifier {
-  final Map<Coffee, int> _cartItems = {};
+  Map<Coffee, int> _cartItems = {};
 
   Map<Coffee, int> get cartItems => _cartItems;
 

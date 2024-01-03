@@ -39,6 +39,31 @@ class Coffee {
       required this.size
       // Add other necessary fields
       });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Coffee &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          photoPath == other.photoPath &&
+          price == other.price &&
+          milkType == other.milkType &&
+          extraShot == other.extraShot &&
+          decaf == other.decaf &&
+          size == other.size;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      photoPath.hashCode ^
+      price.hashCode ^
+      milkType.hashCode ^
+      extraShot.hashCode ^
+      decaf.hashCode ^
+      size.hashCode;
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
