@@ -16,7 +16,7 @@ class CartProvider with ChangeNotifier {
   }
 
   void removeFromCart(Coffee product) {
-    _cartItems.update(product, (value) => value + 1);
+    _cartItems.update(product, (value) => value - 1);
     if (_cartItems[product] == 0) {
       _cartItems.remove(product);
     }

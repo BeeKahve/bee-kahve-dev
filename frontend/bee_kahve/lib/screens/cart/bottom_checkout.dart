@@ -1,9 +1,27 @@
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/screens/cart/payment.dart';
+import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:flutter/material.dart';
+import 'package:bee_kahve/screens/cart/cart_provider.dart';
 
 class CartBottomSheetWidget extends StatelessWidget {
-  const CartBottomSheetWidget({super.key});
+  CartBottomSheetWidget({super.key});
+  CartProvider cartProvider = CartProvider();
+  String calculateTotal() {
+    int total = 0;
+    for (int quantity in cartProvider.cartItems.values.toList()) {
+      total += quantity;
+    }
+    return total.toString();
+  }
+
+  String calculatePrice() {
+    double total = 0;
+    for (Coffee product in cartProvider.cartItems.keys.toList()) {
+      total += product.price * cartProvider.cartItems[product]!;
+    }
+    return total.toStringAsFixed(2);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,23 +41,23 @@ class CartBottomSheetWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Flexible(
+              Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Total (6 coffee)",
-                      style: TextStyle(
+                      "${calculateTotal()} Items",
+                      style: const TextStyle(
                           fontWeight: FontWeight.normal,
                           color: AppColors.textColor,
                           fontSize: 20,
                           overflow: TextOverflow.ellipsis),
                     ),
                     Text(
-                      "600.00\₺",
-                      style: TextStyle(
+                      "${calculatePrice()}\₺",
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.yellow,
+                          color: AppColors.textColor,
                           fontSize: 16),
                     ),
                   ],

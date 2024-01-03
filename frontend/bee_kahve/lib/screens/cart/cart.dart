@@ -55,7 +55,7 @@ class CartScreen extends StatelessWidget {
       bottomSheet: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
           if (cartProvider.cartItems.isNotEmpty) {
-            return const CartBottomSheetWidget();
+            return CartBottomSheetWidget();
           } else {
             return SizedBox
                 .shrink(); // Return an empty widget if the cart is empty
