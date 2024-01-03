@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.2b94dcbd.css",
+    "main.js": "/static/js/main.4aec35d0.js",
+    "static/js/787.3e07150b.chunk.js": "/static/js/787.3e07150b.chunk.js",
+    "static/media/bee-logo.png": "/static/media/bee-logo.a6aba9f4371e98fea801.png",
+    "index.html": "/index.html",
+    "main.2b94dcbd.css.map": "/static/css/main.2b94dcbd.css.map",
+    "main.4aec35d0.js.map": "/static/js/main.4aec35d0.js.map",
+    "787.3e07150b.chunk.js.map": "/static/js/787.3e07150b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2b94dcbd.css",
+    "static/js/main.4aec35d0.js"
+  ]
+}
