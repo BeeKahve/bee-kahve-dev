@@ -10,11 +10,13 @@ import 'package:http/http.dart' as http;
 class ProductDetailsScreen extends StatefulWidget {
   final int productId;
 
-  const ProductDetailsScreen({Key? key, required this.productId}) : super(key: key);
+  const ProductDetailsScreen({Key? key, required this.productId})
+      : super(key: key);
 
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
 }
+
 class Coffee {
   final int id;
   final String name;
@@ -25,18 +27,19 @@ class Coffee {
   final bool? decaf;
   final String? size;
 
-  Coffee({
-    required this.id,
-    required this.name,
-    required this.photoPath,
-    required this.price,
-    this.milkType,
-    this.extraShot,
-    this.decaf,
-    this.size,
-    // Add other necessary fields
-  });
+  Coffee(
+      {required this.id,
+      required this.name,
+      required this.photoPath,
+      required this.price,
+      this.milkType,
+      this.extraShot,
+      this.decaf,
+      required this.size
+      // Add other necessary fields
+      });
 }
+
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   bool? _isChecked;
   bool? _isCheckedDecaf;
@@ -53,7 +56,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   Future<Map<String, dynamic>> fetchProductDetails() async {
     final response = await http.get(
-      Uri.parse('http://51.20.117.162:8000/get_product?product_id=${widget.productId}'),
+      Uri.parse(
+          'http://51.20.117.162:8000/get_product?product_id=${widget.productId}'),
     );
 
     if (response.statusCode == 200) {
@@ -62,7 +66,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       throw Exception('Failed to load product details');
     }
   }
-   Future<void> _addCart(product) async {
+
+  Future<void> _addCart(product) async {
     // Create a product object with selected options
     Coffee productToAdd = Coffee(
       id: widget.productId,
@@ -77,10 +82,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
     // Add the product to the cart using the cart provider
     CartProvider cartProvider = CartProvider();
-    cartProvider.addToCart(productToAdd, quantity: 1);
+    cartProvider.addToCart(productToAdd);
 
     // Additional logic (e.g., show a confirmation message)
   }
+
   void dropdownCallBack(String? selectedValue) {
     if (selectedValue is String) {
       setState(() {
@@ -93,7 +99,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     return isVisible
         ? Align(
             alignment: Alignment.centerLeft,
-            child: Text(text, style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),),
+            child: Text(
+              text,
+              style: const TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 16,
+                  color: AppColors.textColor),
+            ),
           )
         : const SizedBox.shrink();
   }
@@ -123,7 +135,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(height: 30,),
+                    const SizedBox(
+                      height: 30,
+                    ),
                     Row(
                       children: [
                         IconButton(
@@ -132,23 +146,35 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               Navigator.pop(context);
                             }
                           },
-                          icon: const Icon(Icons.keyboard_backspace, size: 32,),
+                          icon: const Icon(
+                            Icons.keyboard_backspace,
+                            size: 32,
+                          ),
                         ),
                         Text(
                           product?['coffee_name'] ?? '',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28, color: AppColors.textColor),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 28,
+                              color: AppColors.textColor),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20,),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     CachedNetworkImage(
                       imageUrl: product?['photo_path'] ?? '',
-                      placeholder: (context, url) => const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
                       width: double.infinity, // Set image width to full width
                       height: MediaQuery.of(context).size.width / 2.0,
                     ),
-                    const SizedBox(height: 20,),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(right: 20.0),
                       child: Row(
@@ -156,26 +182,52 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         children: [
                           const Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text("Ratings", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),),
+                            child: Text(
+                              "Ratings",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 16,
+                                  color: AppColors.textColor),
+                            ),
                           ),
-                          const Icon(Icons.star, color: AppColors.yellow,),
+                          const Icon(
+                            Icons.star,
+                            color: AppColors.yellow,
+                          ),
                           Text(product?['rate']?.toString() ?? ''),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20,),
-                    const Text("Coffee Details", style: TextStyle(color: AppColors.textColor),),
-                    buildIngredientText("Contains milk", product?['contains_milk'] == true),
-                    buildIngredientText("Contains chocolate syrup", product?['contains_chocolate_syrup'] == true),
-                    buildIngredientText("Contains white chocolate syrup", product?['contains_white_chocolate_syrup'] == true),
-                    buildIngredientText("Contains caramel syrup", product?['contains_caramel_syrup'] == true),
-                    buildIngredientText("Contains sugar", product?['contains_sugar'] == true),
-                    
-                    const SizedBox(height: 20,),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text(
+                      "Coffee Details",
+                      style: TextStyle(color: AppColors.textColor),
+                    ),
+                    buildIngredientText(
+                        "Contains milk", product?['contains_milk'] == true),
+                    buildIngredientText("Contains chocolate syrup",
+                        product?['contains_chocolate_syrup'] == true),
+                    buildIngredientText("Contains white chocolate syrup",
+                        product?['contains_white_chocolate_syrup'] == true),
+                    buildIngredientText("Contains caramel syrup",
+                        product?['contains_caramel_syrup'] == true),
+                    buildIngredientText(
+                        "Contains sugar", product?['contains_sugar'] == true),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Text("Extra shot", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),),
+                        const Text(
+                          "Extra shot",
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16,
+                              color: AppColors.textColor),
+                        ),
                         Checkbox(
                             value: _isChecked ?? false,
                             activeColor: AppColors.yellow,
@@ -184,7 +236,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 _isChecked = newBool;
                               });
                             }),
-                        const Text("Decaf", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),),
+                        const Text(
+                          "Decaf",
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16,
+                              color: AppColors.textColor),
+                        ),
                         Checkbox(
                             value: _isCheckedDecaf ?? false,
                             activeColor: AppColors.yellow,
@@ -196,47 +254,117 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ],
                     ),
                     if (product?['contains_milk'] == true)
-                    Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: DropdownButton(
-                        items: const [
-                          DropdownMenuItem(value: "Milk Options", enabled: false, child: Text("Milk Options", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),)),
-                          DropdownMenuItem(value: "Whole Milk", child: Text("Whole Milk", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),),),
-                          DropdownMenuItem(value: "Reduced Fat Milk", child: Text("Reduced Fat Milk", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),),),
-                          DropdownMenuItem(value: "Lactose Free Milk", child: Text("Lactose Free Milk", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),),),
-                          DropdownMenuItem(value: "Oat Milk", child: Text("Oat Milk", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),),),
-                          DropdownMenuItem(value: "Almond Milk", child: Text("Almond Milk", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),),),
-                        ],
-                        value: _dropdownValue,
-                        onChanged: (selectedValue) {
+                      Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: DropdownButton(
+                          items: const [
+                            DropdownMenuItem(
+                                value: "Milk Options",
+                                enabled: false,
+                                child: Text(
+                                  "Milk Options",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 16,
+                                      color: AppColors.textColor),
+                                )),
+                            DropdownMenuItem(
+                              value: "Whole Milk",
+                              child: Text(
+                                "Whole Milk",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 16,
+                                    color: AppColors.textColor),
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: "Reduced Fat Milk",
+                              child: Text(
+                                "Reduced Fat Milk",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 16,
+                                    color: AppColors.textColor),
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: "Lactose Free Milk",
+                              child: Text(
+                                "Lactose Free Milk",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 16,
+                                    color: AppColors.textColor),
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: "Oat Milk",
+                              child: Text(
+                                "Oat Milk",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 16,
+                                    color: AppColors.textColor),
+                              ),
+                            ),
+                            DropdownMenuItem(
+                              value: "Almond Milk",
+                              child: Text(
+                                "Almond Milk",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 16,
+                                    color: AppColors.textColor),
+                              ),
+                            ),
+                          ],
+                          value: _dropdownValue,
+                          onChanged: (selectedValue) {
                             setState(() {
                               _selectedMilkType = selectedValue;
                               dropdownCallBack(selectedValue);
                             });
                           },
-                        iconSize: 32,
-                        isExpanded: true,
+                          iconSize: 32,
+                          isExpanded: true,
+                        ),
                       ),
+                    const SizedBox(
+                      height: 25,
                     ),
-                    const SizedBox(height: 25,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         TextButton(
                           onPressed: () {},
-                          child: Text("Small\n${product?['price']?.toStringAsFixed(2) ?? ''}", style: const TextStyle(color: AppColors.textColor), textAlign: TextAlign.center,),
+                          child: Text(
+                            "Small\n${product?['price']?.toStringAsFixed(2) ?? ''}",
+                            style: const TextStyle(color: AppColors.textColor),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                         TextButton(
                           onPressed: () {},
-                          child: Text("Medium\n${ (product?['price'] * 1.3)?.toStringAsFixed(2)}", style: const TextStyle(color: AppColors.textColor), textAlign: TextAlign.center,),
+                          child: Text(
+                            "Medium\n${(product?['price'] * 1.3)?.toStringAsFixed(2)}",
+                            style: const TextStyle(color: AppColors.textColor),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                         TextButton(
                           onPressed: () {},
-                          child: Text("Large\n${ (product?['price'] * 1.7)?.toStringAsFixed(2)}", style: const TextStyle(color: AppColors.textColor), textAlign: TextAlign.center,),
+                          child: Text(
+                            "Large\n${(product?['price'] * 1.7)?.toStringAsFixed(2)}",
+                            style: const TextStyle(color: AppColors.textColor),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 30,),
+                    const SizedBox(
+                      height: 30,
+                    ),
                     SizedBox(
                       width: 300,
                       child: ElevatedButton(
@@ -250,7 +378,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         onPressed: () async {
                           await _addCart(product);
                         },
-                        child: const Text("Add to Cart", style: TextStyle(color: AppColors.darkColor),),
+                        child: const Text(
+                          "Add to Cart",
+                          style: TextStyle(color: AppColors.darkColor),
+                        ),
                       ),
                     ),
                   ],
