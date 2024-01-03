@@ -76,24 +76,24 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Coffee Menu",
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.textColor,
-            ),
-          ),
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text(
+        "Coffee Menu",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: AppColors.textColor,
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(14.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: searchTextController,
-              decoration: InputDecoration(
+    ),
+    body: Padding(
+      padding: const EdgeInsets.all(14.0),
+      child: Column(
+        children: [
+          TextField(
+            controller: searchTextController,
+            decoration: InputDecoration(
                 filled: true,
                 fillColor: AppColors.lightYellow,
                 hintText: "Search coffee",
@@ -102,6 +102,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   onTap: () {
                     setState(() {
                       searchTextController.clear();
+                      displayedProducts = coffeeMenu.menuProducts;
                     });
                   },
                   child: const Icon(Icons.clear),
@@ -122,78 +123,93 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                 ),
               ),
-              onSubmitted: (value) {
-                searchCoffee(value);
-              },
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            Expanded(
-              child: GridView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: coffeeMenu.productCount,
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                ),
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProductDetailsScreen(productId: coffeeMenu.menuProducts[index].productId),
-                          ),
-                        );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 5.0,
-                        horizontal: 5.0,
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: AppColors.yellow,
-                            width: 2.0,
-                          ),
-                        ),
+              onChanged: (value) {
+              if (value.isEmpty) {
+                // If the text is cleared, reset to the entire menu
+                setState(() {
+                  displayedProducts = coffeeMenu.menuProducts;
+                });
+              }
+            },
+            onSubmitted: (value) {
+              searchCoffee(value);
+            },
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          Expanded(
+            child: displayedProducts.isEmpty && searchTextController.text.isNotEmpty
+                ? const Center(
+                    child: Text(
+                      'You entered the wrong coffee name',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  )
+                : GridView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: displayedProducts.length,
+                    shrinkWrap: true,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                    ),
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductDetailsScreen(productId: displayedProducts[index].productId),
+                            ),
+                          );
+                        },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0,
-                            vertical: 10.0,
+                            vertical: 5.0,
+                            horizontal: 5.0,
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CachedNetworkImage(
-                                imageUrl: coffeeMenu.menuProducts[index].photoPath,
-                                placeholder: (context, url) =>
-                                    const CircularProgressIndicator(),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                                width: double.infinity, // Set image width to full width
-                                height: MediaQuery.of(context).size.width / 4.0,
-                              
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(
+                                color: AppColors.yellow,
+                                width: 2.0,
                               ),
-                              Text(
-                                coffeeMenu.menuProducts[index].name,
-                                textAlign: TextAlign.center,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10.0,
+                                vertical: 10.0,
                               ),
-                            ],
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  CachedNetworkImage(
+                                    imageUrl: displayedProducts[index].photoPath,
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                    width: double.infinity,
+                                    height: MediaQuery.of(context).size.width / 4.0,
+                                  ),
+                                  Text(
+                                    displayedProducts[index].name,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
