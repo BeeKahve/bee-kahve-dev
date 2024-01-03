@@ -86,39 +86,42 @@ class Manager:
             total_ingrediants[ingredient] = 0
         
         for item in order.line_items:
+            coeff = self.get_coefficient(item.size_choice)
+            if coeff == 0:
+                return Response(status=False ,message="Size choice is not valid.")
             ingredients = self.database_manager.get_product_ingredient(item.product_id).dict()
             for ingredient in ingredients:
                 if ingredient == "milk_amount":
                     if item.milk_choice == "whole_milk":
-                        total_ingrediants["whole_milk_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                        total_ingrediants["whole_milk_amount"] += ingredients[ingredient] * coeff
                     elif item.milk_choice == "reduced_fat_milk":
-                        total_ingrediants["reduced_fat_milk_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                        total_ingrediants["reduced_fat_milk_amount"] += ingredients[ingredient] * coeff
                     elif item.milk_choice == "lactose_free_milk":
-                        total_ingrediants["lactose_free_milk_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                        total_ingrediants["lactose_free_milk_amount"] += ingredients[ingredient] * coeff
                     elif item.milk_choice == "oat_milk":
-                        total_ingrediants["oat_milk_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                        total_ingrediants["oat_milk_amount"] += ingredients[ingredient] * coeff
                     elif item.milk_choice == "almond_milk":
-                        total_ingrediants["almond_milk_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                        total_ingrediants["almond_milk_amount"] += ingredients[ingredient] * coeff
                     else:
                         return Response(status=False ,message="Milk choice is not valid.")
                 
                 elif ingredient == "espresso_amount":
                     if item.caffein_choice == False:
-                        total_ingrediants["decaff_espresso_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                        total_ingrediants["decaff_espresso_amount"] += ingredients[ingredient] * coeff
                     elif item.caffein_choice == True:
-                        total_ingrediants["espresso_amount"] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                        total_ingrediants["espresso_amount"] += ingredients[ingredient] * coeff
                     else:
                         return Response(status=False ,message="Caffein choice is not valid.")
                         
                 elif ingredient == "foam_amount":
-                    total_ingrediants[item.milk_choice+"_amount"] += 0.2 * ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                    total_ingrediants[item.milk_choice+"_amount"] += 0.2 * ingredients[ingredient] * coeff
                 
                 elif ingredient == "price":
                     pass      
                 
                 else:
                     try:
-                        total_ingrediants[ingredient] += ingredients[ingredient] * self.get_coefficient(item.size_choice)
+                        total_ingrediants[ingredient] += ingredients[ingredient] * coeff
                     except Exception as e:
                         print("Error: ", e)
                         return Response(status=False ,message="Ingredient is not valid.")

@@ -1,5 +1,8 @@
-// modifyStock.js
-import React, { useState, useEffect } from 'react';
+// Novruz Amirov: 150200903
+// Software Engineerin - BLG 411E - 2023/2024 - Semester Project
+// modifyStock.js -> an admin page to update the stock information
+
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Form, Input, Checkbox, Modal } from 'antd';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -10,25 +13,13 @@ const ModifyStock = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Check if the user has a valid token
-    const token = localStorage.getItem('token');
-
-    if (token === 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
-      fetchStockData();
-    } else {
-      navigate('/signInPage'); 
-    }
-  }, [navigate]);
-
-  const fetchStockData = async () => {
+  const fetchStockData = useCallback(async () => {
     try {
-      const response = await axios.get('http://51.20.117.162:8000/get_stock?stock_id=1'); // Adjust the API endpoint
+      const response = await axios.get('http://51.20.117.162:8000/get_stock?stock_id=1');
       setStockData(response.data);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching stock data:', error);
-      // In case of an error, set the stock data to default values
       setStockData({
         smallCupCount: 0,
         mediumCupCount: 0,
@@ -49,7 +40,18 @@ const ModifyStock = () => {
       });
       setLoading(false);
     }
-  };
+  }, [setStockData]);
+
+  useEffect(() => {
+    // Check if the user has a valid token
+    const token = localStorage.getItem('token');
+
+    if (token === 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
+      fetchStockData();
+    } else {
+      navigate('/signInPage'); 
+    }
+  }, [navigate, fetchStockData]);
 
   const handleCheckboxChange = (itemName, checked) => {
     setUpdatedItems((prevItems) => ({ ...prevItems, [itemName]: checked }));
@@ -74,19 +76,20 @@ const ModifyStock = () => {
 
   const handleUpdateStock = async () => {
     try {
-      // Filter only the updated items
       const updatedData = Object.fromEntries(
         Object.entries(stockData).filter(([key, value]) => updatedItems[key])
       );
 
-      // Send the updated data to the database
+      // Send the updated data to the database over API
       console.log(updatedData)
-      await axios.post('http://51.20.117.162:8000/update_stock', updatedData); // Adjust the API endpoint
+      await axios.post('http://51.20.117.162:8000/update_stock', updatedData);
       
-
       Modal.success({
         title: 'Stock Updated',
         content: 'Stock has been successfully updated.',
+        onOk: () => {
+          window.location.reload();
+        },
       });
     } catch (error) {
       console.error('Error updating stock:', error);
@@ -96,7 +99,6 @@ const ModifyStock = () => {
   return (
     <div className="adminPage modifyStock">
      <div className="left-sidebar">
-        {/* ... (existing code) */}
         <h1 style={{ color: 'white', marginLeft: '30%' }}>ADMIN</h1>
         <div
           className={`menu-stock-header ${activeMenu === 'Modify Menu' ? 'active' : ''}`}
@@ -124,7 +126,6 @@ const ModifyStock = () => {
         <div className="lower-content modify-stock" style={{ height: '85%' }}>
           <h2>Modify Stock</h2>
           <Form>
-            {/* Render input boxes and checkboxes for each stock item */}
             {Object.entries(stockData).map(([itemName, amount]) => (
               <Form.Item label={itemName} key={itemName}>
                 <Input
@@ -140,7 +141,6 @@ const ModifyStock = () => {
                 </Checkbox>
               </Form.Item>
             ))}
-            {/* Button to update the entire stock */}
             <Form.Item>
               <Button type="primary" onClick={handleUpdateStock} disabled={loading}>
                 Update Stock

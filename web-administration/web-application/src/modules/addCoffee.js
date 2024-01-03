@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from 'react';
+// Novruz Amirov: 150200903
+// Software Engineerin - BLG 411E - 2023/2024 - Semester Project
+// addCoffee.js -> admin page for adding new coffee to menu
+
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Form, Input, Checkbox, message, Slider } from 'antd'; // Upload
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -6,23 +10,20 @@ import axios from 'axios';
 const AddCoffee = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const [smallSizeOnlyChecked, setSmallSizeOnlyChecked] = useState(false)
+  const [sugarChecked, setSugarChecked] = useState(false);
+  const [iceChecked, setIceChecked] = useState(false);
+  const [activeMenu, setActiveMenu] = useState('Modify Menu');
 
   useEffect(() => {
     // Check if the user has a valid token
     const token = localStorage.getItem('token');
-
-    if (token !== 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba') {
+    if (token !== 'b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba')
       navigate('/signInPage');
-    } 
+    
   }, [navigate]);
 
-
-    // State variables for checkboxes
-    const [sugarChecked, setSugarChecked] = useState(false);
-    const [iceChecked, setIceChecked] = useState(false);
-
-  const [activeMenu, setActiveMenu] = useState('Modify Menu');
-
+  // handling left bar click button options
   const handleExitAccount = () => {
     localStorage.removeItem('token');
     navigate('/signInPage');
@@ -38,7 +39,8 @@ const AddCoffee = () => {
     setActiveMenu('Modify Stock');
   };
 
-  const onFinish = async (values) => {
+  // submitting new coffee to menu
+  const onFinish = useCallback( async (values) => {
     try {
       let {
         name,
@@ -56,7 +58,9 @@ const AddCoffee = () => {
         small_cup_only,
         priceSmall,
       } = values;
+      console.log(small_cup_only)
 
+      // making undefined values 0 to be calculatable
       if(isNaN(milk_amount)){
         milk_amount = 0
       }
@@ -73,6 +77,7 @@ const AddCoffee = () => {
         white_chocolate_syrup_amount = 0
       }
 
+      // calculating totl percentage, so it will not be over or under 100%
       const totalPercentage =
       espresso_amount +
       milk_amount +
@@ -87,10 +92,10 @@ const AddCoffee = () => {
     }
 
       const payload = {
-        admin_id: 1, // Assuming admin_id is 1 for the current admin
+        admin_id: 1, // there is only 1 admin
         coffee_name: name,
         photo_path: image,
-        small_cup_only: small_cup_only,
+        small_cup_only: smallSizeOnlyChecked ? true : false,
         price: Number(priceSmall),
         espresso_amount,
         milk_amount: milk_amount || 0,
@@ -101,18 +106,15 @@ const AddCoffee = () => {
         sugar_amount: sugar_checkbox ? sugar_amount || 0 : 0,
         ice_amount: ice_checkbox ? ice_amount || 0 : 0,
       };
-      console.log(payload);
       
-      // Use your API endpoint instead of the placeholder URL
-      const response = await axios.post('http://51.20.117.162:8000/add_product', payload);
-      console.log(response)
-
+      // adding new product to menu over API
+      await axios.post('http://51.20.117.162:8000/add_product', payload);
       navigate('/adminPage');
     } catch (error) {
       console.error('Error submitting form:', error);
       message.error('Failed to submit the form. Please try again.');
     }
-  };
+  }, [navigate, smallSizeOnlyChecked]);
 
   const onBackClick = () => {
     navigate('/adminPage');
@@ -245,7 +247,7 @@ const AddCoffee = () => {
           <Input type="number" />
         </Form.Item>
       )}
-              <Form.Item label="Size" name="small_cup_only">
+              <Form.Item label="Size" name="small_cup_only" onChange={(e) => setSmallSizeOnlyChecked(e.target.checked)}>
                 <Checkbox>
                   Small Only
                 </Checkbox>

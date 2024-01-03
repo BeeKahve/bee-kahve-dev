@@ -105,3 +105,10 @@ INSERT INTO Admins (admin_name, admin_email, admin_password, stock_id) VALUES ("
 INSERT INTO Employees (employee_name, employee_email, employee_password, admin_id) VALUES ("Employee Name", "Employee Email", "Employee Password", 1);
 INSERT INTO Customers (customer_name, customer_email, customer_password) VALUES ("Customer Name", "Customer Email", "Customer Password");
 INSERT INTO Products (product_id, coffee_name, photo_path, espresso_amount, milk_amount, price) VALUES (1, "Coffee Name", "Photo path", 40.0, 100.0, 60.0);
+
+
+-- Path: set timeout values
+SET @@wait_timeout = 600000;
+SET @@interactive_timeout = 600000;
+SET @@global.wait_timeout = 600000;
+SET @@global.interactive_timeout = 600000;

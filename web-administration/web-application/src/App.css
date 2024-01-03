@@ -1,3 +1,8 @@
+/* Novruz Amirov: 150200903
+   Software Engineerin - BLG 411E - 2023/2024 - Semester Project
+   App.css file -> for designing specifically in addition to antd library
+*/
+
 .container {
   display: flex;
   flex-direction: column; /* Change from 'row' to 'column' */
@@ -23,11 +28,8 @@
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-/* Rest of your styles remain unchanged */
-
  
- .radio-btn {
+.radio-btn {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
@@ -62,7 +64,6 @@
   transform: translateY(-50%);
  }
  
-
  .radio-btn input[type='radio']:checked + label:before {
   background: #F1DB11;
   box-shadow: 0 0 0 4px #ffffff;
@@ -140,10 +141,7 @@
 
 .adminPage .right-content .lower-content{
   border: 2px solid red;
-  /* display: flex;
-  justify-content: center; */
   width: 100%;
-  /* height: 10vh; */
   overflow: auto;
 }
 
@@ -154,7 +152,6 @@
 .adminPage .right-content .lower-content th{
   text-align: center;
 }
-
 
 .left-sidebar {
   width: 20%;
@@ -203,7 +200,6 @@
   align-items: center;
 }
 
-/* AddCoffee.css */
 .back-button {
   background-color: #F1DB11;
   color: #fff;
@@ -221,7 +217,7 @@
 .back-button::before {
   content: '\2190'; /* Unicode character for left arrow */
   margin-right: 8px;
-  font-family: 'Arial', sans-serif; /* Use a common sans-serif font */
+  font-family: 'Arial', sans-serif;
 }
 
 .back-button:hover {
@@ -234,7 +230,7 @@
 }
 
 .add-coffee-form {
-  width: 70%; /* Adjust width based on your preference */
+  width: 70%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -267,7 +263,6 @@
   background-color: #e0a800;
 }
 
-
 .menu-stock-header {
   cursor: pointer;
   padding: 10px;
@@ -275,17 +270,16 @@
 }
 
 .menu-stock-header:hover {
-  background-color: #ddd; /* Change the background color on hover */
+  background-color: #ddd;
 }
 
 .menu-stock-header.active {
-  background-color: #F1DB11; /* Change the background color for the active menu */
-  color: white; /* Change text color for the active menu */
-  border: 2px solid #F1DB11; /* Add border for the active menu */
+  background-color: #F1DB11; 
+  color: white; 
+  border: 2px solid #F1DB11; 
 }
 
 .modify-stock{
-  /* border: 5px solid red; */
   width: 100%;
 }
 
@@ -296,7 +290,6 @@
 }
 
 .modify-stock form input{
-  /* border: 5px solid red; */
   width: 100px;
   margin-right: 20px;
 }
@@ -320,7 +313,6 @@
 }
 
 .modify-stock form .ant-row {
-  /* width: 40%; */
   height: 60px;
   display: flex;
   flex-direction: column;
@@ -336,7 +328,6 @@
 }
 
 .exit-account h4{
-  /* height: 30px; */
   font-size: 15px;
 }
 
@@ -359,8 +350,6 @@
   width: 45%;
   margin: 10px;
 }
-
-
 
 #addCoffeeForm .ant-form-item .ant-col{
   font-size: 20px;
@@ -387,13 +376,10 @@
   width: 100%;
 }
 
-
-
 .orders{
   border: 4px solid green;
   display: flex;
   flex-direction: column;
-  /* justify-content: baseline; */
   align-items: center;
 }
 
@@ -420,4 +406,23 @@
   width: 20vw;
   font-size: 15px;
   font-weight: bold;
+}
+
+.update-status-buttons{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 150px;
+}
+
+.update-status-product{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
+.update-status-product span{
+  border: 2px solid red;
+
 }

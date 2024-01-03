@@ -1,5 +1,9 @@
 import 'dart:convert';
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/menu_product_model.dart';
+import 'package:bee_kahve/models/product_model.dart';
+import 'package:bee_kahve/screens/cart/cart_provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,11 +15,34 @@ class ProductDetailsScreen extends StatefulWidget {
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
 }
+class Coffee {
+  final int id;
+  final String name;
+  final String photoPath;
+  final double price;
+  final String? milkType;
+  final bool? extraShot;
+  final bool? decaf;
+  final String? size;
 
+  Coffee({
+    required this.id,
+    required this.name,
+    required this.photoPath,
+    required this.price,
+    this.milkType,
+    this.extraShot,
+    this.decaf,
+    this.size,
+    // Add other necessary fields
+  });
+}
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  bool? isChecked = false;
-  bool? isCheckedDecaf = false;
+  bool? _isChecked;
+  bool? _isCheckedDecaf;
   String? _dropdownValue = "Milk Options";
+  String? _selectedMilkType;
+  String? _selectedSize;
   late Future<Map<String, dynamic>> productDetails;
 
   @override
@@ -35,18 +62,31 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       throw Exception('Failed to load product details');
     }
   }
+   Future<void> _addCart(product) async {
+    // Create a product object with selected options
+    Coffee productToAdd = Coffee(
+      id: widget.productId,
+      name: product?['coffee_name'] ?? '',
+      photoPath: product?['photo_path'] ?? '',
+      price: product?['price'] ?? 0.0,
+      milkType: _selectedMilkType,
+      extraShot: _isChecked,
+      decaf: _isCheckedDecaf,
+      size: _selectedSize,
+    );
 
+    // Add the product to the cart using the cart provider
+    CartProvider cartProvider = CartProvider();
+    cartProvider.addToCart(productToAdd, quantity: 1);
+
+    // Additional logic (e.g., show a confirmation message)
+  }
   void dropdownCallBack(String? selectedValue) {
     if (selectedValue is String) {
       setState(() {
         _dropdownValue = selectedValue;
       });
     }
-  }
-
-  Future<void> _addToCart() async {
-    FocusScope.of(context).unfocus();
-    // Add logic to add the product to the cart
   }
 
   Widget buildIngredientText(String text, bool isVisible) {
@@ -101,10 +141,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ],
                     ),
                     const SizedBox(height: 20,),
-                    Image.network(
-                      product?['photo_path'] ?? '',
-                      height: 200,
-                      width: double.infinity,
+                    CachedNetworkImage(
+                      imageUrl: product?['photo_path'] ?? '',
+                      placeholder: (context, url) => const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                      width: double.infinity, // Set image width to full width
+                      height: MediaQuery.of(context).size.width / 2.0,
                     ),
                     const SizedBox(height: 20,),
                     Padding(
@@ -122,7 +164,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 20,),
-                     buildIngredientText("Contains milk", product?['contains_milk'] == true),
+                    const Text("Coffee Details", style: TextStyle(color: AppColors.textColor),),
+                    buildIngredientText("Contains milk", product?['contains_milk'] == true),
                     buildIngredientText("Contains chocolate syrup", product?['contains_chocolate_syrup'] == true),
                     buildIngredientText("Contains white chocolate syrup", product?['contains_white_chocolate_syrup'] == true),
                     buildIngredientText("Contains caramel syrup", product?['contains_caramel_syrup'] == true),
@@ -134,20 +177,20 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       children: [
                         const Text("Extra shot", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),),
                         Checkbox(
-                            value: isChecked,
+                            value: _isChecked ?? false,
                             activeColor: AppColors.yellow,
                             onChanged: (newBool) {
                               setState(() {
-                                isChecked = newBool;
+                                _isChecked = newBool;
                               });
                             }),
                         const Text("Decaf", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),),
                         Checkbox(
-                            value: isCheckedDecaf,
+                            value: _isCheckedDecaf ?? false,
                             activeColor: AppColors.yellow,
                             onChanged: (newBool) {
                               setState(() {
-                                isCheckedDecaf = newBool;
+                                _isCheckedDecaf = newBool;
                               });
                             }),
                       ],
@@ -165,7 +208,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           DropdownMenuItem(value: "Almond Milk", child: Text("Almond Milk", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: AppColors.textColor),),),
                         ],
                         value: _dropdownValue,
-                        onChanged: dropdownCallBack,
+                        onChanged: (selectedValue) {
+                            setState(() {
+                              _selectedMilkType = selectedValue;
+                              dropdownCallBack(selectedValue);
+                            });
+                          },
                         iconSize: 32,
                         isExpanded: true,
                       ),
@@ -200,7 +248,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          await _addToCart();
+                          await _addCart(product);
                         },
                         child: const Text("Add to Cart", style: TextStyle(color: AppColors.darkColor),),
                       ),

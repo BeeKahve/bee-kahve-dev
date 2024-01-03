@@ -1,6 +1,9 @@
-// updateStatus.js
-import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form } from 'antd';
+// Novruz Amirov: 150200903
+// Software Engineerin - BLG 411E - 2023/2024 - Semester Project
+// updateStatus.js -> an employee page to update the status of the orders
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { Button, Table, Modal } from 'antd';
 import axios from 'axios';
 import { useNavigate , useLocation} from 'react-router-dom';
 
@@ -8,65 +11,82 @@ const { Column } = Table;
 
 const UpdateStatus = () => {
   const [orderList, setOrderList] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalTitle, setModalTitle] = useState('');
-  const [selectedOrder, setSelectedOrder] = useState({});
   const location = useLocation();
   const employeeName = location.state && location.state.employeeName;
+  const navigate = useNavigate()
+  const [clickedButtons, setClickedButtons] = useState({});
+  const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
+  const [cancelOrderID, setCancelOrderID] = useState(null);
 
-
-  const navigate = useNavigate();
-
-//   useEffect(() => {
-//     // Check if the user has a valid token or role for employee
-//     const token = localStorage.getItem('token');
-//     const role = localStorage.getItem('role');
-
-//     if (token && role === 'employee') {
-//       fetchOrderList();
-//     } else {
-//       navigate('/signInPage'); // Redirect to sign-in if not authenticated as employee
-//     }
-//   }, []);
-
-  const fetchOrderList = async () => {
+  const fetchOrderList = useCallback(async () => {
     try {
-      const response = await axios.get('/api/orders');
-      setOrderList(response.data);
+      const response = await axios.post('http://51.20.117.162:8000/get_active_orders?admin_id=1');
+      console.log(response.data.orders)
+      setOrderList(response.data.orders);
     } catch (error) {
       console.error('Error fetching order list:', error);
     }
-  };
+  }, [setOrderList]);
 
-  const showModal = (title, order) => {
-    setIsModalVisible(true);
-    setModalTitle(title);
-    setSelectedOrder(order);
-  };
+  useEffect(() => {
+    // Check if the user has a valid token or role for employee
+    const token = localStorage.getItem('token');
+    const name = localStorage.getItem('name');
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleReadyOrder = () => {
-    // Logic for marking order as ready
-    handleCancel(); // Close the modal after action
-  };
+    try{
+      if(token === "b1d632f26e83babf1c80709208e1b6ed01312cc94860c327d82107ff3f073e65e81f902169d4ddfe3f837f8297ea8d80085f0ed1f6fc6ee7a84e0383abadf5ba"){
+        navigate('/adminPage')
+      }
+      if (token && name === employeeName) {
+        fetchOrderList();
+      } else {
+        navigate('/signInPage'); // Redirect to sign-in if not authenticated as employee
+      }
+    }
+    catch{
+      navigate('/signInPage'); // Redirect to sign-in if not authenticated as employee
+    }
+  }, [fetchOrderList, navigate, employeeName]);
 
   const handleExitAccount = () => {
     localStorage.removeItem('token');
     navigate('/signInPage');
   };
 
-  const handleDeliveredOrder = async () => {
-    try {
-      // Update the order status to 'Delivered' and send back to the server
-      await axios.put(`/api/orders/${selectedOrder._id}`, { status: 'Delivered' });
-      handleCancel(); // Close the modal after action
-      fetchOrderList(); // Refresh the order list
-    } catch (error) {
-      console.error('Error updating order status:', error);
+  const handleButtonClick = async (order_id, status) => {
+    if (status === 'cancelled') {
+      setIsCancelModalVisible(true);
+      setCancelOrderID(order_id);
+    } else {
+      try {
+        await axios.get(`http://51.20.117.162:8000/set_status?order_id=${order_id}&status=${status}`);
+        fetchOrderList();
+        setClickedButtons((prevClickedButtons) => ({
+          ...prevClickedButtons,
+          [order_id]: status,
+        }));
+      } catch (error) {
+        console.error('Error updating order status:', error);
+      }
     }
+  };
+
+  const handleCancelModalOk = async () => {
+    try {
+      await axios.get(`http://51.20.117.162:8000/set_status?order_id=${cancelOrderID}&status=cancelled`);
+      fetchOrderList();
+      setClickedButtons((prevClickedButtons) => ({
+        ...prevClickedButtons,
+        [cancelOrderID]: 'cancelled',
+      }));
+      setIsCancelModalVisible(false); // Close the modal
+    } catch (error) {
+      console.error('Error cancelling order:', error);
+    }
+  };
+
+  const handleCancelModalCancel = () => {
+    setIsCancelModalVisible(false);
   };
 
   return (
@@ -93,16 +113,25 @@ const UpdateStatus = () => {
 
         <div className="lower-content" style={{ height: '85%' }}>
           <h2>Order List</h2>
-          {/* Table for Order List */}
           <Table dataSource={orderList} rowKey="_id">
-            <Column title="Order ID" dataIndex="_id" key="_id" render={(text, record) => <h3>Order ID: {text}</h3>} />
-            <Column title="Products" dataIndex="products" key="products" render={(text, record) => (
+            <Column title="Order ID" dataIndex="order_id" key="order_id" render={(text, record) => <h3>Order ID: {text}</h3>} />
+            <Column title="Status" dataIndex="order_status" key="order_status" render={(text, record) => <h3>Status: {text}</h3>} />
+            <Column className='update-status-product' title="Image" dataIndex="line_items" key="line_items" render={(text, record) => (
               <div>
-                {/* Render product details for each order */}
                 {text.map((product) => (
-                  <div key={product._id}>
-                    <img src={product.image} alt={product.name} style={{ width: 50, height: 50, marginRight: 8 }} />
-                    <span>{product.name} - Size: {product.size} - Price: {product.price}</span>
+                  <div key={product.product_id}>
+                    <img src={product.photo_path} alt={product.name} style={{ width: 150, height: 150, marginRight: 8 }} />
+                  </div>
+                ))}
+              </div>
+            )} />
+            <Column title="Product" dataIndex="line_items" key="line_items" render={(text, record)  => (
+              <div>
+                {text.map((product) => (
+                  <div key={product.product_id}>
+                    <p>Name: {product.name}</p>
+                    <p>Size: {product.size}</p>
+                    <p>Price: {product.price}</p>
                   </div>
                 ))}
               </div>
@@ -111,32 +140,39 @@ const UpdateStatus = () => {
               title="Action"
               key="action"
               render={(text, record) => (
-                <span>
-                  <Button type="primary" onClick={() => showModal('Ready Order', record)}>
-                    Ready
-                  </Button>
-                  <Button type="primary" onClick={() => showModal('Delivered Order', record)}>
-                    Delivered
-                  </Button>
-                </span>
+                <div className='update-status-buttons'>
+               <Button
+                type={clickedButtons[record.order_id] === 'on_the_way' ? 'primary' : 'default'}
+                onClick={() => handleButtonClick(record.order_id, 'on_the_way')}
+              >
+                On The Way
+              </Button>
+              <Button
+                type={clickedButtons[record.order_id] === 'delivered' ? 'primary' : 'default'}
+                onClick={() => handleButtonClick(record.order_id, 'delivered')}
+              >
+                Delivered
+              </Button>
+              <Button
+                type={clickedButtons[record.order_id] === 'cancelled' ? 'primary' : 'default'}
+                onClick={() => handleButtonClick(record.order_id, 'cancelled')}
+              >
+                Cancel
+              </Button>
+                </div>
               )}
             />
           </Table>
+          <Modal
+        title="Cancel Order"
+        visible={isCancelModalVisible}
+        onOk={handleCancelModalOk}
+        onCancel={handleCancelModalCancel}
+      >
+        <p>Are you sure you want to cancel this order?</p>
+      </Modal>
         </div>
       </div>
-
-      <Modal title={modalTitle} visible={isModalVisible} onCancel={handleCancel} footer={null}>
-        {/* Form for Order Modal */}
-        <Form onFinish={modalTitle === 'Ready Order' ? handleReadyOrder : handleDeliveredOrder}>
-          {/* Form fields go here */}
-          {/* You can customize the form fields based on your requirements */}
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              {modalTitle === 'Ready Order' ? 'Mark as Ready' : 'Mark as Delivered'}
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
     </div>
   );
 };

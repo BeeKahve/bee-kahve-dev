@@ -1,3 +1,7 @@
+// Novruz Amirov: 150200903
+// Software Engineerin - BLG 411E - 2023/2024 - Semester Project
+// updateCoffee.js -> an admin page to update an existing product
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button, Form, Input, Checkbox, Slider, message } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -10,15 +14,13 @@ const UpdateCoffee = () => {
   const { selectedCoffee } = location.state || {};
   const [sugarChecked, setSugarChecked] = useState(false);
   const [iceChecked, setIceChecked] = useState(false);
+  const [smallSizeOnlyChecked, setSmallSizeOnlyChecked] = useState(false)
+  const [activeMenu, setActiveMenu] = useState('Modify Menu');
 
   const fetchCoffeeDetails = useCallback(async () => {
     try {
       const response = await axios.get(`http://51.20.117.162:8000/get_full_product?product_id=${selectedCoffee.product_id}`);
       const coffeeDetails = response.data;
-      console.log(coffeeDetails)
-  
-      // Populate the form with coffee details
-      // if(small_cup_only
 
       form.setFieldsValue({
         name: coffeeDetails.coffee_name,
@@ -33,7 +35,7 @@ const UpdateCoffee = () => {
         sugar_amount: coffeeDetails.sugar_amount,
         ice_checkbox: coffeeDetails.ice_amount > 0,
         ice_amount: coffeeDetails.ice_amount,
-        size: coffeeDetails.small_cup_only,
+        small_cup_only: coffeeDetails.small_cup_only,
         priceSmall: coffeeDetails.price,
       });
   
@@ -54,11 +56,11 @@ const UpdateCoffee = () => {
     } else {
       fetchCoffeeDetails();
     }
-  }, [selectedCoffee, navigate, fetchCoffeeDetails]); // Removed selectedCoffee from the dependency array to ensure it only runs on mount
+  }, [selectedCoffee, navigate, fetchCoffeeDetails]);
 
   const onFinish = async (values) => {
     try {
-      const {
+      let {
         name,
         image,
         espresso_amount,
@@ -71,15 +73,47 @@ const UpdateCoffee = () => {
         sugar_amount,
         ice_checkbox,
         ice_amount,
-        size,
+        small_cup_only,
         priceSmall,
       } = values;
 
+      console.log(small_cup_only)
+
+      // to calculate total amount to be exactly 100%
+      if(isNaN(milk_amount)){
+        milk_amount = 0
+      }
+      if(isNaN(foam_amount)){
+        foam_amount = 0
+      }
+      if(isNaN(chocolate_syrup_amount)){
+        chocolate_syrup_amount = 0
+      }
+      if(isNaN(caramel_syrup_amount)){
+        caramel_syrup_amount = 0
+      }
+      if(isNaN(white_chocolate_syrup_amount)){
+        white_chocolate_syrup_amount = 0
+      }
+
+      const totalPercentage =
+      espresso_amount +
+      milk_amount +
+      foam_amount +
+      chocolate_syrup_amount +
+      caramel_syrup_amount +
+      white_chocolate_syrup_amount;
+
+    if (totalPercentage !== 100) {
+      message.error('The sum of espresso amount, milk, foam, chocolate syrup, caramel syrup, and white chocolate syrup must be exactly 100.');
+      return;
+    }
+
       const payload = {
-        admin_id: 1, // Assuming admin_id is 1 for the current admin
+        admin_id: 1, 
         coffee_name: name,
         photo_path: image,
-        small_cup_only: size || 0,
+        small_cup_only: smallSizeOnlyChecked ? true : false,
         price: Number(priceSmall),
         espresso_amount,
         milk_amount: milk_amount || 0,
@@ -91,11 +125,7 @@ const UpdateCoffee = () => {
         ice_amount: ice_checkbox ? ice_amount || 0 : 0,
       };
 
-      // Use your API endpoint for updating instead of the placeholder URL
-      console.log(payload)
-      const response = await axios.post(`http://51.20.117.162:8000/update_product?product_id=${selectedCoffee.product_id}`, payload);
-
-      console.log(response);
+      await axios.post(`http://51.20.117.162:8000/update_product?product_id=${selectedCoffee.product_id}`, payload);
       message.success('Coffee updated successfully!');
       navigate('/adminPage');
     } catch (error) {
@@ -106,11 +136,7 @@ const UpdateCoffee = () => {
 
   const onRemoveCoffee = async () => {
     try {
-      // Use your API endpoint for removing instead of the placeholder URL
-      // console.log(`http://51.20.117.162:8000/delete_product?product_id=${selectedCoffee.product_id}`)
-      const response = await axios.get(`http://51.20.117.162:8000/delete_product?product_id=${selectedCoffee.product_id}`);
-
-      console.log(response);
+      await axios.get(`http://51.20.117.162:8000/delete_product?product_id=${selectedCoffee.product_id}`);
       message.success('Coffee removed successfully!');
       navigate('/adminPage');
     } catch (error) {
@@ -123,7 +149,6 @@ const UpdateCoffee = () => {
     navigate('/adminPage');
   };
 
-  const [activeMenu, setActiveMenu] = useState('Modify Menu');
 
   const handleModifyMenu = () => {
     navigate('/adminPage');
@@ -186,7 +211,7 @@ const UpdateCoffee = () => {
                 { required: true, message: 'Please upload an image!' },
               ]}
             >
-                 <Input />
+              <Input />
             </Form.Item>
             <Form.Item
               label="Coffee Name"
@@ -218,11 +243,11 @@ const UpdateCoffee = () => {
               <Slider min={0} max={100} />
             </Form.Item>
             <Form.Item
-        name="sugar_checkbox"
-        label="Sugar"
-        valuePropName="checked"
-        onChange={(e) => setSugarChecked(e.target.checked)}
-      >
+              name="sugar_checkbox"
+              label="Sugar"
+              valuePropName="checked"
+              onChange={(e) => setSugarChecked(e.target.checked)}
+            >
         <Checkbox>Include Sugar</Checkbox>
       </Form.Item>
       {sugarChecked && (
@@ -249,15 +274,17 @@ const UpdateCoffee = () => {
           name="ice_amount"
           label="Ice Amount (1 to 10)"
           rules={[
-            { required: true, min: 1, max: 10, message: 'Please enter the ice amount!' },
+            { required: true, message: 'Please enter the ice amount!' },
           ]}
         >
           <Input type="number" />
         </Form.Item>
       )}
             <Form.Item
-              label="Size"
-              name="size"
+              label="small_cup_only"
+              name="small_cup_only"
+              valuePropName="checked"
+              onChange={(e) => setSmallSizeOnlyChecked(e.target.checked)}
             >
                 <Checkbox value="small">Small Only</Checkbox>
             </Form.Item>
@@ -265,12 +292,11 @@ const UpdateCoffee = () => {
               label="Price"
               name="priceSmall"
               rules={[
-                { required: true, message: 'Please enter the price for Small size!' },
+                { required: true, message: 'Please enter the price for Small small_cup_only!' },
               ]}
             >
               <Input type="number" />
             </Form.Item>
-            {/* Include the rest of the form fields here */}
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
                 Update Coffee

@@ -1,8 +1,11 @@
+import 'package:bee_kahve/screens/cart/cart_provider.dart';
+import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 
 class CartWidget extends StatelessWidget {
-  const CartWidget({super.key});
+  const CartWidget({Key? key, required this.product}) : super(key: key);
+  final Coffee product;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -17,10 +20,9 @@ class CartWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: FancyShimmerImage(
-                imageUrl: 'https://i.ibb.co/8r1Ny2n/20-Nike-Air-Force-1-07.png',
+                imageUrl: product.photoPath,
                 width: size.height * 0.2,
                 height: size.height * 0.2,
-
                 ),
               ),
               const SizedBox(
@@ -33,11 +35,13 @@ class CartWidget extends StatelessWidget {
                       children: [
                         SizedBox(
                             width: size.width * 0.6,
-                            child: Text("Cappuccino" * 10)
+                            child: Text(product.name),
                         ),
                         Column(
                           children: [
-                            IconButton(onPressed: (){}, icon: const Icon(Icons.clear)),
+                            IconButton(onPressed: (){
+                              CartProvider().removeFromCart(product.id);
+                            }, icon: const Icon(Icons.clear)),
                           ],
                         )
                       ],
@@ -45,10 +49,14 @@ class CartWidget extends StatelessWidget {
                     const SizedBox(
                       height: 10,
                     ),
+                    Text("Milk Type: ${product.milkType ?? 'Not selected'}"),
+                    Text("Extra Shot: ${product.extraShot ?? false}"),
+                    Text("Decaf: ${product.decaf ?? false}"),
+                    Text("Size: ${product.size ?? 'Not selected'}"),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("16.00\$"),
+                        Text("${product.price}\₺"),
                         OutlinedButton.icon(
                             onPressed: (){},
                             icon: const Icon(Icons.arrow_drop_down) ,
