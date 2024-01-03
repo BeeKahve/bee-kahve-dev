@@ -55,6 +55,11 @@ class DatabaseManager:
     def __init__(self, db_host, db_user, db_password, db_name):
         self.database = Database(db_host, db_user, db_password, db_name)
 
+    def set_timeout_values(self):
+        self.database.execute_query("SET @@wait_timeout = 600000")
+        self.database.execute_query("SET @@interactive_timeout = 600000")
+        self.database.execute_query("SET @@global.wait_timeout = 600000")
+        self.database.execute_query("SET @@global.interactive_timeout = 600000")
 
     def get_product_ingredient(self, product_id):
         query_product = "SELECT * FROM Products WHERE product_id = %s"  # list of tuples. each tuple is a product
