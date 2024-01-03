@@ -2,20 +2,28 @@ import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:flutter/material.dart';
 
 class CartProvider with ChangeNotifier {
-  List<Coffee> _cartItems = [];
+  final Map<Coffee, int> _cartItems = {};
 
-  List<Coffee> get cartItems => _cartItems;
+  Map<Coffee, int> get cartItems => _cartItems;
 
-  void addToCart(Coffee product, {int quantity = 1}) {
+  void addToCart(Coffee product) {
     // You can implement logic to handle duplicate items or update quantities here
-    _cartItems.add(product);
+    if (_cartItems.containsKey(product)) {
+      _cartItems.update(product, (value) => value + 1);
+    } else {
+      _cartItems.putIfAbsent(product, () => 1);
+    }
     notifyListeners();
   }
 
-  void removeFromCart(int productId) {
-    _cartItems.removeWhere((product) => product.id == productId);
+  void removeFromCart(Coffee product) {
+    _cartItems.update(product, (value) => value + 1);
+    if (_cartItems[product] == 0) {
+      _cartItems.remove(product);
+    }
     notifyListeners();
   }
+
   void clearCart() {
     _cartItems.clear();
     notifyListeners();
