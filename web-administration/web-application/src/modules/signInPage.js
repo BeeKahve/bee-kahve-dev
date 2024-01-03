@@ -74,9 +74,14 @@ const SignIn = () => {
 
     try {
       setLoading(true)
+      const apiProtocol = process.env.REACT_APP_API_PROTOCOL || 'https';
+      const apiBaseUrl = `${apiProtocol}://51.20.117.162:8000`;
+
+      // Use apiBaseUrl in your axios request
+      const res = await axios.post(`${apiBaseUrl}/web_login`, body, config);
       // const res = await axios.post('http://51.20.117.162:8000/web_login', body, config);
-      const res = await axios.post('www.bee-kahve-dev.vercel.app/web_login', body, config);
-      console.log(res)
+      // // const res = await axios.post('www.bee-kahve-dev.vercel.app/web_login', body, config);
+      // console.log(res)
 
       if (res.data.email !== null) {
         localStorage.setItem('token', hashedValue);
