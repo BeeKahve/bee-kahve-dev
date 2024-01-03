@@ -9,6 +9,7 @@ fotoğraflar nasıl tutulacak
 class Manager:
     def __init__(self):
         self.database_manager = DatabaseManager(db_host="localhost", db_user="test", db_password="test", db_name="bee_kahve_db")
+        self.database_manager.set_timeout_values()
         pass
 
     def get_dict(self, obj):
