@@ -20,6 +20,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   late final TextEditingController _addressController;
   final _formkey = GlobalKey<FormState>();
   bool obscureText = true;
+  bool obscureTextConfirm = true;
+
   @override
   void initState(){
     _nameController = TextEditingController();
@@ -75,6 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           // Handle success as needed
           print('Registration successful');
           print('Message: ${jsonResponse['message']}');
+          // ignore: use_build_context_synchronously
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -105,25 +108,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        appBar: AppBar(
+        title: const Text(
+          "",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppColors.textColor,
+          ),
+        ),
+      ),
         body: Padding(
           padding: const EdgeInsets.all(14.0),
           child: SingleChildScrollView(
             child: Column(
               children: [
                 const SizedBox(height: 25,),
-                 Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(Icons.keyboard_backspace, size: 32,),
-                      ),
-                    ],
-                  ),
-                ),
                 Image.asset('assets/images/bee-logo.png', height: 100,),
                 const Text(
                   "Sign Up",
@@ -185,7 +184,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         const SizedBox(height: 20,),
 
                         TextFormField(
-                          obscureText: obscureText,
+                          obscureText: obscureTextConfirm,
                           controller: _repeatPasswordController,
                           textInputAction: TextInputAction.next,
                           keyboardType: TextInputType.visiblePassword,
@@ -193,11 +192,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {
-                                    obscureText = !obscureText;
+                                    obscureTextConfirm = !obscureTextConfirm;
                                   });
                                 },
                                 icon: Icon(
-                                  obscureText
+                                  obscureTextConfirm
                                       ? Icons.visibility
                                       : Icons.visibility_off,
                                 ),

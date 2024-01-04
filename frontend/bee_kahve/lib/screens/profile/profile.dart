@@ -1,112 +1,70 @@
+import 'dart:convert';
 import 'package:bee_kahve/consts/app_color.dart';
-import 'package:bee_kahve/screens/profile/update_address.dart';
-import 'package:flutter/material.dart';
-import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
+import 'package:bee_kahve/models/line_items_model.dart';
+import 'package:bee_kahve/models/order_history_model.dart';
+import 'package:bee_kahve/models/past_order_model.dart';
+import 'package:bee_kahve/models/user_model.dart';
+import 'package:bee_kahve/screens/auth/signin.dart';
 import 'package:bee_kahve/screens/profile/order_details.dart';
-
-class Order {
-  final int id;
-  final String time;
-  final double cost;
-  final List<int> count;
-  final List<double> prices;
-  final List<String> names;
-  final List<String> images;
-
-  Order(this.id, this.time, this.cost, this.count, this.prices, this.names,
-      this.images);
-}
-
-List<Order> pastOrders = [
-  Order(
-    1,
-    "12.12.23",
-    22.50,
-    [1, 2],
-    [10.50, 6.00],
-    ["Cappuccino", "BASKET OFC"],
-    ["assets/images/cappuccino.jpg", "assets/images/basket.png"],
-  ),
-  Order(2, "14.12.23", 22.00, [
-    1,
-    1,
-    1
-  ], [
-    6.00,
-    12.00,
-    4.00
-  ], [
-    "BASKET OFC",
-    "Cappuccino",
-    "LOGO LOL"
-  ], [
-    "assets/images/cappuccino.jpg",
-    "assets/images/basket.png",
-    "assets/images/bee-logo.png"
-  ]),
-  Order(3, "15.12.23", 10.50, [1], [6.0], ["BASKET OFC"],
-      ["assets/images/basket.png"]),
-];
-
-// class OrderHistoryItem extends StatelessWidget {
-//   final Order order;
-//
-//   const OrderHistoryItem({Key? key, required this.order}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.symmetric(vertical: 10),
-//       width: double.infinity,
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           // Left side: Order details
-//           Row(
-//             children: [
-//               Image.asset(
-//                 order.image,
-//                 width: 60,
-//                 height: 60,
-//                 fit: BoxFit.cover,
-//               ),
-//               const SizedBox(width: 10),
-//               Text(
-//                 order.name,
-//                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-//               ),
-//             ],
-//           ),
-//           // Right side: View Order button
-//           ElevatedButton(
-//             onPressed: () {
-//               Navigator.push(context, MaterialPageRoute(builder: (context) => const OrderDetailsScreen()));
-//             },
-//             style: ElevatedButton.styleFrom(
-//               primary: AppColors.yellow,
-//             ),
-//             child: const Text(
-//               "View Order",
-//               style: TextStyle(color: AppColors.darkColor),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+import 'package:bee_kahve/screens/profile/update_address.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
-
+  final User? user;
+  const ProfileScreen({Key? key, required this.user}) : super(key: key);
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late OrderHistory orderHistory;
   @override
   void initState() {
     super.initState();
+    orderHistory = OrderHistory(orders: []);
+    fetchOrders();
+  }
+
+  Future<void> fetchOrders() async {
+    try {
+      var response = await http.get(Uri.parse(
+          'http://51.20.117.162:8000/order_history?customer_id=${widget.user!.customerId}'));
+
+      if (response.statusCode == 200) {
+        var jsonData = json.decode(response.body);
+        List<Order> orders = [];
+        if (jsonData['orders'] is List) {
+          orders = List<Order>.from(jsonData['orders'].map((item) => Order(
+                customerID: item['customer_id'],
+                orderID: item['order_id'],
+                lineItems:
+                    List<Coffee>.from(item['line_items'].map((i) => Coffee(
+                          id: i['product_id'],
+                          name: i['name'],
+                          photoPath: i['photo_path'],
+                          price: i['price'],
+                          sizeChoice: i['size_choice'],
+                          milkChoice: i['milk_choice'],
+                          extraShotChoice: i['extra_shot_choice'],
+                          caffeineChoice: i['caffein_choice'],
+                        ))),
+                orderDate: item['order_date'],
+                orderStatus: item['order_status'],
+              )));
+        }
+        OrderHistory history = OrderHistory(orders: orders);
+
+        setState(() {
+          orderHistory = history;
+        });
+      } else {
+        print('Failed to load order history data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching order history data: $e');
+    }
   }
 
   @override
@@ -114,6 +72,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (mounted) {
       super.dispose();
     }
+  }
+
+  String calculateTotalPrice(Order order) {
+    double total = 0;
+    for (Coffee product in order.lineItems) {
+      total += product.price;
+    }
+    return total.toStringAsFixed(2);
+  }
+
+  String timeOfOrder(String dateTime) {
+    List<String> dateList = dateTime.substring(0, 10).split('-');
+    List<String> timeList = dateTime.substring(11, 19).split(':');
+    String formattedDate = '${dateList[2]}/${dateList[1]}/${dateList[0]}';
+    String formattedTime = '${timeList[0]}:${timeList[1]}';
+    return "$formattedDate $formattedTime";
   }
 
   @override
@@ -128,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: const Row(
             children: [
               Text(
-                "Bee",
+                "Bee' ",
                 style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -143,6 +117,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const SignInScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.logout),
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(14.0),
@@ -154,8 +140,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                const Text(
-                  "Name",
+                Text(
+                  widget.user?.name ?? "",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -165,8 +151,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                const Text(
-                  "test@gmail.com",
+                Text(
+                  widget.user?.email ?? "",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -184,7 +170,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: AppColors.textColor,
                   ),
                 ),
-
                 const SizedBox(
                   height: 20,
                 ),
@@ -192,8 +177,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      " İTÜ Ayazağa Kampüsü, Rektörlük Binası, 34467 Maslak-İSTANBUL",
+                    Text(
+                      widget.user?.address ?? '',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -218,7 +203,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const UpdateAddressScreen()));
+                                      UpdateAddressScreen(user: widget.user)));
                         },
                         child: const Text(
                           "Update Address",
@@ -239,24 +224,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
                 ),
-                // DynamicHeightGridView(
-                //     mainAxisSpacing: 12,
-                //     crossAxisSpacing: 12,
-                //     shrinkWrap: true,
-                //     physics: const BouncingScrollPhysics(),
-                //     builder: (context, index){
-                //       return const Text("AAA");
-                //     },  itemCount: 200,
-                //     crossAxisCount: 1
-                // ),
                 ListView.builder(
-                  itemCount: pastOrders.length,
+                  itemCount: orderHistory.orders.length,
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.only(
-                        bottom: 40.0,
+                        bottom: 20.0,
                       ),
                       child: Container(
                         decoration: BoxDecoration(
@@ -275,23 +250,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Order ID: ${pastOrders[index].id}",
+                                    "Order ID: ${orderHistory.orders[orderHistory.orders.length - 1 - index].orderID}",
                                     style: const TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 14,
                                     ),
                                   ),
-                                  Text(pastOrders[index].time,
+                                  Text(
+                                      timeOfOrder(orderHistory
+                                          .orders[orderHistory.orders.length -
+                                              1 -
+                                              index]
+                                          .orderDate!),
                                       style: const TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 14.0,
                                       ))
                                 ],
                               ),
                               const SizedBox(
-                                height: 40.0,
+                                height: 20.0,
                               ),
-                              for (int i = 0;
-                                  i < pastOrders[index].count.length;
-                                  i++)
+                              for (Coffee lineItem in orderHistory.orders[
+                                      orderHistory.orders.length - 1 - index]
+                                  .listToMap()
+                                  .keys
+                                  .toList())
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     bottom: 8.0,
@@ -302,14 +284,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Image.asset(
-                                        pastOrders[index].images[i],
-                                        width: 60,
-                                        height: 60,
-                                        fit: BoxFit.cover,
+                                      CachedNetworkImage(
+                                        imageUrl: lineItem.photoPath,
+                                        placeholder: (context, url) =>
+                                            const CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(Icons.error),
+                                        width: 90.0,
+                                        height: 90.0,
                                       ),
-                                      Text(
-                                        "${pastOrders[index].names[i]}  ${pastOrders[index].count[i]} x ${pastOrders[index].prices[i]}\$",
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(lineItem.name),
+                                          Text(
+                                            "${orderHistory.orders[orderHistory.orders.length - 1 - index].listToMap()[lineItem]} x ${lineItem.price.toStringAsFixed(2)}\$",
+                                          )
+                                        ],
                                       )
                                     ],
                                   ),
@@ -322,7 +314,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "${pastOrders[index].cost}\$",
+                                    "${calculateTotalPrice(orderHistory.orders[orderHistory.orders.length - 1 - index])}₺",
                                     style: const TextStyle(
                                       fontSize: 20.0,
                                     ),
@@ -333,7 +325,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const OrderDetailsScreen()));
+                                                  OrderDetailsScreen(
+                                                      order: orderHistory
+                                                          .orders[orderHistory
+                                                              .orders.length -
+                                                          1 -
+                                                          index],
+                                                      user: widget.user)));
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.yellow,

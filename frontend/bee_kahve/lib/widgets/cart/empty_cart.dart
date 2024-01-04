@@ -1,14 +1,19 @@
 import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/root.dart';
+import 'package:bee_kahve/screens/menu.dart';
 import 'package:flutter/material.dart';
 import '../../consts/app_color.dart';
 
 class EmptyCartWidget extends StatelessWidget {
   final User? user;
-  const EmptyCartWidget( {Key? key, this.user, required this.imagePath, required this.title,
-    required this.subtitle,
-    required this.buttonText}) : super(
-    key: key);
+  const EmptyCartWidget(
+      {Key? key,
+      required this.user,
+      required this.imagePath,
+      required this.title,
+      required this.subtitle,
+      required this.buttonText})
+      : super(key: key);
 
   final String imagePath, title, subtitle, buttonText;
   @override
@@ -31,19 +36,17 @@ class EmptyCartWidget extends StatelessWidget {
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 30,
-                color: AppColors.textColor
-            ),
+                color: AppColors.textColor),
           ),
           const SizedBox(
             height: 20,
           ),
-           Text(
+          Text(
             title,
             style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 30,
-                color: AppColors.textColor
-            ),
+                color: AppColors.textColor),
           ),
           const SizedBox(
             height: 20,
@@ -55,8 +58,7 @@ class EmptyCartWidget extends StatelessWidget {
               style: const TextStyle(
                   fontWeight: FontWeight.normal,
                   fontSize: 16,
-                  color: AppColors.textColor
-              ),
+                  color: AppColors.textColor),
             ),
           ),
           const SizedBox(
@@ -64,7 +66,8 @@ class EmptyCartWidget extends StatelessWidget {
           ),
           ElevatedButton(
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                 backgroundColor: AppColors.yellow,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
@@ -72,20 +75,22 @@ class EmptyCartWidget extends StatelessWidget {
               ),
               onPressed: () {
                 Navigator.pop(context);
-                 Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => RootScreen(currentScreen: 0, user: user),
-              ),
-            );
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        RootScreen(currentScreen: 0, user: user),
+                  ),
+                );
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => MenuScreen(user: user),
+                  ),
+                );
               },
               child: Text(
                 buttonText,
-                style: const TextStyle(
-                    color: AppColors.darkColor
-                ),
-
-              )
-          ),
+                style: const TextStyle(color: AppColors.darkColor),
+              )),
         ],
       ),
     );

@@ -107,10 +107,15 @@ class Manager:
                         return Response(status=False ,message="Milk choice is not valid.")
                 
                 elif ingredient == "espresso_amount":
+                    
+                    extra_shot = 1
+                    if item.extra_shot_choice == True:
+                        extra_shot = 2
+                    
                     if item.caffein_choice == False:
-                        total_ingrediants["decaff_espresso_amount"] += ingredients[ingredient] * coeff
+                        total_ingrediants["decaff_espresso_amount"] += ingredients[ingredient] * coeff * extra_shot
                     elif item.caffein_choice == True:
-                        total_ingrediants["espresso_amount"] += ingredients[ingredient] * coeff
+                        total_ingrediants["espresso_amount"] += ingredients[ingredient] * coeff * extra_shot
                     else:
                         return Response(status=False ,message="Caffein choice is not valid.")
                         
@@ -136,19 +141,19 @@ class Manager:
             if stock_dict[ingredient] < total_ingrediants[ingredient]:
                 return Response(status=False ,message="Stock is not enough for {}.".format(ingredient))
         
+        # place order
+        order.order_date = str(datetime.datetime.now())[:-4]
+        status = self.database_manager.place_order(order)
+        if not status:
+            return Response(status=False ,message="Order cannot be placed.")
+        
         # update stock
         for ingredient in total_ingrediants:
             stock_dict[ingredient] -= total_ingrediants[ingredient]
         
         status = self.database_manager.update_stock(Stock(**stock_dict)) #TODO admin_id or stock_id
         if not status:
-            return Response(status=False ,message="Stock can not updated.")
-
-        # place order
-        order.order_date = str(datetime.datetime.now())[:-4]
-        status = self.database_manager.place_order(order)
-        if not status:
-            return Response(status=False ,message="Stock updated, but order can not placed.")
+            return Response(status=False ,message="Order placed, but stock cannot be updated.")
         
         # update loyalty count
         total_coffee_count = len(order.line_items)
@@ -273,5 +278,12 @@ class Manager:
             return Response(status=status ,message="Product is deleted successfully.")
         else:
             return Response(status=status ,message="Product can not be deleted.")
+
+    def get_address(self, customer_id):
+        status, address = self.database_manager.get_address(customer_id)
+        if status:
+            return Response(body=address, status=status ,message="Address is fetched successfully.")
+        else:
+            return Response(status=status ,message="Address is not fetched.")
 
     #jwt token

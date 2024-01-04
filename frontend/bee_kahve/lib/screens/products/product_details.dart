@@ -1,44 +1,20 @@
 import 'dart:convert';
 import 'package:bee_kahve/consts/app_color.dart';
-import 'package:bee_kahve/models/menu_product_model.dart';
-import 'package:bee_kahve/models/product_model.dart';
-import 'package:bee_kahve/root.dart';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/cart/cart_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:bee_kahve/models/line_items_model.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final int productId;
-
-  const ProductDetailsScreen({Key? key, required this.productId})
+  final User? user;
+  const ProductDetailsScreen(
+      {Key? key, required this.productId, required this.user})
       : super(key: key);
-
   @override
   State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
-}
-
-class Coffee {
-  final int id;
-  final String name;
-  final String photoPath;
-  final double price;
-  final String? milkType;
-  final bool? extraShot;
-  final bool? decaf;
-  final String? size;
-
-  Coffee(
-      {required this.id,
-      required this.name,
-      required this.photoPath,
-      required this.price,
-      this.milkType,
-      this.extraShot,
-      this.decaf,
-      required this.size
-      // Add other necessary fields
-      });
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
@@ -70,21 +46,26 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   Future<void> _addCart(product) async {
     // Create a product object with selected options
+    Map<String, double> sizeMap = {
+      'small': 1,
+      'medium': 1.3,
+      'large': 1.7,
+    };
+
     Coffee productToAdd = Coffee(
       id: widget.productId,
       name: product?['coffee_name'] ?? '',
       photoPath: product?['photo_path'] ?? '',
-      price: product?['price'] ?? 0.0,
-      milkType: _selectedMilkType,
-      extraShot: _isChecked,
-      decaf: _isCheckedDecaf,
-      size: _selectedSize,
+      price: product?['price'] * sizeMap[_selectedSize] ?? 0.0,
+      sizeChoice: _selectedSize,
+      milkChoice: _selectedMilkType,
+      extraShotChoice: _isChecked,
+      caffeineChoice: _isCheckedDecaf,
     );
 
     // Add the product to the cart using the cart provider
     CartProvider cartProvider = CartProvider();
     cartProvider.addToCart(productToAdd);
-    Navigator.pop(context);
     Navigator.pop(context);
     // Additional logic (e.g., show a confirmation message)
   }
@@ -211,17 +192,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             Icons.star,
                             color: AppColors.yellow,
                           ),
-                          Text(product?['rate']?.toString() ?? ''),
+                          Text(product?['rate']?.toStringAsFixed(1) ?? ''),
                         ],
                       ),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text(
-                      "Coffee Details",
-                      style: TextStyle(color: AppColors.textColor),
-                    ),
+                    coffeeDetailsText(
+                        "Coffee Details",
+                        product?['contains_milk'] == true ||
+                            product?['contains_chocolate_syrup'] == true ||
+                            product?['contains_white_chocolate_syrup'] ==
+                                true ||
+                            product?['contains_caramel_syrup'] == true ||
+                            product?['contains_sugar'] == true),
                     buildIngredientText(
                         "Contains milk", product?['contains_milk'] == true),
                     buildIngredientText("Contains chocolate syrup",
@@ -250,7 +235,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             activeColor: AppColors.yellow,
                             onChanged: (newBool) {
                               setState(() {
-                                _isChecked = newBool;
+                                _isChecked = newBool!;
                               });
                             }),
                         const Text(
@@ -265,7 +250,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             activeColor: AppColors.yellow,
                             onChanged: (newBool) {
                               setState(() {
-                                _isCheckedDecaf = newBool;
+                                _isCheckedDecaf = newBool!;
                               });
                             }),
                       ],
@@ -286,7 +271,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                       color: AppColors.textColor),
                                 )),
                             DropdownMenuItem(
-                              value: "Whole Milk",
+                              value: "whole_milk",
                               child: Text(
                                 "Whole Milk",
                                 style: TextStyle(
@@ -296,7 +281,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                             ),
                             DropdownMenuItem(
-                              value: "Reduced Fat Milk",
+                              value: "reduced_fat_milk",
                               child: Text(
                                 "Reduced Fat Milk",
                                 style: TextStyle(
@@ -306,7 +291,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                             ),
                             DropdownMenuItem(
-                              value: "Lactose Free Milk",
+                              value: "lactose_free_milk",
                               child: Text(
                                 "Lactose Free Milk",
                                 style: TextStyle(
@@ -316,7 +301,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                             ),
                             DropdownMenuItem(
-                              value: "Oat Milk",
+                              value: "oat_milk",
                               child: Text(
                                 "Oat Milk",
                                 style: TextStyle(
@@ -326,7 +311,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ),
                             ),
                             DropdownMenuItem(
-                              value: "Almond Milk",
+                              value: "almond_milk",
                               child: Text(
                                 "Almond Milk",
                                 style: TextStyle(
@@ -420,16 +405,25 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          if (_selectedSize == null ||
-                              _selectedSize == 'not selected' ||
+                          if(product?['contains_milk'] == true &&
                               _selectedMilkType == null ||
-                              _selectedMilkType == 'Milk Options') {
+                              _selectedMilkType == 'Milk Options'){
+                                ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Please choose milk type before adding to the cart.'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                              }
+                          else if (_selectedSize == null ||
+                              _selectedSize == 'not selected') {
                             // Display an error message (you can use a SnackBar or any other suitable widget)
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text(
-                                    'Please choose both milk type and size before adding to the cart.'),
-                                duration: Duration(seconds: 3),
+                                    'Please choose size before adding to the cart.'),
+                                duration: Duration(seconds: 2),
                               ),
                             );
                           } else {

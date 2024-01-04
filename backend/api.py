@@ -117,5 +117,9 @@ async def update_product(product_id : int, product : ProductFull) -> Response:
 async def delete_product(product_id : int) -> Response:
     return manager.delete_product(product_id)
 
+@app.get("/get_address")
+async def get_address(customer_id : int) -> Address:
+    return manager.get_address(customer_id).body
+
 if __name__ == "__main__":
     uvicorn.run(app,host="0.0.0.0", port=8000)

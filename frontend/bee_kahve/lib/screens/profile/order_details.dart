@@ -1,63 +1,59 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/line_items_model.dart';
+import 'package:bee_kahve/models/past_order_model.dart';
+import 'package:bee_kahve/models/user_model.dart';
+import 'package:bee_kahve/root.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:timelines/timelines.dart';
 import 'package:bee_kahve/screens/profile/rate.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
-  const OrderDetailsScreen({super.key});
+  final User? user;
+  final Order order;
+  const OrderDetailsScreen({Key? key, required this.order, required this.user})
+      : super(key: key);
 
   @override
   State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
 }
 
-const List<String> processes = [
-  "Placed",
-  "Preparing",
-  "On the way",
-  "Delivered"
-];
+const Map<String, List<dynamic>> processes = {
+  "waiting": [0, "Placed"],
+  "preparing": [1, "Preparing"],
+  "on_the_way": [2, "On the way"],
+  "delivered": [3, "Delivered"],
+  "cancelled": [4, "Cancelled"],
+};
 
-const int currentStatus = 2;
-
-class PastOrder {
-  final String id;
-  final String time;
-  final List<String> names;
-  final List<String> images;
-  final List<int> count;
-  final List<double> prices;
-  final double cost;
-
-  const PastOrder({
-    required this.id,
-    required this.time,
-    required this.names,
-    required this.images,
-    required this.count,
-    required this.prices,
-    required this.cost,
-  });
-}
-
-PastOrder pastOrder1 = const PastOrder(
-  id: "123456",
-  time: "12:30 PM",
-  names: ["Cappuccino", "Cappuccino", "Cappuccino", "Latte", "Espresso"],
-  images: [
-    "assets/images/cappuccino.jpg",
-    "assets/images/cappuccino.jpg",
-    "assets/images/cappuccino.jpg",
-    "assets/images/cappuccino.jpg",
-    "assets/images/cappuccino.jpg"
-  ],
-  count: [1, 1, 1, 1, 1],
-  prices: [4.5, 4.5, 4.5, 5.0, 3.0],
-  cost: 21.5,
-);
+const Map<String, String> milkTypes = {
+  "whole_milk": "Whole Milk",
+  "reduced_fat_milk": "Reduced Fat Milk",
+  "lactose_free_milk": "Lactose Free Milk",
+  "oat_milk": "Oat Milk",
+  "almond_milk": "Almond Milk",
+};
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
-  bool? isChecked = false;
-  bool? isCheckedDecaf = false;
+  late Order order;
+  Color colorChoice = Colors.green;
+  @override
+  void initState() {
+    order = widget.order;
+    if (processes[order.orderStatus]![0] == 4) {
+      colorChoice = Colors.red;
+    }
+    super.initState();
+  }
+
+  String calculateTotalPrice(Order order) {
+    double total = 0;
+    for (Coffee product in order.lineItems) {
+      total += product.price;
+    }
+    return total.toStringAsFixed(2);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -68,11 +64,18 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, size: 32),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          RootScreen(currentScreen: 2, user: widget.user)));
+            },
           ),
-          title: const Text(
-            "Order ID",
-            style: TextStyle(
+          title: Text(
+            "Order ${order.orderID}",
+            style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 28,
                 color: AppColors.textColor),
@@ -83,6 +86,15 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                if (processes[order.orderStatus]![0] == 4)
+                  const Text(
+                    "Order Cancelled",
+                    style: TextStyle(
+                      fontSize: 40.0,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textColor,
+                    ),
+                  ),
                 Container(
                   height: 120,
                   alignment: Alignment.topCenter,
@@ -107,28 +119,29 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         return Padding(
                           padding: const EdgeInsets.only(top: 15.0),
                           child: Text(
-                            processes[index],
+                            processes.values.toList()[index][1],
                             style: const TextStyle(fontSize: 12),
                           ),
                         );
                       },
                       indicatorBuilder: (_, index) {
-                        if (index <= currentStatus) {
-                          return const DotIndicator(
+                        if (processes[order.orderStatus]![0] == 5) {}
+                        if (index <= processes[order.orderStatus]![0]) {
+                          return DotIndicator(
                             size: 15.0,
-                            color: Colors.green,
+                            color: colorChoice,
                           );
                         } else {
                           return OutlinedDotIndicator(
                             borderWidth: 4.0,
-                            color: Colors.green,
+                            color: colorChoice,
                           );
                         }
                       },
                       connectorBuilder: (_, index, type) {
                         if (index > 0) {
-                          return const SolidLineConnector(
-                            color: Colors.green,
+                          return SolidLineConnector(
+                            color: colorChoice,
                           );
                         } else {
                           return null;
@@ -139,59 +152,91 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,
+                    horizontal: 10.0,
                     vertical: 10.0,
                   ),
                   child: Column(
                     children: [
-                      for (int i = 0; i < pastOrder1.names.length; i++)
+                      for (Coffee product in order.listToMap().keys.toList())
                         Container(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              Image.asset(
-                                pastOrder1.images[i],
+                              CachedNetworkImage(
+                                imageUrl: product.photoPath,
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
                                 width: 90,
                                 height: 90,
-                                fit: BoxFit.cover,
                               ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.5,
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "${pastOrder1.names[i]}  ${pastOrder1.count[i]} x ${pastOrder1.prices[i]}\$",
-                                      style: const TextStyle(
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${product.name} ${product.sizeChoice}",
+                                    style: const TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    "- ${milkTypes[product.milkChoice]}",
+                                    style: const TextStyle(
+                                      fontSize: 14.0,
+                                    ),
+                                  ),
+                                  if (product.caffeineChoice == true)
+                                    const Text(
+                                      "- Decaf",
+                                      style: TextStyle(
                                         fontSize: 14.0,
                                       ),
                                     ),
-                                    const SizedBox(
-                                      height: 10.0,
+                                  if (product.extraShotChoice == true)
+                                    const Text(
+                                      "- Extra Shot",
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                      ),
                                     ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const RatePage()));
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.yellow,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 40.0,
-                                          vertical: 10.0,
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "${order.listToMap()[product]} x ${product.price}\₺",
+                                        style: const TextStyle(
+                                          fontSize: 14.0,
                                         ),
                                       ),
-                                      child: const Text(
-                                        "Rate",
-                                        style: TextStyle(
-                                            color: AppColors.darkColor),
+                                      const SizedBox(
+                                        width: 20.0,
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      RatePage(
+                                                          product: product,
+                                                          user: widget.user)));
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.yellow,
+                                        ),
+                                        child: const Text(
+                                          "Rate",
+                                          style: TextStyle(
+                                              color: AppColors.darkColor),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -202,7 +247,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "${pastOrder1.cost}\$",
+                          "${calculateTotalPrice(order)}\₺",
                           style: const TextStyle(
                             fontSize: 20.0,
                           ),

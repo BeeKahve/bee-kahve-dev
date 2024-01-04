@@ -1,15 +1,66 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
+
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/line_items_model.dart';
+import 'package:bee_kahve/models/user_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:http/http.dart' as http;
 
 class RatePage extends StatefulWidget {
-  const RatePage({super.key});
+  final User? user;
+  final Coffee product;
+  const RatePage({Key? key, required this.user, required this.product})
+      : super(key: key);
 
   @override
   State<RatePage> createState() => _RatePage();
 }
 
 class _RatePage extends State<RatePage> {
+  late Coffee product;
+  late double rate = 0;
+  @override
+  void initState() {
+    product = widget.product;
+    super.initState();
+  }
+
+  Future<void> _rate() async {
+    FocusScope.of(context).unfocus();
+    try {
+      final Map<String, dynamic> requestBody = {
+        'product_id': product.id,
+        'rate': rate,
+      };
+      final response = await http.post(
+        Uri.parse('http://51.20.117.162:8000/rate'),
+        body: json.encode(requestBody),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        if (jsonResponse['status'] == true) {
+          print("Order placed successfully");
+          print("Message: ${jsonResponse['message']}");
+          Navigator.pop(context);
+        } else {
+          print("Order placement failed. Message: ${jsonResponse['message']}");
+        }
+      } else {
+        print('Order placement failed: Status code: ${response.statusCode}');
+        // Handle the error if the server did not return a 200 OK response
+      }
+    } catch (e) {
+      print('Error during order placement: $e');
+      // Handle other exceptions, such as network issues
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,16 +81,17 @@ class _RatePage extends State<RatePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              "assets/images/cappuccino.jpg",
-              width: 200,
-              height: 200,
-              fit: BoxFit.cover,
+            CachedNetworkImage(
+              imageUrl: product.photoPath,
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+              width: double.infinity,
+              height: MediaQuery.of(context).size.width / 4.0,
             ),
             const SizedBox(height: 20),
-            const Text(
-              "Cappuccino",
-              style: TextStyle(
+            Text(
+              product.name,
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 28,
                 color: AppColors.textColor,
@@ -57,13 +109,15 @@ class _RatePage extends State<RatePage> {
                 color: Colors.amber,
               ),
               onRatingUpdate: (rating) {
-                print(rating);
+                setState(() {
+                  rate = rating;
+                });
               },
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
+              onPressed: () async {
+                await _rate();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.yellow,

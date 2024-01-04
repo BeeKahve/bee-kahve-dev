@@ -3,7 +3,6 @@ import 'package:bee_kahve/consts/validator.dart';
 import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/root.dart';
 import 'package:bee_kahve/screens/auth/signup.dart';
-import 'package:bee_kahve/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -44,7 +43,6 @@ class _SignInScreenState extends State<SignInScreen> {
       final String email = _emailController.text;
       final String password = _passwordController.text;
 
-      // Create the request body
       final Map<String, dynamic> requestBody = {
         'email': email,
         'password': password,
@@ -64,7 +62,7 @@ class _SignInScreenState extends State<SignInScreen> {
           // Check if login was successful
           if (jsonResponse['customer_id'] != null) {
             // Login successful
-            // Create a User instance
+            // Create a User
             User user = User.fromJson(jsonResponse);
 
             // Handle success as needed
@@ -78,8 +76,6 @@ class _SignInScreenState extends State<SignInScreen> {
             setState(() {
               user = user;
             });
-            // Example: Navigate to the profile screen after successful login
-            // ignore: use_build_context_synchronously
             // ignore: use_build_context_synchronously
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
@@ -87,9 +83,14 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
             );
           } else {
-            // Login failed
-            // Handle failure, e.g., display an error message
-            print('Login failed. Please check your credentials.');
+            // Show error message
+            final errorMessage = jsonResponse['message'] ??
+                'Login failed. Please check your credentials.';
+            // ignore: use_build_context_synchronously
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(errorMessage),
+              duration: const Duration(seconds: 2),
+            ));
           }
         } else {
           // Login failed
@@ -98,7 +99,12 @@ class _SignInScreenState extends State<SignInScreen> {
         }
       } catch (e) {
         // Handle other exceptions, such as network issues
-        print('Error during login: $e');
+        // Show error message
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error during login: $e'),
+          duration: const Duration(seconds: 2),
+        ));
       }
     }
   }
@@ -193,8 +199,6 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                             onPressed: () async {
                               await _signin();
-                              /* Navigator.push(
-                                  context, MaterialPageRoute(builder: (context) => const HomeScreen())); */
                             },
                             child: const Text(
                               "Sign in",
