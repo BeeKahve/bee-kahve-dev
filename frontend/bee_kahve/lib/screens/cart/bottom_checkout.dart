@@ -1,11 +1,18 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/line_items_model.dart';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/cart/payment.dart';
-import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:flutter/material.dart';
 import 'package:bee_kahve/screens/cart/cart_provider.dart';
 
-class CartBottomSheetWidget extends StatelessWidget {
-  CartBottomSheetWidget({super.key});
+class CartBottomSheetWidget extends StatefulWidget {
+  final User? user;
+  const CartBottomSheetWidget({Key? key, required this.user}) : super(key: key);
+  @override
+  State<CartBottomSheetWidget> createState() => _CartBottomSheetWidget();
+}
+
+class _CartBottomSheetWidget extends State<CartBottomSheetWidget> {
   CartProvider cartProvider = CartProvider();
   String calculateTotal() {
     int total = 0;
@@ -68,7 +75,8 @@ class CartBottomSheetWidget extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const PaymentPage()));
+                          builder: (context) =>
+                              PaymentPage(user: widget.user)));
                 },
                 style: ElevatedButton.styleFrom(
                   padding:

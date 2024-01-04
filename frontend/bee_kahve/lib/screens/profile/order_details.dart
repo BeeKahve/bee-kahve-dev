@@ -1,10 +1,12 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:timelines/timelines.dart';
 import 'package:bee_kahve/screens/profile/rate.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
-  const OrderDetailsScreen({super.key});
+  final User? user;
+  const OrderDetailsScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
@@ -174,8 +176,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const RatePage()));
+                                                builder: (context) => RatePage(
+                                                    user: widget.user)));
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.yellow,

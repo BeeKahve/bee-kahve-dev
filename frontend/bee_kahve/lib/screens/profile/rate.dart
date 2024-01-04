@@ -1,9 +1,11 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class RatePage extends StatefulWidget {
-  const RatePage({super.key});
+  final User? user;
+  const RatePage({Key? key, required this.user}) : super(key: key);
 
   @override
   State<RatePage> createState() => _RatePage();
