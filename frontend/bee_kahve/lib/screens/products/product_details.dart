@@ -406,16 +406,25 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ),
                         onPressed: () async {
-                          if (_selectedSize == null ||
-                              _selectedSize == 'not selected' ||
+                          if(product?['contains_milk'] == true &&
                               _selectedMilkType == null ||
-                              _selectedMilkType == 'Milk Options') {
+                              _selectedMilkType == 'Milk Options'){
+                                ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'Please choose milk type before adding to the cart.'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                              }
+                          else if (_selectedSize == null ||
+                              _selectedSize == 'not selected') {
                             // Display an error message (you can use a SnackBar or any other suitable widget)
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text(
-                                    'Please choose both milk type and size before adding to the cart.'),
-                                duration: Duration(seconds: 3),
+                                    'Please choose size before adding to the cart.'),
+                                duration: Duration(seconds: 2),
                               ),
                             );
                           } else {
