@@ -350,7 +350,7 @@ class DatabaseManager:
                 line_items_list.append(LineItem(product_id=product[0],
                                                 name=product[1],
                                                 photo_path=product[2],
-                                                price=product[12],
+                                                price=line_item[7],
                                                 size_choice=line_item[3],
                                                 milk_choice=line_item[4],
                                                 extra_shot_choice=line_item[5],
