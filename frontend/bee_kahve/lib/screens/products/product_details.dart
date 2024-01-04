@@ -195,7 +195,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       height: MediaQuery.of(context).size.width / 2.0,
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 20.0),
@@ -203,7 +203,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           const Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(4.0),
                             child: Text(
                               "Ratings",
                               style: TextStyle(
@@ -368,7 +368,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 : null,
                           ),
                           child: Text(
-                            "Small\n${product?['price']?.toStringAsFixed(2) ?? ''}",
+                            "Small\n${product?['price']?.toStringAsFixed(2) ?? ''}₺",
                             style: const TextStyle(color: AppColors.textColor),
                             textAlign: TextAlign.center,
                           ),
@@ -385,7 +385,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 : null,
                           ),
                           child: Text(
-                            "Medium\n${(product?['price'] * 1.3)?.toStringAsFixed(2)}",
+                            "Medium\n${(product?['price'] * 1.3)?.toStringAsFixed(2)}₺",
                             style: const TextStyle(color: AppColors.textColor),
                             textAlign: TextAlign.center,
                           ),
@@ -402,7 +402,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 : null,
                           ),
                           child: Text(
-                            "Large\n${(product?['price'] * 1.7)?.toStringAsFixed(2)}",
+                            "Large\n${(product?['price'] * 1.7)?.toStringAsFixed(2)}₺",
                             style: const TextStyle(color: AppColors.textColor),
                             textAlign: TextAlign.center,
                           ),

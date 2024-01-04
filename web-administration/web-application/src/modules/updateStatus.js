@@ -22,7 +22,14 @@ const UpdateStatus = () => {
     try {
       const response = await axios.post('http://51.20.117.162:8000/get_active_orders?admin_id=1');
       console.log(response.data.orders)
-      setOrderList(response.data.orders);
+      const orders = response.data.orders;
+      // Fetch address for each order and update the orderList state
+      const updatedOrderList = await Promise.all(orders.map(async (order) => {
+        const addressResponse = await axios.get(`http://51.20.117.162:8000/get_address?customer_id=${order.customer_id}`);
+        return { ...order, address: addressResponse.data.address };
+      }));
+      console.log(updatedOrderList)
+      setOrderList(updatedOrderList);
     } catch (error) {
       console.error('Error fetching order list:', error);
     }
@@ -130,12 +137,22 @@ const UpdateStatus = () => {
                 {text.map((product) => (
                   <div key={product.product_id}>
                     <p>Name: {product.name}</p>
-                    <p>Size: {product.size}</p>
+                    <p>Size: {product.size_choice}</p>
                     <p>Price: {product.price}</p>
                   </div>
                 ))}
               </div>
             )} />
+            <Column
+            title="Customer Address"
+            dataIndex="address"
+            key="address"
+            render={(address, record) => (
+              <div>
+                <h3>Address: {address}</h3>
+              </div>
+            )}
+          />
             <Column
               title="Action"
               key="action"
