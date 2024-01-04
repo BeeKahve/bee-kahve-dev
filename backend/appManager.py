@@ -107,10 +107,15 @@ class Manager:
                         return Response(status=False ,message="Milk choice is not valid.")
                 
                 elif ingredient == "espresso_amount":
+                    
+                    extra_shot = 1
+                    if item.extra_shot_choice == True:
+                        extra_shot = 2
+                    
                     if item.caffein_choice == False:
-                        total_ingrediants["decaff_espresso_amount"] += ingredients[ingredient] * coeff
+                        total_ingrediants["decaff_espresso_amount"] += ingredients[ingredient] * coeff * extra_shot
                     elif item.caffein_choice == True:
-                        total_ingrediants["espresso_amount"] += ingredients[ingredient] * coeff
+                        total_ingrediants["espresso_amount"] += ingredients[ingredient] * coeff * extra_shot
                     else:
                         return Response(status=False ,message="Caffein choice is not valid.")
                         
