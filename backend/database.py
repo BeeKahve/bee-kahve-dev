@@ -545,7 +545,7 @@ class DatabaseManager:
         return self.database.execute_query(query_product, (1, product_id))
 
     def get_address(self, customer_id):
-        query_address = "SELECT address FROM Customers WHERE customer_id = %s"
+        query_address = "SELECT customer_address FROM Customers WHERE customer_id = %s"
         address = self.database.fetch_data(query_address, (customer_id,))[0][0]
 
         if address == []:
