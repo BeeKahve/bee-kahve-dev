@@ -7,7 +7,7 @@ import 'package:bee_kahve/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'package:crypto/crypto.dart';
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
@@ -43,6 +43,9 @@ class _SignInScreenState extends State<SignInScreen> {
     if (isValid) {
       final String email = _emailController.text;
       final String password = _passwordController.text;
+      // final String plainPassword = _passwordController.text;
+      // // Hash the password using SHA-512
+      // final String hashedPassword = sha512.convert(utf8.encode(plainPassword)).toString();
 
       // Create the request body
       final Map<String, dynamic> requestBody = {
@@ -87,9 +90,13 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
             );
           } else {
-            // Login failed
-            // Handle failure, e.g., display an error message
-            print('Login failed. Please check your credentials.');
+            // Show error message
+            final errorMessage = jsonResponse['message'] ?? 'Login failed. Please check your credentials.';
+            // ignore: use_build_context_synchronously
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(errorMessage),
+              duration: const Duration(seconds: 2),
+            ));
           }
         } else {
           // Login failed
@@ -98,7 +105,12 @@ class _SignInScreenState extends State<SignInScreen> {
         }
       } catch (e) {
         // Handle other exceptions, such as network issues
-        print('Error during login: $e');
+        // Show error message
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error during login: $e'),
+          duration: const Duration(seconds: 2),
+        ));
       }
     }
   }
@@ -193,8 +205,6 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                             onPressed: () async {
                               await _signin();
-                              /* Navigator.push(
-                                  context, MaterialPageRoute(builder: (context) => const HomeScreen())); */
                             },
                             child: const Text(
                               "Sign in",
