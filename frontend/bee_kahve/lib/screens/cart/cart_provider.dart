@@ -2,7 +2,7 @@ import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:flutter/material.dart';
 
 class CartProvider with ChangeNotifier {
-  final Map<Coffee, int> _cartItems = {};
+  Map<Coffee, int> _cartItems = {};
 
   Map<Coffee, int> get cartItems => _cartItems;
 
@@ -16,7 +16,7 @@ class CartProvider with ChangeNotifier {
   }
 
   void removeFromCart(Coffee product) {
-    _cartItems.update(product, (value) => value + 1);
+    _cartItems.update(product, (value) => value - 1);
     if (_cartItems[product] == 0) {
       _cartItems.remove(product);
     }

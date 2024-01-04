@@ -74,14 +74,18 @@ class CartWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         if (product.size == "small")
-                          Text("${product.price}\₺"),
+                          Text("${product.price * cartProvider.cartItems[product]!.toInt()}\₺"),
                         if (product.size == "medium")
-                          Text("${(product.price * 1.3).toStringAsFixed(2)}\₺"),
+                          Text("${(product.price * 1.3 * cartProvider.cartItems[product]!.toInt()).toStringAsFixed(2)}\₺"),
                         if (product.size == "large")
-                          Text("${(product.price * 1.7).toStringAsFixed(2)}\₺"),
-                        Icon(Icons.remove),
-                        Text(cartProvider.cartItems[product]),
-                        Icon(Icons.add),
+                          Text("${(product.price * 1.7 * cartProvider.cartItems[product]!.toInt()).toStringAsFixed(2)}\₺"),
+                        IconButton(onPressed: (){
+                          cartProvider.removeFromCart(product);
+                        }, icon: const Icon(Icons.remove)),
+                        Text(cartProvider.cartItems[product].toString()),
+                        IconButton(onPressed: (){
+                          cartProvider.addToCart(product);
+                        }, icon: const Icon(Icons.add))
                       ],
                     )
                   ],
