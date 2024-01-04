@@ -22,13 +22,15 @@ class CartScreen extends StatelessWidget {
             color: AppColors.textColor,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Clear the cart or add your logic here
-              Provider.of<CartProvider>(context, listen: false).clearCart();
-            },
-            icon: const Icon(Icons.delete_forever_rounded),
+         actions: [
+          Visibility(
+            visible: Provider.of<CartProvider>(context).cartItems.isNotEmpty,
+            child: IconButton(
+              onPressed: () {
+                Provider.of<CartProvider>(context, listen: false).clearCart();
+              },
+              icon: const Icon(Icons.delete_forever_rounded),
+            ),
           ),
         ],
       ),
