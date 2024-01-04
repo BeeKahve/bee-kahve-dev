@@ -1,4 +1,4 @@
-import 'package:bee_kahve/screens/products/product_details.dart';
+import 'package:bee_kahve/models/line_items_model.dart';
 import 'package:flutter/material.dart';
 
 class CartProvider with ChangeNotifier {
