@@ -108,15 +108,10 @@ class _PaymentPage extends State<PaymentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 32),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: const Text(
           "Payment",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 28,
             color: AppColors.textColor,
           ),
         ),
