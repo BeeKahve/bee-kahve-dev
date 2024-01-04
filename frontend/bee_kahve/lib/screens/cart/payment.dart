@@ -14,14 +14,12 @@ import 'dart:convert';
 
 class PaymentPage extends StatefulWidget {
   final User? user;
-
-  const PaymentPage({Key? key, this.user}) : super(key: key);
+  const PaymentPage({Key? key, required this.user}) : super(key: key);
   @override
   State<PaymentPage> createState() => _PaymentPage();
 }
 
 class _PaymentPage extends State<PaymentPage> {
-  User? user;
   late final TextEditingController _cardNumberController;
   late final TextEditingController _dateController;
   late final TextEditingController _cvvController;
@@ -49,9 +47,11 @@ class _PaymentPage extends State<PaymentPage> {
     FocusScope.of(context).unfocus();
     if (isValid) {
       CartProvider cartProvider = CartProvider();
-      final List<Map<String, dynamic>> listItems = [];
+      List<Map<String, dynamic>> listItems = [];
 
       for (Coffee product in cartProvider.cartItems.keys) {
+        print(product.decaf);
+        print(widget.user?.customerId);
         for (int i = 0; i < cartProvider.cartItems[product]!; i++) {
           listItems.add({
             "product_id": product.id,
@@ -67,7 +67,7 @@ class _PaymentPage extends State<PaymentPage> {
       }
 
       final Map<String, dynamic> requestBody = {
-        'customer_id': user?.customerId,
+        'customer_id': widget.user?.customerId,
         'line_items': listItems,
       };
 
@@ -90,9 +90,8 @@ class _PaymentPage extends State<PaymentPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const RootScreen(
-                          currentScreen: 2,
-                        )));
+                    builder: (context) =>
+                        RootScreen(currentScreen: 2, user: widget.user)));
           } else {
             print(
                 "Order placement failed. Message: ${jsonResponse['message']}");
@@ -196,7 +195,6 @@ class _PaymentPage extends State<PaymentPage> {
                 const SizedBox(height: 16.0), // Add vertical spacing if needed
                 ElevatedButton(
                   onPressed: () async {
-                    // Navigator.pop(context);
                     await _pay();
                   },
                   style: ElevatedButton.styleFrom(

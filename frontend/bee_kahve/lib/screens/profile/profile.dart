@@ -1,4 +1,5 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/profile/update_address.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
@@ -97,7 +98,8 @@ List<Order> pastOrders = [
 // }
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final User? user;
+  const ProfileScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -218,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const UpdateAddressScreen()));
+                                      UpdateAddressScreen(user: widget.user)));
                         },
                         child: const Text(
                           "Update Address",
@@ -333,7 +335,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const OrderDetailsScreen()));
+                                                  OrderDetailsScreen(
+                                                      user: widget.user)));
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.yellow,

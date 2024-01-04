@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -9,7 +10,8 @@ import 'package:bee_kahve/models/menu_model.dart';
 import 'package:bee_kahve/models/menu_product_model.dart';
 
 class MenuScreen extends StatefulWidget {
-  const MenuScreen({super.key});
+  final User? user;
+  const MenuScreen({Key? key, required this.user}) : super(key: key);
   @override
   State<MenuScreen> createState() => _MenuScreenState();
 }
@@ -31,7 +33,8 @@ class _MenuScreenState extends State<MenuScreen> {
   void searchCoffee(String searchTerm) {
     setState(() {
       displayedProducts = coffeeMenu.menuProducts
-          .where((product) => product.name.toLowerCase().contains(searchTerm.toLowerCase()))
+          .where((product) =>
+              product.name.toLowerCase().contains(searchTerm.toLowerCase()))
           .toList();
     });
   }
@@ -46,8 +49,8 @@ class _MenuScreenState extends State<MenuScreen> {
 
         List<MenuProductModel> menuProducts = [];
         if (jsonData['menuProducts'] is List) {
-          menuProducts = List<MenuProductModel>.from(jsonData['menuProducts']
-              .map((item) => MenuProductModel(
+          menuProducts = List<MenuProductModel>.from(
+              jsonData['menuProducts'].map((item) => MenuProductModel(
                     productId: item['product_id'],
                     name: item['name'],
                     photoPath: item['photo_path'],
@@ -82,10 +85,10 @@ class _MenuScreenState extends State<MenuScreen> {
         title: const Text(
           "Coffee Menu",
           style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.textColor,
-            ),
+            fontWeight: FontWeight.bold,
+            color: AppColors.textColor,
           ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(14.0),
@@ -143,9 +146,11 @@ class _MenuScreenState extends State<MenuScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProductDetailsScreen(productId: coffeeMenu.menuProducts[index].productId),
-                          ),
-                        );
+                              builder: (context) => ProductDetailsScreen(
+                                    productId: coffeeMenu
+                                        .menuProducts[index].productId,
+                                    user: widget.user,
+                                  )));
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -169,14 +174,15 @@ class _MenuScreenState extends State<MenuScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               CachedNetworkImage(
-                                imageUrl: coffeeMenu.menuProducts[index].photoPath,
+                                imageUrl:
+                                    coffeeMenu.menuProducts[index].photoPath,
                                 placeholder: (context, url) =>
                                     const CircularProgressIndicator(),
                                 errorWidget: (context, url, error) =>
                                     const Icon(Icons.error),
-                                width: double.infinity, // Set image width to full width
+                                width: double
+                                    .infinity, // Set image width to full width
                                 height: MediaQuery.of(context).size.width / 4.0,
-                              
                               ),
                               Text(
                                 coffeeMenu.menuProducts[index].name,

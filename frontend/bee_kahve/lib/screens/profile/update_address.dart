@@ -1,9 +1,11 @@
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/consts/validator.dart';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:flutter/material.dart';
 
 class UpdateAddressScreen extends StatefulWidget {
-  const UpdateAddressScreen({super.key});
+  final User? user;
+  const UpdateAddressScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   State<UpdateAddressScreen> createState() => _UpdateAddressScreenState();

@@ -1,4 +1,5 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/cart/cart_provider.dart';
 import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
@@ -6,13 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:bee_kahve/screens/cart/cart_provider.dart';
 
 class CartWidget extends StatelessWidget {
-  CartWidget({Key? key, required this.product}) : super(key: key);
+  User? user;
+  CartWidget({Key? key, required this.product, required this.user})
+      : super(key: key);
   final Coffee product;
   CartProvider cartProvider = CartProvider();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    
+
     return FittedBox(
       child: IntrinsicWidth(
         child: Padding(
@@ -23,9 +26,9 @@ class CartWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
                 child: FancyShimmerImage(
-                imageUrl: product.photoPath,
-                width: size.height * 0.2,
-                height: size.height * 0.2,
+                  imageUrl: product.photoPath,
+                  width: size.height * 0.2,
+                  height: size.height * 0.2,
                 ),
               ),
               const SizedBox(
@@ -37,11 +40,17 @@ class CartWidget extends StatelessWidget {
                     Row(
                       children: [
                         SizedBox(
-                            width: size.width * 0.6,
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(product.name, style: const TextStyle(color: AppColors.textColor, fontWeight: FontWeight.bold, fontSize: 18),),
+                          width: size.width * 0.6,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text(
+                              product.name,
+                              style: const TextStyle(
+                                  color: AppColors.textColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18),
                             ),
+                          ),
                         ),
                       ],
                     ),
@@ -52,11 +61,13 @@ class CartWidget extends StatelessWidget {
                         children: [
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text("Milk Type: ${product.milkType ?? 'not selected'}"),
+                            child: Text(
+                                "Milk Type: ${product.milkType ?? 'not selected'}"),
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text("Extra Shot: ${product.extraShot ?? false}"),
+                            child: Text(
+                                "Extra Shot: ${product.extraShot ?? false}"),
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
@@ -64,28 +75,29 @@ class CartWidget extends StatelessWidget {
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text("Size: ${product.size ?? 'not selected'}"),
+                            child:
+                                Text("Size: ${product.size ?? 'not selected'}"),
                           ),
                         ],
                       ),
                     ),
-                    
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        if (product.size == "small")
-                          Text("${product.price * cartProvider.cartItems[product]!.toInt()}\₺"),
-                        if (product.size == "medium")
-                          Text("${(product.price * 1.3 * cartProvider.cartItems[product]!.toInt()).toStringAsFixed(2)}\₺"),
-                        if (product.size == "large")
-                          Text("${(product.price * 1.7 * cartProvider.cartItems[product]!.toInt()).toStringAsFixed(2)}\₺"),
-                        IconButton(onPressed: (){
-                          cartProvider.removeFromCart(product);
-                        }, icon: const Icon(Icons.remove)),
+                        Text(
+                          "${(product.price * cartProvider.cartItems[product]!.toInt()).toStringAsFixed(2)}\₺",
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              cartProvider.removeFromCart(product);
+                            },
+                            icon: const Icon(Icons.remove)),
                         Text(cartProvider.cartItems[product].toString()),
-                        IconButton(onPressed: (){
-                          cartProvider.addToCart(product);
-                        }, icon: const Icon(Icons.add))
+                        IconButton(
+                            onPressed: () {
+                              cartProvider.addToCart(product);
+                            },
+                            icon: const Icon(Icons.add))
                       ],
                     )
                   ],
