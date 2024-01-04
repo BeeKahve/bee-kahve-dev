@@ -1,13 +1,13 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/line_items_model.dart';
 import 'package:bee_kahve/root.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:bee_kahve/consts/validator.dart';
 import 'package:bee_kahve/screens/cart/cart_provider.dart';
-import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:bee_kahve/models/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -48,20 +48,17 @@ class _PaymentPage extends State<PaymentPage> {
     if (isValid) {
       CartProvider cartProvider = CartProvider();
       List<Map<String, dynamic>> listItems = [];
-
       for (Coffee product in cartProvider.cartItems.keys) {
-        print(product.decaf);
-        print(widget.user?.customerId);
         for (int i = 0; i < cartProvider.cartItems[product]!; i++) {
           listItems.add({
             "product_id": product.id,
             "name": product.name,
             "photo_path": product.photoPath,
             "price": product.price,
-            "size_choice": product.size,
-            "milk_choice": product.milkType,
-            "extra_shot_choice": product.extraShot,
-            "caffein_choice": product.decaf,
+            "size_choice": product.sizeChoice,
+            "milk_choice": product.milkChoice,
+            "extra_shot_choice": product.extraShotChoice ?? true,
+            "caffein_choice": product.caffeineChoice ?? true,
           });
         }
       }
