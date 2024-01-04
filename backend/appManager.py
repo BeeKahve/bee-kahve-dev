@@ -279,4 +279,11 @@ class Manager:
         else:
             return Response(status=status ,message="Product can not be deleted.")
 
+    def get_address(self, customer_id):
+        status, address = self.database_manager.get_address(customer_id)
+        if status:
+            return Response(body=address, status=status ,message="Address is fetched successfully.")
+        else:
+            return Response(status=status ,message="Address is not fetched.")
+
     #jwt token
