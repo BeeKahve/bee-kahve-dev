@@ -15,7 +15,7 @@ class Product(BaseModel):
     contains_caramel_syrup : bool = None
     contains_sugar : bool = None
     price : float = None
-    rate : int = None
+    rate : float = None
 
 
 class MenuProduct(BaseModel):
@@ -120,7 +120,7 @@ class Address(BaseModel):
 
 class Rate(BaseModel):
     product_id : int = None
-    rate : int = None
+    rate : float = None
 
 
 class Stock(BaseModel):
