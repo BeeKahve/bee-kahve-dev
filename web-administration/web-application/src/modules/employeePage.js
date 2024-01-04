@@ -18,7 +18,17 @@ const EmployeePage = () => {
   const fetchOrderList = useCallback(async () => {
     try {
       const response = await axios.get('http://51.20.117.162:8000/get_waiting_orders?admin_id=1');
-      setOrderList(response.data.orders);
+      console.log(response)
+
+      const orders = response.data.orders;
+      // Fetch address for each order and update the orderList state
+      const updatedOrderList = await Promise.all(orders.map(async (order) => {
+        const addressResponse = await axios.get(`http://51.20.117.162:8000/get_address?customer_id=${order.customer_id}`);
+        return { ...order, address: addressResponse.data.address };
+      }));
+
+      setOrderList(updatedOrderList);
+      // setOrderList(response.data.orders);
     } catch (error) {
       console.error('Error fetching order list:', error);
     }
@@ -131,6 +141,16 @@ const EmployeePage = () => {
                 </div>
               )}
             />
+             <Column
+            title="Customer Address"
+            dataIndex="address"
+            key="address"
+            render={(address, record) => (
+              <div>
+                <h3>Address: {address}</h3>
+              </div>
+            )}
+          />
             <Column
               title="Action"
               key="action"
