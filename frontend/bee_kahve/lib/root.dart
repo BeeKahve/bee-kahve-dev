@@ -30,7 +30,7 @@ class _RootScreenState extends State<RootScreen> {
     screens = [
       HomeScreen(user: widget.user),
       CartScreen(),
-      const ProfileScreen(),
+      ProfileScreen(user: widget.user),
     ];
     controller = PageController(initialPage: currentScreen);
   }
