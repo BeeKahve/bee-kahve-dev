@@ -48,7 +48,9 @@ class _PaymentPage extends State<PaymentPage> {
     if (isValid) {
       CartProvider cartProvider = CartProvider();
       List<Map<String, dynamic>> listItems = [];
+      List<Coffee> lineItems = [];
       for (Coffee product in cartProvider.cartItems.keys) {
+        lineItems.add(product);
         for (int i = 0; i < cartProvider.cartItems[product]!; i++) {
           listItems.add({
             "product_id": product.id,
