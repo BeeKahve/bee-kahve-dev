@@ -102,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: const Row(
             children: [
               Text(
-                "Bee",
+                "Bee' ",
                 style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -140,8 +140,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                const Text(
-                  "Name",
+                Text(
+                  widget.user?.name ?? "",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -151,8 +151,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                const Text(
-                  "test@gmail.com",
+                Text(
+                  widget.user?.email ?? "",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -177,8 +177,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      " İTÜ Ayazağa Kampüsü, Rektörlük Binası, 34467 Maslak-İSTANBUL",
+                    Text(
+                      widget.user?.address ?? '',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,

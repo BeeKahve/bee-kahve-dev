@@ -20,9 +20,12 @@ class _HomeScreenState extends State<HomeScreen> {
     searchTextController = TextEditingController();
   }
 
-  int getCoffeesNeededForReward() {
-    const coffeesForReward = 5; // Set the number of coffees needed for a reward
-    return coffeesForReward - (widget.user?.loyaltyCount ?? 0);
+  String getCoffeesNeededForReward() {
+    const coffeesForReward = 5; 
+    if (coffeesForReward - (widget.user?.loyaltyCount ?? 0) > 0) {
+      return "${coffeesForReward - (widget.user?.loyaltyCount ?? 0)} coffees left to get a reward drink";
+    }
+    return "Congratulations! You get a reard drink";
   }
 
   @override
@@ -99,9 +102,8 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(
                 height: 30,
               ),
-              // ... (Other Campaign Widgets)
               Text(
-                "${getCoffeesNeededForReward()} coffees left to get a reward drink",
+                getCoffeesNeededForReward(),
                 style: const TextStyle(
                   fontWeight: FontWeight.normal,
                   fontSize: 24,
@@ -111,7 +113,6 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(
                 height: 30,
               ),
-              // ... (Other Widgets)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

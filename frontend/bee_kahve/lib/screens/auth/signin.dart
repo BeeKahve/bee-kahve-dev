@@ -42,11 +42,7 @@ class _SignInScreenState extends State<SignInScreen> {
     if (isValid) {
       final String email = _emailController.text;
       final String password = _passwordController.text;
-      // final String plainPassword = _passwordController.text;
-      // // Hash the password using SHA-512
-      // final String hashedPassword = sha512.convert(utf8.encode(plainPassword)).toString();
 
-      // Create the request body
       final Map<String, dynamic> requestBody = {
         'email': email,
         'password': password,
@@ -66,7 +62,7 @@ class _SignInScreenState extends State<SignInScreen> {
           // Check if login was successful
           if (jsonResponse['customer_id'] != null) {
             // Login successful
-            // Create a User instance
+            // Create a User
             User user = User.fromJson(jsonResponse);
 
             // Handle success as needed
@@ -80,8 +76,6 @@ class _SignInScreenState extends State<SignInScreen> {
             setState(() {
               user = user;
             });
-            // Example: Navigate to the profile screen after successful login
-            // ignore: use_build_context_synchronously
             // ignore: use_build_context_synchronously
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
