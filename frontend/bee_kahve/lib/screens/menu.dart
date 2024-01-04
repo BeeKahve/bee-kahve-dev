@@ -143,7 +143,7 @@ Widget build(BuildContext context) {
                 ? const Center(
                     child: Text(
                       'You entered the wrong coffee name',
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: AppColors.yellow, fontSize: 32, fontWeight: FontWeight.bold),
                     ),
                   )
                 : GridView.builder(
