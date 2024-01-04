@@ -63,7 +63,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, size: 32),
+            icon: const Icon(Icons.arrow_back_rounded),
             onPressed: () {
               Navigator.pop(context);
               Navigator.pushReplacement(
@@ -76,9 +76,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           title: Text(
             "Order ${order.orderID}",
             style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 28,
-                color: AppColors.textColor),
+                fontWeight: FontWeight.bold, color: AppColors.textColor),
           ),
         ),
         body: Padding(

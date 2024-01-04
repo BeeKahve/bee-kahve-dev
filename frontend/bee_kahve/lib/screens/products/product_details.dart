@@ -152,36 +152,18 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             FocusScope.of(context).unfocus();
           },
           child: Scaffold(
+            appBar: AppBar(
+              title: Text(
+                product?['coffee_name'] ?? '',
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: AppColors.textColor),
+              ),
+            ),
             body: Padding(
               padding: const EdgeInsets.all(14.0),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            if (Navigator.canPop(context)) {
-                              Navigator.pop(context);
-                            }
-                          },
-                          icon: const Icon(
-                            Icons.keyboard_backspace,
-                            size: 32,
-                          ),
-                        ),
-                        Text(
-                          product?['coffee_name'] ?? '',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 28,
-                              color: AppColors.textColor),
-                        ),
-                      ],
-                    ),
                     const SizedBox(
                       height: 20,
                     ),
