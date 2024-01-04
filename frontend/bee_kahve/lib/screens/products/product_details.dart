@@ -67,7 +67,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     CartProvider cartProvider = CartProvider();
     cartProvider.addToCart(productToAdd);
     Navigator.pop(context);
-    Navigator.pop(context);
     // Additional logic (e.g., show a confirmation message)
   }
 
@@ -193,7 +192,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             Icons.star,
                             color: AppColors.yellow,
                           ),
-                          Text(product?['rate']?.toString() ?? ''),
+                          Text(product?['rate']?.toStringAsFixed(1) ?? ''),
                         ],
                       ),
                     ),
