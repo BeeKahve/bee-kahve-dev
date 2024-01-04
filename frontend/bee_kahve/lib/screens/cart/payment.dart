@@ -81,6 +81,7 @@ class _PaymentPage extends State<PaymentPage> {
           final jsonResponse = json.decode(response.body);
 
           if (jsonResponse['status'] == true) {
+            widget.user?.loyaltyCount += lineItems.length;
             print("Order placed successfully");
             print("Message: ${jsonResponse['message']}");
             cartProvider.clearCart();

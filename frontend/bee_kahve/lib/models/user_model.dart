@@ -3,7 +3,7 @@ class User {
   final String name;
   final String email;
   String address;
-  final int loyaltyCount;
+  int loyaltyCount;
 
   User({
     required this.customerId,
