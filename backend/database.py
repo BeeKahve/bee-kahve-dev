@@ -350,7 +350,7 @@ class DatabaseManager:
                 line_items_list.append(LineItem(product_id=product[0],
                                                 name=product[1],
                                                 photo_path=product[2],
-                                                price=product[12],
+                                                price=line_item[7],
                                                 size_choice=line_item[3],
                                                 milk_choice=line_item[4],
                                                 extra_shot_choice=line_item[5],
@@ -544,6 +544,14 @@ class DatabaseManager:
         query_product = "UPDATE Products SET is_product_disabled = %s WHERE product_id = %s"
         return self.database.execute_query(query_product, (1, product_id))
 
+    def get_address(self, customer_id):
+        query_address = "SELECT customer_address FROM Customers WHERE customer_id = %s"
+        address = self.database.fetch_data(query_address, (customer_id,))[0][0]
+
+        if address == []:
+            return False, None
+        
+        return True, Address(address=address)
 
     # Returns None if an insertion failed, "waiting" otherwise.
     def place_order(self, order : Order):
