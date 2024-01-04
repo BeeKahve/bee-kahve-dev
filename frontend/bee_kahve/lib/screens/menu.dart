@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:flutter/material.dart';

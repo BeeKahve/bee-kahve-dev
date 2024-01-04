@@ -3,11 +3,10 @@ import 'package:bee_kahve/consts/validator.dart';
 import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/root.dart';
 import 'package:bee_kahve/screens/auth/signup.dart';
-import 'package:bee_kahve/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:crypto/crypto.dart';
+
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
@@ -91,7 +90,8 @@ class _SignInScreenState extends State<SignInScreen> {
             );
           } else {
             // Show error message
-            final errorMessage = jsonResponse['message'] ?? 'Login failed. Please check your credentials.';
+            final errorMessage = jsonResponse['message'] ??
+                'Login failed. Please check your credentials.';
             // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(errorMessage),
