@@ -60,7 +60,9 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
           print('Updating address is successful');
           print('Message: ${jsonResponse['message']}');
           widget.user!.address = requestBody['address'];
+          // ignore: use_build_context_synchronously
           Navigator.pop(context);
+          // ignore: use_build_context_synchronously
           Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -91,11 +93,14 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, size: 32),
-            onPressed: () => Navigator.pop(context),
+        title: const Text(
+          "",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppColors.textColor,
           ),
         ),
+      ),
         body: Padding(
           padding: const EdgeInsets.all(14.0),
           child: SingleChildScrollView(
