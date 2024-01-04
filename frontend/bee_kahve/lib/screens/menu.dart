@@ -105,6 +105,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   onTap: () {
                     setState(() {
                       searchTextController.clear();
+                      displayedProducts = coffeeMenu.menuProducts;
                     });
                   },
                   child: const Icon(Icons.clear),
@@ -125,6 +126,14 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                 ),
               ),
+              onChanged: (value) {
+                if (value.isEmpty) {
+                  // If the text is cleared, reset to the entire menu
+                  setState(() {
+                    displayedProducts = coffeeMenu.menuProducts;
+                  });
+                }
+              },
               onSubmitted: (value) {
                 searchCoffee(value);
               },
@@ -133,69 +142,84 @@ class _MenuScreenState extends State<MenuScreen> {
               height: 15,
             ),
             Expanded(
-              child: GridView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: coffeeMenu.productCount,
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                ),
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ProductDetailsScreen(
-                                    productId: coffeeMenu
-                                        .menuProducts[index].productId,
-                                    user: widget.user,
-                                  )));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 5.0,
-                        horizontal: 5.0,
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
+              child: displayedProducts.isEmpty &&
+                      searchTextController.text.isNotEmpty
+                  ? const Center(
+                      child: Text(
+                        'You entered the wrong coffee name',
+                        style: TextStyle(
                             color: AppColors.yellow,
-                            width: 2.0,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0,
-                            vertical: 10.0,
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CachedNetworkImage(
-                                imageUrl:
-                                    coffeeMenu.menuProducts[index].photoPath,
-                                placeholder: (context, url) =>
-                                    const CircularProgressIndicator(),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                                width: double
-                                    .infinity, // Set image width to full width
-                                height: MediaQuery.of(context).size.width / 4.0,
-                              ),
-                              Text(
-                                coffeeMenu.menuProducts[index].name,
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold),
                       ),
+                    )
+                  : GridView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: displayedProducts.length,
+                      shrinkWrap: true,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                      ),
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetailsScreen(
+                                  productId: displayedProducts[index].productId,
+                                  user: widget.user,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 5.0,
+                              horizontal: 5.0,
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(
+                                  color: AppColors.yellow,
+                                  width: 2.0,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0,
+                                  vertical: 10.0,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl:
+                                          displayedProducts[index].photoPath,
+                                      placeholder: (context, url) =>
+                                          const CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                      width: double.infinity,
+                                      height:
+                                          MediaQuery.of(context).size.width /
+                                              4.0,
+                                    ),
+                                    Text(
+                                      displayedProducts[index].name,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),

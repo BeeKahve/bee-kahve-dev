@@ -251,10 +251,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text(
-                      "Coffee Details",
-                      style: TextStyle(color: AppColors.textColor),
-                    ),
+                    coffeeDetailsText("Coffee Details", product?['contains_milk'] == true
+                    || product?['contains_chocolate_syrup'] == true
+                    || product?['contains_white_chocolate_syrup'] == true
+                    || product?['contains_caramel_syrup'] == true
+                    || product?['contains_sugar'] == true),
                     buildIngredientText(
                         "Contains milk", product?['contains_milk'] == true),
                     buildIngredientText("Contains chocolate syrup",
