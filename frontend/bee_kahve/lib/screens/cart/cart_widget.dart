@@ -1,17 +1,28 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/line_items_model.dart';
 import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/cart/cart_provider.dart';
-import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
-import 'package:bee_kahve/screens/cart/cart_provider.dart';
 
-class CartWidget extends StatelessWidget {
-  User? user;
-  CartWidget({Key? key, required this.product, required this.user})
+class CartWidget extends StatefulWidget {
+  final User? user;
+  const CartWidget({Key? key, required this.product, required this.user})
       : super(key: key);
   final Coffee product;
+  @override
+  State<CartWidget> createState() => _CartWidget();
+}
+
+class _CartWidget extends State<CartWidget> {
+  late Coffee product;
   CartProvider cartProvider = CartProvider();
+  @override
+  void initState() {
+    super.initState();
+    product = widget.product;
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -62,21 +73,22 @@ class CartWidget extends StatelessWidget {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                                "Milk Type: ${product.milkType ?? 'not selected'}"),
+                                "Milk Type: ${product.milkChoice ?? 'not selected'}"),
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                                "Extra Shot: ${product.extraShot ?? false}"),
+                                "Extra Shot: ${product.extraShotChoice ?? false}"),
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text("Decaf: ${product.decaf ?? false}"),
+                            child: Text(
+                                "Decaf: ${product.caffeineChoice ?? false}"),
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child:
-                                Text("Size: ${product.size ?? 'not selected'}"),
+                            child: Text(
+                                "Size: ${product.sizeChoice ?? 'not selected'}"),
                           ),
                         ],
                       ),
