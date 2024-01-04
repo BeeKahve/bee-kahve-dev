@@ -1,8 +1,8 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/order_history_model.dart';
 import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/profile/update_address.dart';
 import 'package:flutter/material.dart';
-import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:bee_kahve/screens/profile/order_details.dart';
 
 class Order {
@@ -100,17 +100,16 @@ List<Order> pastOrders = [
 class ProfileScreen extends StatefulWidget {
   final User? user;
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
-
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  User? user;
+  late OrderHistory orderHistory;
   @override
   void initState() {
-    user = widget.user; 
     super.initState();
+    orderHistory = OrderHistory(orders: []);
   }
 
   @override
@@ -159,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 20,
                 ),
                 Text(
-                  user?.name ?? "",
+                  widget.user?.name ?? "",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -170,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 20,
                 ),
                 Text(
-                  user?.email ?? "",
+                  widget.user?.email ?? "",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -197,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      user?.address ?? '',
+                      widget.user?.address ?? '',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -222,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      UpdateAddressScreen(user: user,)));
+                                      UpdateAddressScreen(user: widget.user)));
                         },
                         child: const Text(
                           "Update Address",
@@ -337,7 +336,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const OrderDetailsScreen()));
+                                                  OrderDetailsScreen(
+                                                      user: widget.user)));
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.yellow,

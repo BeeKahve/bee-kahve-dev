@@ -2,7 +2,6 @@ import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/consts/validator.dart';
 import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/root.dart';
-import 'package:bee_kahve/screens/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

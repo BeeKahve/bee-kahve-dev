@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -9,7 +10,8 @@ import 'package:bee_kahve/models/menu_model.dart';
 import 'package:bee_kahve/models/menu_product_model.dart';
 
 class MenuScreen extends StatefulWidget {
-  const MenuScreen({super.key});
+  final User? user;
+  const MenuScreen({Key? key, required this.user}) : super(key: key);
   @override
   State<MenuScreen> createState() => _MenuScreenState();
 }
@@ -31,7 +33,8 @@ class _MenuScreenState extends State<MenuScreen> {
   void searchCoffee(String searchTerm) {
     setState(() {
       displayedProducts = coffeeMenu.menuProducts
-          .where((product) => product.name.toLowerCase().contains(searchTerm.toLowerCase()))
+          .where((product) =>
+              product.name.toLowerCase().contains(searchTerm.toLowerCase()))
           .toList();
     });
   }
@@ -46,8 +49,8 @@ class _MenuScreenState extends State<MenuScreen> {
 
         List<MenuProductModel> menuProducts = [];
         if (jsonData['menuProducts'] is List) {
-          menuProducts = List<MenuProductModel>.from(jsonData['menuProducts']
-              .map((item) => MenuProductModel(
+          menuProducts = List<MenuProductModel>.from(
+              jsonData['menuProducts'].map((item) => MenuProductModel(
                     productId: item['product_id'],
                     name: item['name'],
                     photoPath: item['photo_path'],
@@ -76,24 +79,24 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text(
-        "Coffee Menu",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: AppColors.textColor,
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Coffee Menu",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppColors.textColor,
+          ),
         ),
       ),
-    ),
-    body: Padding(
-      padding: const EdgeInsets.all(14.0),
-      child: Column(
-        children: [
-          TextField(
-            controller: searchTextController,
-            decoration: InputDecoration(
+      body: Padding(
+        padding: const EdgeInsets.all(14.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: searchTextController,
+              decoration: InputDecoration(
                 filled: true,
                 fillColor: AppColors.lightYellow,
                 hintText: "Search coffee",
@@ -124,92 +127,103 @@ Widget build(BuildContext context) {
                 ),
               ),
               onChanged: (value) {
-              if (value.isEmpty) {
-                // If the text is cleared, reset to the entire menu
-                setState(() {
-                  displayedProducts = coffeeMenu.menuProducts;
-                });
-              }
-            },
-            onSubmitted: (value) {
-              searchCoffee(value);
-            },
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Expanded(
-            child: displayedProducts.isEmpty && searchTextController.text.isNotEmpty
-                ? const Center(
-                    child: Text(
-                      'You entered the wrong coffee name',
-                      style: TextStyle(color: AppColors.yellow, fontSize: 32, fontWeight: FontWeight.bold),
-                    ),
-                  )
-                : GridView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: displayedProducts.length,
-                    shrinkWrap: true,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                    ),
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductDetailsScreen(productId: displayedProducts[index].productId),
+                if (value.isEmpty) {
+                  // If the text is cleared, reset to the entire menu
+                  setState(() {
+                    displayedProducts = coffeeMenu.menuProducts;
+                  });
+                }
+              },
+              onSubmitted: (value) {
+                searchCoffee(value);
+              },
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            Expanded(
+              child: displayedProducts.isEmpty &&
+                      searchTextController.text.isNotEmpty
+                  ? const Center(
+                      child: Text(
+                        'You entered the wrong coffee name',
+                        style: TextStyle(
+                            color: AppColors.yellow,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  : GridView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: displayedProducts.length,
+                      shrinkWrap: true,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                      ),
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetailsScreen(
+                                  productId: displayedProducts[index].productId,
+                                  user: widget.user,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 5.0,
+                              horizontal: 5.0,
                             ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 5.0,
-                            horizontal: 5.0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(
+                                  color: AppColors.yellow,
+                                  width: 2.0,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0,
+                                  vertical: 10.0,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl:
+                                          displayedProducts[index].photoPath,
+                                      placeholder: (context, url) =>
+                                          const CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                      width: double.infinity,
+                                      height:
+                                          MediaQuery.of(context).size.width /
+                                              4.0,
+                                    ),
+                                    Text(
+                                      displayedProducts[index].name,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(
-                                color: AppColors.yellow,
-                                width: 2.0,
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0,
-                                vertical: 10.0,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  CachedNetworkImage(
-                                    imageUrl: displayedProducts[index].photoPath,
-                                    placeholder: (context, url) =>
-                                        const CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
-                                    width: double.infinity,
-                                    height: MediaQuery.of(context).size.width / 4.0,
-                                  ),
-                                  Text(
-                                    displayedProducts[index].name,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }

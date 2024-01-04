@@ -6,7 +6,7 @@ import 'package:bee_kahve/models/user_model.dart';
 class HomeScreen extends StatefulWidget {
   final User? user;
 
-  const HomeScreen({Key? key, this.user}) : super(key: key);
+  const HomeScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -14,7 +14,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late TextEditingController searchTextController;
-  User? user;
   @override
   void initState() {
     super.initState();
@@ -51,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: AppColors.textColor,
               ),
             ),
-            
           ],
         ),
         actions: [
@@ -59,22 +57,26 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 backgroundColor: AppColors.yellow,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
                 ),
-                ),
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MenuScreen(),
+                    builder: (context) => MenuScreen(user: widget.user),
                   ),
                 );
               },
-              child: const Text("Menu", style: TextStyle(color: AppColors.darkColor, fontSize: 16),),
-                ),
+              child: const Text(
+                "Menu",
+                style: TextStyle(color: AppColors.darkColor, fontSize: 16),
+              ),
+            ),
           ),
         ],
       ),
@@ -94,7 +96,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: AppColors.textColor,
                 ),
               ),
-              const SizedBox(height: 30,),
+              const SizedBox(
+                height: 30,
+              ),
               // ... (Other Campaign Widgets)
               Text(
                 "${getCoffeesNeededForReward()} coffees left to get a reward drink",
@@ -104,7 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: AppColors.textColor,
                 ),
               ),
-              const SizedBox(height: 30,),
+              const SizedBox(
+                height: 30,
+              ),
               // ... (Other Widgets)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -120,18 +126,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Center(
-                child: Text(
-                  'Have you tried our Affagato coffee?',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                padding: EdgeInsets.all(16.0),
+                child: Center(
+                  child: Text(
+                    'Have you tried our Affagato coffee?',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Image.asset("assets/images/try-coffee.png", width: double.infinity, height: MediaQuery.of(context).size.height/ 2.0,),
+              Image.asset(
+                "assets/images/try-coffee.png",
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height / 2.0,
+              ),
             ],
           ),
         ),

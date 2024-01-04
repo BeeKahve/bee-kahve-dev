@@ -1,4 +1,5 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/cart/bottom_checkout.dart';
 import 'package:bee_kahve/screens/cart/cart_provider.dart';
 import 'package:bee_kahve/screens/cart/cart_widget.dart';
@@ -7,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CartScreen extends StatelessWidget {
+  final User? user;
+  const CartScreen({Key? key, required this.user}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +40,8 @@ class CartScreen extends StatelessWidget {
       body: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
           if (cartProvider.cartItems.isEmpty) {
-            return const EmptyCartWidget(
+            return EmptyCartWidget(
+              user: user,
               imagePath: 'assets/images/basket.png',
               title: "Your cart is empty",
               subtitle: "Looks like your cart is empty. Add something!",
@@ -48,7 +52,8 @@ class CartScreen extends StatelessWidget {
               itemCount: cartProvider.cartItems.length,
               itemBuilder: (context, index) {
                 return CartWidget(
-                    product: cartProvider.cartItems.keys.toList()[index]);
+                    product: cartProvider.cartItems.keys.toList()[index],
+                    user: user);
               },
             );
           }
@@ -57,7 +62,7 @@ class CartScreen extends StatelessWidget {
       bottomSheet: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
           if (cartProvider.cartItems.isNotEmpty) {
-            return CartBottomSheetWidget();
+            return CartBottomSheetWidget(user: user);
           } else {
             return SizedBox
                 .shrink(); // Return an empty widget if the cart is empty
