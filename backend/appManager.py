@@ -136,19 +136,19 @@ class Manager:
             if stock_dict[ingredient] < total_ingrediants[ingredient]:
                 return Response(status=False ,message="Stock is not enough for {}.".format(ingredient))
         
+        # place order
+        order.order_date = str(datetime.datetime.now())[:-4]
+        status = self.database_manager.place_order(order)
+        if not status:
+            return Response(status=False ,message="Order cannot be placed.")
+        
         # update stock
         for ingredient in total_ingrediants:
             stock_dict[ingredient] -= total_ingrediants[ingredient]
         
         status = self.database_manager.update_stock(Stock(**stock_dict)) #TODO admin_id or stock_id
         if not status:
-            return Response(status=False ,message="Stock can not updated.")
-
-        # place order
-        order.order_date = str(datetime.datetime.now())[:-4]
-        status = self.database_manager.place_order(order)
-        if not status:
-            return Response(status=False ,message="Stock updated, but order can not placed.")
+            return Response(status=False ,message="Order placed, but stock cannot be updated.")
         
         # update loyalty count
         total_coffee_count = len(order.line_items)
