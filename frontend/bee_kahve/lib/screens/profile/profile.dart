@@ -1,4 +1,5 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/profile/update_address.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
@@ -97,15 +98,18 @@ List<Order> pastOrders = [
 // }
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final User? user;
+  const ProfileScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  User? user;
   @override
   void initState() {
+    user = widget.user; 
     super.initState();
   }
 
@@ -154,8 +158,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                const Text(
-                  "Name",
+                Text(
+                  user?.name ?? "",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -165,8 +169,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                const Text(
-                  "test@gmail.com",
+                Text(
+                  user?.email ?? "",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -192,8 +196,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      " İTÜ Ayazağa Kampüsü, Rektörlük Binası, 34467 Maslak-İSTANBUL",
+                    Text(
+                      user?.address ?? '',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -218,7 +222,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const UpdateAddressScreen()));
+                                      UpdateAddressScreen(user: user,)));
                         },
                         child: const Text(
                           "Update Address",
