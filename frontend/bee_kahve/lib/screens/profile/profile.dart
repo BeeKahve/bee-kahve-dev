@@ -131,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: const Row(
             children: [
               Text(
-                "Bee",
+                "Bee' ",
                 style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
