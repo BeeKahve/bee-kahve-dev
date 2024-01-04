@@ -1,22 +1,51 @@
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/models/user_model.dart';
+import 'package:bee_kahve/root.dart';
 import 'package:bee_kahve/screens/cart/bottom_checkout.dart';
 import 'package:bee_kahve/screens/cart/cart_provider.dart';
 import 'package:bee_kahve/screens/cart/cart_widget.dart';
+import 'package:bee_kahve/screens/menu.dart';
 import 'package:bee_kahve/widgets/cart/empty_cart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CartScreen extends StatelessWidget {
   final User? user;
-  const CartScreen({Key? key, required this.user}) : super(key: key);
+  final bool isReward;
+  const CartScreen({Key? key, required this.user, this.isReward = false})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Icon(Icons.shopping_cart),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: isReward
+              ? IconButton(
+                  onPressed: () {
+                    CartProvider cartProvider = CartProvider();
+                    cartProvider.clearCart();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RootScreen(
+                          currentScreen: 0,
+                          user: user,
+                        ),
+                      ),
+                    );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MenuScreen(
+                          isReward: isReward,
+                          user: user,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.arrow_back_rounded))
+              : const Icon(Icons.shopping_cart),
         ),
         title: const Text(
           "Cart",
@@ -25,9 +54,10 @@ class CartScreen extends StatelessWidget {
             color: AppColors.textColor,
           ),
         ),
-         actions: [
+        actions: [
           Visibility(
-            visible: Provider.of<CartProvider>(context).cartItems.isNotEmpty,
+            visible: Provider.of<CartProvider>(context).cartItems.isNotEmpty &&
+                !isReward,
             child: IconButton(
               onPressed: () {
                 Provider.of<CartProvider>(context, listen: false).clearCart();
@@ -52,6 +82,7 @@ class CartScreen extends StatelessWidget {
               itemCount: cartProvider.cartItems.length,
               itemBuilder: (context, index) {
                 return CartWidget(
+                    isReward: isReward,
                     product: cartProvider.cartItems.keys.toList()[index],
                     user: user);
               },
@@ -62,9 +93,9 @@ class CartScreen extends StatelessWidget {
       bottomSheet: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
           if (cartProvider.cartItems.isNotEmpty) {
-            return CartBottomSheetWidget(user: user);
+            return CartBottomSheetWidget(user: user, isReward: isReward);
           } else {
-            return SizedBox
+            return const SizedBox
                 .shrink(); // Return an empty widget if the cart is empty
           }
         },

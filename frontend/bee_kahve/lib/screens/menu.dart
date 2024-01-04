@@ -10,7 +10,9 @@ import 'package:bee_kahve/models/menu_product_model.dart';
 
 class MenuScreen extends StatefulWidget {
   final User? user;
-  const MenuScreen({Key? key, required this.user}) : super(key: key);
+  final bool isReward;
+  const MenuScreen({Key? key, required this.user, this.isReward = false})
+      : super(key: key);
   @override
   State<MenuScreen> createState() => _MenuScreenState();
 }
@@ -167,6 +169,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ProductDetailsScreen(
+                                  isReward: widget.isReward,
                                   productId: displayedProducts[index].productId,
                                   user: widget.user,
                                 ),
