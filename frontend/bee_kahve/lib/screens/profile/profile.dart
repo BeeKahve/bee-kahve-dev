@@ -1,8 +1,8 @@
 import 'package:bee_kahve/consts/app_color.dart';
+import 'package:bee_kahve/models/order_history_model.dart';
 import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/profile/update_address.dart';
 import 'package:flutter/material.dart';
-import 'package:dynamic_height_grid_view/dynamic_height_grid_view.dart';
 import 'package:bee_kahve/screens/profile/order_details.dart';
 
 class Order {
@@ -100,15 +100,16 @@ List<Order> pastOrders = [
 class ProfileScreen extends StatefulWidget {
   final User? user;
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
-
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late OrderHistory orderHistory;
   @override
   void initState() {
     super.initState();
+    orderHistory = OrderHistory(orders: []);
   }
 
   @override
