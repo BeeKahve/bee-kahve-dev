@@ -2,7 +2,7 @@ class User {
   final int customerId;
   final String name;
   final String email;
-  final String address;
+  String address;
   final int loyaltyCount;
 
   User({
