@@ -182,12 +182,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Text(
-                                    "- ${milkTypes[product.milkChoice]}",
-                                    style: const TextStyle(
-                                      fontSize: 14.0,
+                                  if (product.milkChoice != null)
+                                    Text(
+                                      "- ${milkTypes[product.milkChoice]}",
+                                      style: const TextStyle(
+                                        fontSize: 14.0,
+                                      ),
                                     ),
-                                  ),
                                   if (product.caffeineChoice == true)
                                     const Text(
                                       "- Decaf",
