@@ -5,19 +5,19 @@ import 'package:bee_kahve/screens/cart/cart_provider.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 
-class CartWidget extends StatefulWidget {
-  final User? user;
-  final bool isReward;
-  const CartWidget(
-      {Key? key,
-      required this.product,
-      required this.user,
-      this.isReward = false})
-      : super(key: key);
-  final Coffee product;
-  @override
-  State<CartWidget> createState() => _CartWidget();
-}
+// class CartWidget extends StatefulWidget {
+//   final User? user;
+//   final bool isReward;
+//   const CartWidget(
+//       {Key? key,
+//       required this.product,
+//       required this.user,
+//       this.isReward = false})
+//       : super(key: key);
+//   final Coffee product;
+//   @override
+//   State<CartWidget> createState() => _CartWidget();
+// }
 
 const Map<String, String> milkTypes = {
   "whole_milk": "Whole Milk",
@@ -33,14 +33,22 @@ const Map<String, String> sizes = {
   "large": "Large",
 };
 
-class _CartWidget extends State<CartWidget> {
-  late Coffee product;
-  CartProvider cartProvider = CartProvider();
+class CartWidget extends StatelessWidget {
+  final User? user;
+  final bool isReward;
+  final Coffee product;
+  final CartProvider cartProvider = CartProvider();
   @override
-  void initState() {
-    super.initState();
-    product = widget.product;
-  }
+  CartWidget(
+      {Key? key,
+      required this.product,
+      required this.user,
+      this.isReward = false})
+      : super(key: key);
+  // void initState() {
+  //   super.initState();
+  //   product = widget.product;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +97,7 @@ class _CartWidget extends State<CartWidget> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          if (product.milkChoice != null)
+                          if (product.milkChoice != "no_milk")
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text("${milkTypes[product.milkChoice]}"),
@@ -113,7 +121,7 @@ class _CartWidget extends State<CartWidget> {
                       ),
                     ),
                     Visibility(
-                      visible: !widget.isReward,
+                      visible: !isReward,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
