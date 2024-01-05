@@ -87,6 +87,8 @@ class Manager:
             total_ingrediants[ingredient] = 0
         
         for item in order.line_items:
+            if item.milk_choice == None:
+                item.milk_choice = "no_milk"
             coeff = self.get_coefficient(item.size_choice)
             if coeff == 0:
                 return Response(status=False ,message="Size choice is not valid.")
@@ -120,11 +122,11 @@ class Manager:
                         return Response(status=False ,message="Caffein choice is not valid.")
                         
                 elif ingredient == "foam_amount":
-                    if not item.milk_choice == None:
+                    if not item.milk_choice == None or item.milk_choice == "no_milk":
                         total_ingrediants[item.milk_choice+"_amount"] += 0.2 * ingredients[ingredient] * coeff
                 
                 elif ingredient == "price":
-                    pass      
+                    pass
                 
                 else:
                     try:
