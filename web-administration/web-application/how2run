@@ -1,0 +1,6 @@
+In order to run web application:
+
+1. Be sure you are in a correct direction: bee-kahve-dev-main/web-administration/web-application
+2. run "npm install" on terminal
+3. run "npm start" on terminal
+4. it should automatically opened, but if not go to localhost:3000 in browser
