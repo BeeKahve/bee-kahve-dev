@@ -564,7 +564,7 @@ class DatabaseManager:
         loyalty_coffee_count = customer[0][0]
         
         query_loyalty_count = "UPDATE Customers SET loyalty_coffee_count = %s"
-        return self.database.execute_query(query_loyalty_count, (loyalty_coffee_count - 5,))
+        return self.database.execute_query(query_loyalty_count, (loyalty_coffee_count - 6,))
 
 
     # Returns None if an insertion failed, "waiting" otherwise.
