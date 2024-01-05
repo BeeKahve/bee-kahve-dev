@@ -18,7 +18,6 @@ const EmployeePage = () => {
   const fetchOrderList = useCallback(async () => {
     try {
       const response = await axios.get('http://51.20.117.162:8000/get_waiting_orders?admin_id=1');
-      console.log(response)
 
       const orders = response.data.orders;
       // Fetch address for each order and update the orderList state
@@ -65,7 +64,6 @@ const EmployeePage = () => {
     try {
       // Make a request to update the order status to 'preparing'
       const response = await axios.get(`http://51.20.117.162:8000/set_status?order_id=${orderId}&status=preparing`);
-      console.log(response);
 
       if (response.data.message === "Status is updated successfully.") {
         fetchOrderList()
