@@ -76,7 +76,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
           // Registration successful
           // Handle success as needed
           print('Registration successful');
-          print('Message: ${jsonResponse['message']}');
+            // ignore: use_build_context_synchronously
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Registration Succesfull"),
+              duration: Duration(seconds: 2),
+            ));
           // ignore: use_build_context_synchronously
           Navigator.push(
             context,
@@ -85,8 +89,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SignInScreen()));
         } else {
           // Registration failed
-          // Handle failure, e.g., display an error message
-          print('Registration failed. Message: ${jsonResponse['message']}');
+          print(jsonResponse['message']);
+          final errorMessage = jsonResponse['message'] ??
+                'Registration failed';
+            // ignore: use_build_context_synchronously
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(errorMessage),
+              duration: const Duration(seconds: 2),
+            ));
         }
       } else {
         // Registration failed
