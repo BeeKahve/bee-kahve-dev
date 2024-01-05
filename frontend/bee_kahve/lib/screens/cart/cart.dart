@@ -67,39 +67,45 @@ class CartScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Consumer<CartProvider>(
-        builder: (context, cartProvider, child) {
-          if (cartProvider.cartItems.isEmpty) {
-            return EmptyCartWidget(
-              user: user,
-              imagePath: 'assets/images/basket.png',
-              title: "Your cart is empty",
-              subtitle: "Looks like your cart is empty. Add something!",
-              buttonText: "Shop Now",
-            );
-          } else {
-            return ListView.builder(
-              itemCount: cartProvider.cartItems.length,
-              itemBuilder: (context, index) {
-                return CartWidget(
-                    isReward: isReward,
-                    product: cartProvider.cartItems.keys.toList()[index],
-                    user: user);
+      body: Column(
+        children: [
+          Expanded(
+            child: Consumer<CartProvider>(
+              builder: (context, cartProvider, child) {
+                if (cartProvider.cartItems.isEmpty) {
+                  return EmptyCartWidget(
+                    user: user,
+                    imagePath: 'assets/images/basket.png',
+                    title: "Your cart is empty",
+                    subtitle: "Looks like your cart is empty. Add something!",
+                    buttonText: "Shop Now",
+                  );
+                } else {
+                  return ListView.builder(
+                    itemCount: cartProvider.cartItems.length,
+                    itemBuilder: (context, index) {
+                      return CartWidget(
+                          isReward: isReward,
+                          product: cartProvider.cartItems.keys.toList()[index],
+                          user: user);
+                    },
+                  );
+                }
               },
-            );
-          }
-        },
-      ),
-      bottomSheet: Consumer<CartProvider>(
-        builder: (context, cartProvider, child) {
-          if (cartProvider.cartItems.isNotEmpty) {
-            return CartBottomSheetWidget(user: user, isReward: isReward);
-          } else {
-            return const SizedBox
-                .shrink(); // Return an empty widget if the cart is empty
-          }
-        },
-      ),
+            ),
+          ),
+          Consumer<CartProvider>(
+            builder: (context, cartProvider, child) {
+              if (cartProvider.cartItems.isNotEmpty) {
+                return CartBottomSheetWidget(user: user, isReward: isReward);
+              } else {
+                return const SizedBox
+                    .shrink(); // Return an empty widget if the cart is empty
+              }
+            },
+          ),
+        ],
+      )
     );
   }
 }
