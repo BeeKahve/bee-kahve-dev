@@ -120,7 +120,8 @@ class Manager:
                         return Response(status=False ,message="Caffein choice is not valid.")
                         
                 elif ingredient == "foam_amount":
-                    total_ingrediants[item.milk_choice+"_amount"] += 0.2 * ingredients[ingredient] * coeff
+                    if not item.milk_choice == None:
+                        total_ingrediants[item.milk_choice+"_amount"] += 0.2 * ingredients[ingredient] * coeff
                 
                 elif ingredient == "price":
                     pass      
