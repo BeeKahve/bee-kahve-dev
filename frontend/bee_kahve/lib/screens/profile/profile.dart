@@ -5,6 +5,7 @@ import 'package:bee_kahve/models/order_history_model.dart';
 import 'package:bee_kahve/models/past_order_model.dart';
 import 'package:bee_kahve/models/user_model.dart';
 import 'package:bee_kahve/screens/auth/signin.dart';
+import 'package:bee_kahve/screens/cart/cart_provider.dart';
 import 'package:bee_kahve/screens/profile/order_details.dart';
 import 'package:bee_kahve/screens/profile/update_address.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -120,6 +121,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actions: [
             IconButton(
               onPressed: () {
+                CartProvider cartProvider = CartProvider();
+                cartProvider.clearCart();
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => const SignInScreen(),

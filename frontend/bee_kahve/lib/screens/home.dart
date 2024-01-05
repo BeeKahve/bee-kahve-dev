@@ -25,13 +25,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (coffeesForReward - (widget.user?.loyaltyCount ?? 0) > 0) {
       return "${coffeesForReward - (widget.user?.loyaltyCount ?? 0)} coffees left to get a reward drink";
     }
-    return "Congratulations! You get a reard drink";
+    return "Congratulations! You get a reward drink.";
   }
 
   @override
   Widget build(BuildContext context) {
-    int loyaltyCount = widget.user?.loyaltyCount ?? 0;
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -115,42 +113,41 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (loyaltyCount < 5)
+                  if (widget.user!.loyaltyCount < 5)
                     for (int i = 0; i < 5; i++)
                       Icon(
                         Icons.coffee,
                         size: 60,
-                        color: loyaltyCount > i
+                        color: widget.user!.loyaltyCount > i
                             ? AppColors.yellow
                             : AppColors.textColor,
                       ),
-                  if (loyaltyCount >= 5)
-                    if (loyaltyCount >= 5)
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  MenuScreen(user: widget.user, isReward: true),
-                            ),
-                          );
-                        },
-                        icon: Icon(Icons.coffee, color: AppColors.darkColor),
-                        label: const Text(
-                          "Get reward",
-                          style: TextStyle(
-                              color: AppColors.darkColor, fontSize: 16),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 20),
-                          backgroundColor: AppColors.yellow,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
+                  if (widget.user!.loyaltyCount >= 5)
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                MenuScreen(user: widget.user, isReward: true),
                           ),
+                        );
+                      },
+                      icon: Icon(Icons.coffee, color: AppColors.darkColor),
+                      label: const Text(
+                        "Get reward",
+                        style:
+                            TextStyle(color: AppColors.darkColor, fontSize: 16),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 20),
+                        backgroundColor: AppColors.yellow,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
                         ),
                       ),
+                    ),
                 ],
               ),
               const Padding(

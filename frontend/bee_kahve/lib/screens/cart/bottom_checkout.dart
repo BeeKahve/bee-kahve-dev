@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/models/line_items_model.dart';
@@ -45,8 +47,8 @@ class _CartBottomSheetWidget extends State<CartBottomSheetWidget> {
     List<Map<String, dynamic>> listItems = [];
     List<Coffee> lineItems = [];
     for (Coffee product in cartProvider.cartItems.keys) {
-      lineItems.add(product);
       for (int i = 0; i < cartProvider.cartItems[product]!; i++) {
+        lineItems.add(product);
         listItems.add({
           "product_id": product.id,
           "name": product.name,
