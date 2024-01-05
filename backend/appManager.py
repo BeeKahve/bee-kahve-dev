@@ -292,4 +292,11 @@ class Manager:
         else:
             return Response(status=status ,message="Address is not fetched.")
 
+    def get_customer(self, customer_id):
+        status, customer = self.database_manager.get_customer_info(customer_id)
+        if status:
+            return Response(body=customer, status=status ,message="Customer is fetched successfully.")
+        else:
+            return Response(status=status ,message="Customer is not fetched.")
+    
     #jwt token

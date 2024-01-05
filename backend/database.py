@@ -564,8 +564,21 @@ class DatabaseManager:
         loyalty_coffee_count = customer[0][0]
         
         query_loyalty_count = "UPDATE Customers SET loyalty_coffee_count = %s WHERE customer_id = %s"
-        return self.database.execute_query(query_loyalty_count, (loyalty_coffee_count - 6,))
+        return self.database.execute_query(query_loyalty_count, (loyalty_coffee_count - 6,customer_id))
 
+
+    def get_customer_info(self, customer_id):
+        query_customer = "SELECT * FROM Customers WHERE customer_id = %s"
+        customer = self.database.fetch_data(query_customer, (customer_id,))[0]
+
+        if customer == []:
+            return False, None
+        
+        return True, Customer(customer_id=customer[0],
+                              name=customer[1],
+                              email=customer[2],
+                              address=customer[4],
+                              loyalty_count=customer[5])
 
     # Returns None if an insertion failed, "waiting" otherwise.
     def place_order(self, order : Order):
