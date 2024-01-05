@@ -122,7 +122,7 @@ class Manager:
                         return Response(status=False ,message="Caffein choice is not valid.")
                         
                 elif ingredient == "foam_amount":
-                    if not item.milk_choice == None or item.milk_choice == "no_milk":
+                    if not item.milk_choice == None or not item.milk_choice == "no_milk":
                         total_ingrediants[item.milk_choice+"_amount"] += 0.2 * ingredients[ingredient] * coeff
                 
                 elif ingredient == "price":
@@ -137,7 +137,7 @@ class Manager:
                 
                 total_ingrediants[item.size_choice+"_cup_count"] += 1
 
-        if item.price == 0:
+            if item.price == 0:
                 self.database_manager.decrease_loyalty_count(order.customer_id)
 
         # check stock
