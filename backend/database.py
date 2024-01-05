@@ -563,7 +563,7 @@ class DatabaseManager:
         
         loyalty_coffee_count = customer[0][0]
         
-        query_loyalty_count = "UPDATE Customers SET loyalty_coffee_count = %s"
+        query_loyalty_count = "UPDATE Customers SET loyalty_coffee_count = %s WHERE customer_id = %s"
         return self.database.execute_query(query_loyalty_count, (loyalty_coffee_count - 6,))
 
 
