@@ -66,15 +66,13 @@ class _RatePage extends State<RatePage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, size: 32),
+          icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "Rate",
           style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 28,
-              color: AppColors.textColor),
+              fontWeight: FontWeight.bold, color: AppColors.textColor),
         ),
       ),
       body: Center(
