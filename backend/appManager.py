@@ -103,7 +103,7 @@ class Manager:
                         total_ingrediants["oat_milk_amount"] += ingredients[ingredient] * coeff
                     elif item.milk_choice == "almond_milk":
                         total_ingrediants["almond_milk_amount"] += ingredients[ingredient] * coeff
-                    else:
+                    elif ingredients[ingredient] > 0:
                         return Response(status=False ,message="Milk choice is not valid.")
                 
                 elif ingredient == "espresso_amount":
@@ -133,7 +133,7 @@ class Manager:
                         return Response(status=False ,message="Ingredient is not valid.")
                 
                 total_ingrediants[item.size_choice+"_cup_count"] += 1
-        
+
         # check stock
         status, stock = self.database_manager.get_stock() #TODO admin_id or stock_id
         stock_dict = stock.dict()
