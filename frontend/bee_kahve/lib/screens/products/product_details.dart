@@ -58,7 +58,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     };
 
     if (product?['contains_milk'] == false) {
-      _selectedMilkType = null;
+      _selectedMilkType = "no_milk";
     }
 
     Coffee productToAdd = Coffee(

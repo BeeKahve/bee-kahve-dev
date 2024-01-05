@@ -180,7 +180,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  if (product.milkChoice != null)
+                                  if (product.milkChoice != "no_milk")
                                     Text(
                                       "- ${milkTypes[product.milkChoice]}",
                                       style: const TextStyle(
