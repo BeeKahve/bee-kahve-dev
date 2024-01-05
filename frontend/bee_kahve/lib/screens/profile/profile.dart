@@ -145,7 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 Text(
                   widget.user?.name ?? "",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textColor,
@@ -156,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 Text(
                   widget.user?.email ?? "",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: AppColors.textColor,
@@ -182,7 +182,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Text(
                       widget.user?.address ?? '',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
                         color: AppColors.textColor,
@@ -228,7 +228,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
                 ListView.builder(
-                  itemCount: orderHistory.orders.length,
+                  itemCount: orderHistory.orders.length > 10
+                      ? 10
+                      : orderHistory.orders.length,
                   shrinkWrap: true,
                   physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
@@ -352,12 +354,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     );
-                    // return Center(
-                    //   child: Text(
-                    //     pastOrders[index].name,
-                    //     style: Theme.of(context).textTheme.headlineSmall,
-                    //   ),
-                    // );
                   },
                 ),
               ],
