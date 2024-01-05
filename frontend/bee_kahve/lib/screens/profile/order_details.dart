@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/models/line_items_model.dart';
 import 'package:bee_kahve/models/past_order_model.dart';
@@ -7,16 +9,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:timelines/timelines.dart';
 import 'package:bee_kahve/screens/profile/rate.dart';
-
-class OrderDetailsScreen extends StatefulWidget {
-  final User? user;
-  final Order order;
-  const OrderDetailsScreen({Key? key, required this.order, required this.user})
-      : super(key: key);
-
-  @override
-  State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
-}
 
 const Map<String, List<dynamic>> processes = {
   "waiting": [0, "Placed"],
@@ -34,17 +26,12 @@ const Map<String, String> milkTypes = {
   "almond_milk": "Almond Milk",
 };
 
-class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
-  late Order order;
+class OrderDetailsScreen extends StatelessWidget {
+  final User? user;
+  final Order order;
+  OrderDetailsScreen({Key? key, required this.order, required this.user})
+      : super(key: key);
   Color colorChoice = Colors.green;
-  @override
-  void initState() {
-    order = widget.order;
-    if (processes[order.orderStatus]![0] == 4) {
-      colorChoice = Colors.red;
-    }
-    super.initState();
-  }
 
   String calculateTotalPrice(Order order) {
     double total = 0;
@@ -70,7 +57,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          RootScreen(currentScreen: 2, user: widget.user)));
+                          RootScreen(currentScreen: 2, user: user)));
             },
           ),
           title: Text(
@@ -222,7 +209,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                                   builder: (context) =>
                                                       RatePage(
                                                           product: product,
-                                                          user: widget.user)));
+                                                          user: user)));
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.yellow,

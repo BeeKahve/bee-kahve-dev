@@ -36,55 +36,59 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
   Future<void> _update_address() async {
     final isValid = _formkey.currentState!.validate();
     FocusScope.of(context).unfocus();
-    if(isValid){
+    if (isValid) {
       final String address = _addressController.text;
       final Map<String, dynamic> requestBody = {
-        'customer_id': widget.user!.customerId, 
+        'customer_id': widget.user!.customerId,
         'address': address,
       };
-    try {
-      final response = await http.post(
-        Uri.parse('http://51.20.117.162:8000/update_address'),
-        body: json.encode(requestBody),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        // Parse the JSON response
-        final jsonResponse = json.decode(response.body);
-
-        // Check if the registration was successful
-        if (jsonResponse['status'] == true) {
-          // Registration successful
-          // Handle success as needed
-          print('Updating address is successful');
-          print('Message: ${jsonResponse['message']}');
-          widget.user!.address = requestBody['address'];
-          // ignore: use_build_context_synchronously
-          Navigator.pop(context);
-          // ignore: use_build_context_synchronously
-          Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RootScreen( currentScreen: 2,user: widget.user),
-          ),
+      try {
+        final response = await http.post(
+          Uri.parse('http://51.20.117.162:8000/update_address'),
+          body: json.encode(requestBody),
+          headers: {'Content-Type': 'application/json'},
         );
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final jsonResponse = json.decode(response.body);
+
+          // Check if the registration was successful
+          if (jsonResponse['status'] == true) {
+            // Registration successful
+            // Handle success as needed
+            print('Updating address is successful');
+            print('Message: ${jsonResponse['message']}');
+            widget.user!.address = requestBody['address'];
+            // ignore: use_build_context_synchronously
+            Navigator.pop(context);
+            // ignore: use_build_context_synchronously
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    RootScreen(currentScreen: 2, user: widget.user),
+              ),
+            );
+          } else {
+            // Registration failed
+            // Handle failure, e.g., display an error message
+            print(
+                'Updating address is failed. Message: ${jsonResponse['message']}');
+          }
         } else {
           // Registration failed
           // Handle failure, e.g., display an error message
-          print('Updating address is failed. Message: ${jsonResponse['message']}');
+          print(
+              'Updating address is failed. Status code: ${response.statusCode}');
         }
-      } else {
-        // Registration failed
-        // Handle failure, e.g., display an error message
-        print('Updating address is failed. Status code: ${response.statusCode}');
+      } catch (e) {
+        // Handle other exceptions, such as network issues
+        print('Error during updating address: $e');
       }
-    } catch (e) {
-      // Handle other exceptions, such as network issues
-      print('Error during updating address: $e');
     }
   }
-  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -93,14 +97,30 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-        title: const Text(
-          "",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: AppColors.textColor,
+          leading: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RootScreen(
+                          currentScreen: 2,
+                          user: user,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.arrow_back_rounded))),
+          title: const Text(
+            "",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textColor,
+            ),
           ),
         ),
-      ),
         body: Padding(
           padding: const EdgeInsets.all(14.0),
           child: SingleChildScrollView(
