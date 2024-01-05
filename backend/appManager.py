@@ -87,6 +87,8 @@ class Manager:
             total_ingrediants[ingredient] = 0
         
         for item in order.line_items:
+            if item.milk_choice == None:
+                item.milk_choice = "no_milk"
             coeff = self.get_coefficient(item.size_choice)
             if coeff == 0:
                 return Response(status=False ,message="Size choice is not valid.")
@@ -103,7 +105,7 @@ class Manager:
                         total_ingrediants["oat_milk_amount"] += ingredients[ingredient] * coeff
                     elif item.milk_choice == "almond_milk":
                         total_ingrediants["almond_milk_amount"] += ingredients[ingredient] * coeff
-                    else:
+                    elif ingredients[ingredient] > 0:
                         return Response(status=False ,message="Milk choice is not valid.")
                 
                 elif ingredient == "espresso_amount":
@@ -120,10 +122,11 @@ class Manager:
                         return Response(status=False ,message="Caffein choice is not valid.")
                         
                 elif ingredient == "foam_amount":
-                    total_ingrediants[item.milk_choice+"_amount"] += 0.2 * ingredients[ingredient] * coeff
+                    if not item.milk_choice == "no_milk" and not item.milk_choice == None:
+                        total_ingrediants[item.milk_choice+"_amount"] += 0.2 * ingredients[ingredient] * coeff
                 
                 elif ingredient == "price":
-                    pass      
+                    pass
                 
                 else:
                     try:
@@ -133,7 +136,10 @@ class Manager:
                         return Response(status=False ,message="Ingredient is not valid.")
                 
                 total_ingrediants[item.size_choice+"_cup_count"] += 1
-        
+
+            if item.price == 0:
+                self.database_manager.decrease_loyalty_count(order.customer_id)
+
         # check stock
         status, stock = self.database_manager.get_stock() #TODO admin_id or stock_id
         stock_dict = stock.dict()
@@ -286,4 +292,11 @@ class Manager:
         else:
             return Response(status=status ,message="Address is not fetched.")
 
+    def get_customer(self, customer_id):
+        status, customer = self.database_manager.get_customer_info(customer_id)
+        if status:
+            return Response(body=customer, status=status ,message="Customer is fetched successfully.")
+        else:
+            return Response(status=status ,message="Customer is not fetched.")
+    
     #jwt token

@@ -1,4 +1,5 @@
 import 'package:bee_kahve/screens/menu.dart';
+import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:flutter/material.dart';
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/models/user_model.dart';
@@ -21,17 +22,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String getCoffeesNeededForReward() {
-    const coffeesForReward = 5; 
+    const coffeesForReward = 5;
     if (coffeesForReward - (widget.user?.loyaltyCount ?? 0) > 0) {
       return "${coffeesForReward - (widget.user?.loyaltyCount ?? 0)} coffees left to get a reward drink";
     }
-    return "Congratulations! You get a reard drink";
+    return "Congratulations! You get a reward drink.";
   }
 
   @override
   Widget build(BuildContext context) {
-    int loyaltyCount = widget.user?.loyaltyCount ?? 0;
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -90,7 +89,6 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ... (Other Widgets for Home Screen)
               const Text(
                 "Campaigns",
                 style: TextStyle(
@@ -116,13 +114,40 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for (int i = 0; i < 5; i++)
-                    Icon(
-                      Icons.coffee,
-                      size: 60,
-                      color: loyaltyCount > i
-                          ? AppColors.yellow
-                          : AppColors.textColor,
+                  if (widget.user!.loyaltyCount < 5)
+                    for (int i = 0; i < 5; i++)
+                      Icon(
+                        Icons.coffee,
+                        size: 60,
+                        color: widget.user!.loyaltyCount > i
+                            ? AppColors.yellow
+                            : AppColors.textColor,
+                      ),
+                  if (widget.user!.loyaltyCount >= 5)
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                MenuScreen(user: widget.user, isReward: true),
+                          ),
+                        );
+                      },
+                      icon: Icon(Icons.coffee, color: AppColors.darkColor),
+                      label: const Text(
+                        "Get reward",
+                        style:
+                            TextStyle(color: AppColors.darkColor, fontSize: 16),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 20),
+                        backgroundColor: AppColors.yellow,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
                     ),
                 ],
               ),
@@ -138,10 +163,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              Image.asset(
-                "assets/images/try-coffee.png",
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height / 2.0,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MenuScreen(
+                        user: widget.user,
+                      ),
+                    ),
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetailsScreen(
+                        productId: 46,
+                        user: widget.user,
+                      ),
+                    ),
+                  );
+                },
+                child: Image.asset(
+                  "assets/images/try-coffee.png",
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height / 2.0,
+                ),
               ),
             ],
           ),

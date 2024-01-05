@@ -37,7 +37,7 @@ class LineItem(BaseModel):
     photo_path : str = None
     price : float = None
     size_choice : str = None
-    milk_choice : str = None
+    milk_choice : str = "no_milk"
     extra_shot_choice : bool = None 
     caffein_choice : bool = None
 

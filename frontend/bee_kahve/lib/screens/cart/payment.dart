@@ -50,8 +50,8 @@ class _PaymentPage extends State<PaymentPage> {
       List<Map<String, dynamic>> listItems = [];
       List<Coffee> lineItems = [];
       for (Coffee product in cartProvider.cartItems.keys) {
-        lineItems.add(product);
         for (int i = 0; i < cartProvider.cartItems[product]!; i++) {
+          lineItems.add(product);
           listItems.add({
             "product_id": product.id,
             "name": product.name,

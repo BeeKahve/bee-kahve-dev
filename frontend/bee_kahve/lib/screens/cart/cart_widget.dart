@@ -5,23 +5,50 @@ import 'package:bee_kahve/screens/cart/cart_provider.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 
-class CartWidget extends StatefulWidget {
-  final User? user;
-  const CartWidget({Key? key, required this.product, required this.user})
-      : super(key: key);
-  final Coffee product;
-  @override
-  State<CartWidget> createState() => _CartWidget();
-}
+// class CartWidget extends StatefulWidget {
+//   final User? user;
+//   final bool isReward;
+//   const CartWidget(
+//       {Key? key,
+//       required this.product,
+//       required this.user,
+//       this.isReward = false})
+//       : super(key: key);
+//   final Coffee product;
+//   @override
+//   State<CartWidget> createState() => _CartWidget();
+// }
 
-class _CartWidget extends State<CartWidget> {
-  late Coffee product;
-  CartProvider cartProvider = CartProvider();
+const Map<String, String> milkTypes = {
+  "whole_milk": "Whole Milk",
+  "reduced_fat_milk": "Reduced Fat Milk",
+  "lactose_free_milk": "Lactose Free Milk",
+  "oat_milk": "Oat Milk",
+  "almond_milk": "Almond Milk",
+};
+
+const Map<String, String> sizes = {
+  "small": "Small",
+  "medium": "Medium",
+  "large": "Large",
+};
+
+class CartWidget extends StatelessWidget {
+  final User? user;
+  final bool isReward;
+  final Coffee product;
+  final CartProvider cartProvider = CartProvider();
   @override
-  void initState() {
-    super.initState();
-    product = widget.product;
-  }
+  CartWidget(
+      {Key? key,
+      required this.product,
+      required this.user,
+      this.isReward = false})
+      : super(key: key);
+  // void initState() {
+  //   super.initState();
+  //   product = widget.product;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -70,47 +97,50 @@ class _CartWidget extends State<CartWidget> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
+                          if (product.milkChoice != "no_milk")
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("${milkTypes[product.milkChoice]}"),
+                            ),
+                          if (product.extraShotChoice ?? false)
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("Extra Shot"),
+                            ),
+                          if (product.caffeineChoice ?? false)
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("Decaf"),
+                            ),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                                "Milk Type: ${product.milkChoice ?? 'not selected'}"),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                                "Extra Shot: ${product.extraShotChoice ?? false}"),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                                "Decaf: ${product.caffeineChoice ?? false}"),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                                "Size: ${product.sizeChoice ?? 'not selected'}"),
+                                sizes[product.sizeChoice] ?? 'not selected'),
                           ),
                         ],
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          "${(product.price * cartProvider.cartItems[product]!.toInt()).toStringAsFixed(2)}\₺",
-                        ),
-                        IconButton(
-                            onPressed: () {
-                              cartProvider.removeFromCart(product);
-                            },
-                            icon: const Icon(Icons.remove)),
-                        Text(cartProvider.cartItems[product].toString()),
-                        IconButton(
-                            onPressed: () {
-                              cartProvider.addToCart(product);
-                            },
-                            icon: const Icon(Icons.add))
-                      ],
+                    Visibility(
+                      visible: !isReward,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            "${(product.price * (cartProvider.cartItems[product]?.toInt() ?? 0)).toStringAsFixed(2)}\₺",
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                cartProvider.removeFromCart(product);
+                              },
+                              icon: const Icon(Icons.remove)),
+                          Text(cartProvider.cartItems[product].toString()),
+                          IconButton(
+                              onPressed: () {
+                                cartProvider.addToCart(product);
+                              },
+                              icon: const Icon(Icons.add))
+                        ],
+                      ),
                     )
                   ],
                 ),
