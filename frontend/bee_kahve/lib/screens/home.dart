@@ -1,4 +1,5 @@
 import 'package:bee_kahve/screens/menu.dart';
+import 'package:bee_kahve/screens/products/product_details.dart';
 import 'package:flutter/material.dart';
 import 'package:bee_kahve/consts/app_color.dart';
 import 'package:bee_kahve/models/user_model.dart';
@@ -162,10 +163,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              Image.asset(
-                "assets/images/try-coffee.png",
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height / 2.0,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MenuScreen(
+                        user: widget.user,
+                      ),
+                    ),
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetailsScreen(
+                        productId: 46,
+                        user: widget.user,
+                      ),
+                    ),
+                  );
+                },
+                child: Image.asset(
+                  "assets/images/try-coffee.png",
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height / 2.0,
+                ),
               ),
             ],
           ),
