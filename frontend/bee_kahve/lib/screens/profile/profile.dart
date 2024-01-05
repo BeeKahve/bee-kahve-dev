@@ -304,7 +304,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         children: [
                                           Text(lineItem.name),
                                           Text(
-                                            "${orderHistory.orders[orderHistory.orders.length - 1 - index].listToMap()[lineItem]} x ${lineItem.price.toStringAsFixed(2)}\$",
+                                            "${orderHistory.orders[orderHistory.orders.length - 1 - index].listToMap()[lineItem]} x ${lineItem.price.toStringAsFixed(2)}\₺",
                                           )
                                         ],
                                       )
