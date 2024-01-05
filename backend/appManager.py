@@ -134,6 +134,9 @@ class Manager:
                 
                 total_ingrediants[item.size_choice+"_cup_count"] += 1
 
+        if item.price == 0:
+                self.database_manager.decrease_loyalty_count(order.customer_id)
+
         # check stock
         status, stock = self.database_manager.get_stock() #TODO admin_id or stock_id
         stock_dict = stock.dict()
