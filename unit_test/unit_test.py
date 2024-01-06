@@ -1,3 +1,11 @@
+# def test_get_existing_product():
+#     product_id = read_json("get_product", "existing_product.json")
+#     response = client.post("/get_product", json=product_id)
+#     print(response.json())
+#     assert response.status_code == 200
+#     print(response.json())
+
+
 import sys
 import pathlib
 import json
@@ -167,14 +175,6 @@ def test_get_menu():
     assert response_json != None
     assert response_json["menuProducts"] != None
     assert len(response_json["menuProducts"]) == response_json["product_count"]
-"""
-
-# def test_get_existing_product():
-#     product_id = read_json("get_product", "existing_product.json")
-#     response = client.post("/get_product", json=product_id)
-#     print(response.json())
-#     assert response.status_code == 200
-#     print(response.json())
 
 
 def test_update_address_nonexisting_customer():
@@ -194,4 +194,22 @@ def test_update_address_existing_customer():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["message"] == "Address is updated successfully."
+"""
 
+
+def test_rate_nonexisting_product():
+    rate = read_json("rate", "nonexisting_product.json")
+    response = client.post("/rate", json=rate)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["message"] == "Rate could not fetched."
+
+
+def test_rate_existing_product():
+    rate = read_json("rate", "existing_product.json")
+    response = client.post("/rate", json=rate)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["message"] == "Rate is updated successfully."
