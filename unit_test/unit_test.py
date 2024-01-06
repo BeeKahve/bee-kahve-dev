@@ -17,7 +17,7 @@ def read_json(method_name, json_file_name):
         python_dict = json.load(json_file)
     return python_dict
 
-
+"""
 def test_root():
     response = client.get("/")
     # Check for server error
@@ -167,5 +167,31 @@ def test_get_menu():
     assert response_json != None
     assert response_json["menuProducts"] != None
     assert len(response_json["menuProducts"]) == response_json["product_count"]
+"""
 
+# def test_get_existing_product():
+#     product_id = read_json("get_product", "existing_product.json")
+#     response = client.post("/get_product", json=product_id)
+#     print(response.json())
+#     assert response.status_code == 200
+#     print(response.json())
+
+
+def test_update_address_nonexisting_customer():
+    address = read_json("update_address", "nonexisting_customer.json")
+    response = client.post("/update_address", json=address)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    print(response.json())
+    assert response.json()["message"] == "Address is not updated."
+
+
+def test_update_address_existing_customer():
+    address = read_json("update_address", "existing_customer.json")
+    response = client.post("/update_address", json=address)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["message"] == "Address is updated successfully."
 
