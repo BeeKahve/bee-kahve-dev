@@ -112,3 +112,29 @@ def test_web_register_nonexisting_employee():
     # Check for handled error
     assert response.json()["message"] == "Success"
 
+
+def test_login_customer_correct_credentials():
+    credentials = read_json("login", "customer_correct_credentials.json")
+    response = client.post("/login", json=credentials)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["customer_id"] != None
+
+
+def test_login_customer_wrong_email():
+    credentials = read_json("login", "customer_wrong_email.json")
+    response = client.post("/login", json=credentials)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["customer_id"] == None
+
+
+def test_login_customer_wrong_password():
+    credentials = read_json("login", "customer_wrong_password.json")
+    response = client.post("/login", json=credentials)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["customer_id"] == None
