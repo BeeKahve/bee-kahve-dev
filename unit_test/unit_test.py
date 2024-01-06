@@ -20,6 +20,7 @@ def read_json(method_name, json_file_name):
 
 def test_root():
     response = client.get("/")
+    # Check for server error
     assert response.status_code == 200
 
 
@@ -157,3 +158,14 @@ def test_register_nonexisting_customer():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["message"] == "Success"
+
+
+def test_get_menu():
+    response = client.get("/get_menu")
+    assert response.status_code == 200
+    response_json = response.json()
+    assert response_json != None
+    assert response_json["menuProducts"] != None
+    assert len(response_json["menuProducts"]) == response_json["product_count"]
+
+
