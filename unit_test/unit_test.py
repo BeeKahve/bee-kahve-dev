@@ -212,7 +212,7 @@ def test_rate_existing_product():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["message"] == "Rate is updated successfully."
-"""
+
 
 def test_update_stock_missing_items():
     stock = read_json("update_stock", "missing_items.json")
@@ -230,3 +230,31 @@ def test_update_stock_all_items():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["message"] == "Stock is updated successfully."
+"""
+
+def test_add_product_missing_ingredients():
+    product = read_json("add_product", "missing_ingredients.json")
+    response = client.post("/add_product", json=product)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["message"] == "Product is added successfully."
+
+
+def test_add_product_all_ingredients():
+    product = read_json("add_product", "all_ingredients.json")
+    response = client.post("/add_product", json=product)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["message"] == "Product is added successfully."
+
+
+def test_add_product_duplicate_coffee_name():
+    product = read_json("add_product", "duplicate_coffee_name.json")
+    response = client.post("/add_product", json=product)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["message"] == "Product is not added."
+
