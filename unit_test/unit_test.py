@@ -223,4 +223,10 @@ def test_update_stock_missing_items():
     assert response.json()["message"] == "Stock is updated successfully."
 
 
-# def test_update_stock_all_items():
+def test_update_stock_all_items():
+    stock = read_json("update_stock", "all_items.json")
+    response = client.post("/update_stock", json=stock)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["message"] == "Stock is updated successfully."
