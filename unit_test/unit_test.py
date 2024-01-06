@@ -138,3 +138,22 @@ def test_login_customer_wrong_password():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["customer_id"] == None
+
+
+def test_register_existing_customer():
+    credentials = read_json("register", "existing_customer.json")
+    response = client.post("/register", json=credentials)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    print(response.json())
+    assert response.json()["message"] == "Email already exists"
+
+
+def test_register_nonexisting_customer():
+    credentials = read_json("register", "nonexisting_customer.json")
+    response = client.post("/register", json=credentials)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["message"] == "Success"
