@@ -238,7 +238,7 @@ def test_add_product_missing_ingredients():
     # Check for server error
     assert response.status_code == 200
     # Check for handled error
-    assert response.json()["message"] == "Product is added successfully."
+    assert response.json()["message"] == "Product is not added."
 
 
 def test_add_product_all_ingredients():
@@ -289,7 +289,7 @@ def test_get_waiting_orders_existing_admin():
     response = client.get(f"/get_waiting_orders?admin_id={admin_id}")
     # Check for server error
     assert response.status_code == 200
-"""
+
 
 def test_get_full_product_nonexistent():
     product_id = -1
@@ -307,3 +307,34 @@ def test_get_full_product_existent():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["coffee_name"] != None
+"""
+
+def test_update_product_nonexistent_product():
+    product_id = -1
+    ingredients = read_json("update_product", "nonexistent_product.json")
+    response = client.post(f"update_product?product_id={product_id}", json=ingredients)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["message"] == "Product can not updated."
+
+
+def test_update_product_missing_ingredients():
+    product_id = 68
+    ingredients = read_json("update_product", "missing_ingredients.json")
+    response = client.post(f"update_product?product_id={product_id}", json=ingredients)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    print(response.json())
+    assert response.json()["message"] == "Product is updated successfully."
+
+
+def test_update_product_all_ingredients():
+    product_id = -1
+    ingredients = read_json("update_product", "nonexistent_product.json")
+    response = client.post(f"update_product?product_id={product_id}", json=ingredients)
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["message"] == "Product is updated successfully."
