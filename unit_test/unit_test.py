@@ -257,13 +257,14 @@ def test_add_product_duplicate_coffee_name():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["message"] == "Product is not added."
-"""
+
 
 def test_get_active_orders_nonexisting_admin():
     admin_id = -1
     response = client.post(f"/get_active_orders?admin_id={admin_id}")
     # Check for server error
     assert response.status_code == 200
+    assert response.json()["orders"] == None
 
 
 def test_get_active_orders_existing_admin():
@@ -271,4 +272,18 @@ def test_get_active_orders_existing_admin():
     response = client.post(f"/get_active_orders?admin_id={admin_id}")
     # Check for server error
     assert response.status_code == 200
+"""
 
+def test_get_waiting_orders_nonexisting_admin():
+    admin_id = -1
+    response = client.get(f"/get_waiting_orders?admin_id={admin_id}")
+    # Check for server error
+    assert response.status_code == 200
+    assert response.json()["orders"] == None
+
+
+def test_get_waiting_orders_existing_admin():
+    admin_id = 1
+    response = client.get(f"/get_waiting_orders?admin_id={admin_id}")
+    # Check for server error
+    assert response.status_code == 200
