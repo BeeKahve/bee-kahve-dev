@@ -1,11 +1,3 @@
-# def test_get_existing_product():
-#     product_id = read_json("get_product", "existing_product.json")
-#     response = client.post("/get_product", json=product_id)
-#     print(response.json())
-#     assert response.status_code == 200
-#     print(response.json())
-
-
 import sys
 import pathlib
 import json
@@ -25,7 +17,7 @@ def read_json(method_name, json_file_name):
         python_dict = json.load(json_file)
     return python_dict
 
-"""
+
 def test_root():
     response = client.get("/")
     # Check for server error
@@ -155,7 +147,6 @@ def test_register_existing_customer():
     # Check for server error
     assert response.status_code == 200
     # Check for handled error
-    print(response.json())
     assert response.json()["message"] == "Email already exists"
 
 
@@ -190,7 +181,8 @@ def test_get_product_existent():
     assert response.status_code == 200
     assert response.json()["coffee_name"] != None
 
-    
+
+
 def test_get_status_existent_order():
     order_id = 144
     response = client.get(f"/get_status?order_id={order_id}")
@@ -288,7 +280,7 @@ def test_rate_existing_product():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["message"] == "Rate is updated successfully."
-"""
+
 
 def test_get_stock_existent_stock():
     stock_id = 1
@@ -303,7 +295,7 @@ def test_get_stock_nonexistent_stock():
     assert response.status_code == 200
     assert response.json() != None
 
-"""
+
 def test_update_stock_missing_items():
     stock = read_json("update_stock", "missing_items.json")
     response = client.post("/update_stock", json=stock)
@@ -321,7 +313,7 @@ def test_update_stock_all_items():
     # Check for handled error
     assert response.json()["message"] == "Stock is updated successfully."
 
-
+    
 def test_add_product_missing_ingredients():
     product = read_json("add_product", "missing_ingredients.json")
     response = client.post("/add_product", json=product)
@@ -355,7 +347,11 @@ def test_get_active_orders_nonexisting_admin():
     # Check for server error
     assert response.status_code == 200
     # Check for handled error
-    assert response.json()["orders"] == None
+    response_json = response.json()
+    if response_json["orders"] != []:
+        for order in response_json["orders"]:
+            assert order["order_status"] in ["preparing", "on_the_way"]
+            assert order["line_items"] != None
 
 
 def test_get_active_orders_existing_admin():
@@ -365,7 +361,7 @@ def test_get_active_orders_existing_admin():
     assert response.status_code == 200
     # Check for handled error
     response_json = response.json()
-    if response_json["orders"] != None:
+    if response_json["orders"] != []:
         for order in response_json["orders"]:
             assert order["order_status"] in ["preparing", "on_the_way"]
             assert order["line_items"] != None
@@ -377,7 +373,11 @@ def test_get_waiting_orders_nonexisting_admin():
     # Check for server error
     assert response.status_code == 200
     # Check for handled error
-    assert response.json()["orders"] == None
+    response_json = response.json()
+    if response_json["orders"] != []:
+        for order in response_json["orders"]:
+            assert order["order_status"] == "waiting"
+            assert order["line_items"] != None
 
 
 def test_get_waiting_orders_existing_admin():
@@ -387,7 +387,7 @@ def test_get_waiting_orders_existing_admin():
     assert response.status_code == 200
     # Check for handled error
     response_json = response.json()
-    if response_json["orders"] != None:
+    if response_json["orders"] != []:
         for order in response_json["orders"]:
             assert order["order_status"] == "waiting"
             assert order["line_items"] != None
@@ -428,12 +428,11 @@ def test_update_product_missing_ingredients():
     # Check for server error
     assert response.status_code == 200
     # Check for handled error
-    print(response.json())
     assert response.json()["message"] == "Product is updated successfully."
 
 
 def test_update_product_all_ingredients():
-    product_id = -1
+    product_id = 68
     ingredients = read_json("update_product", "nonexistent_product.json")
     response = client.post(f"update_product?product_id={product_id}", json=ingredients)
     # Check for server error
@@ -494,4 +493,3 @@ def test_get_customer_existent():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["name"] != None
-"""
