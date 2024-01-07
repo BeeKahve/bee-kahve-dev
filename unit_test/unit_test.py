@@ -175,8 +175,23 @@ def test_get_menu():
     assert response_json != None
     assert response_json["menuProducts"] != None
     assert len(response_json["menuProducts"]) == response_json["product_count"]
+"""
+
+def test_get_product_nonexistent():
+    product_id = -1
+    response = client.get(f"/get_product?product_id={product_id}")
+    assert response.status_code == 200
+    assert response.json()["coffee_name"] == None
 
 
+def test_get_product_existent():
+    product_id = 68
+    response = client.get(f"/get_product?product_id={product_id}")
+    assert response.status_code == 200
+    assert response.json()["coffee_name"] != None
+
+
+"""
 def test_update_address_nonexisting_customer():
     address = read_json("update_address", "nonexisting_customer.json")
     response = client.post("/update_address", json=address)
@@ -374,7 +389,7 @@ def test_get_address_existent_customer():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["address"] != None
-"""
+
 
 def test_get_customer_nonexistent():
     customer_id = -1
@@ -392,3 +407,4 @@ def test_get_customer_existent():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["name"] != None
+"""
