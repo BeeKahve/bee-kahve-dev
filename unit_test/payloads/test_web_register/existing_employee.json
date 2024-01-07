@@ -1,0 +1,9 @@
+{
+    "user_id": 1,
+    "email": "admin@itu.edu.tr",
+    "hashedValue": "3a3d104a79d86f8405457bb1a4b640892a2f544a6e9d81c12864bced075ad24e03dd83597517034c4cfbd47ff9876ce809d1609f36e1ad88418bd9de1bfd97a9",
+    "name": "Novruz Amirov",
+    "address": "string",
+    "admin_id": 1,
+    "is_admin": true
+}

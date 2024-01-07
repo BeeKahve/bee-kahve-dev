@@ -1,0 +1,9 @@
+{
+    "admin_id": 1,
+    "coffee_name": "test_coffee_name_missing_ingredients",
+    "photo_path": "test_photo_path",
+    "small_cup_only": true,
+    "price": 80,
+    "rate": 0,
+    "rate_count": 0
+}

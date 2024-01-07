@@ -1,0 +1,18 @@
+{
+    "admin_id": 1,
+    "coffee_name": "test_coffee_name_all_ingredients",
+    "photo_path": "test_photo_path",
+    "small_cup_only": true,
+    "price": 80,
+    "rate": 0,
+    "rate_count": 0,
+    "espresso_amount": 20,
+    "milk_amount": 50,
+    "foam_amount": 20,
+    "chocolate_syrup_amount": 0,
+    "caramel_syrup_amount": 0,
+    "white_chocolate_syrup_amount": 0,
+    "sugar_amount": 0,
+    "ice_amount": 0,
+    "is_product_disabled": false
+}

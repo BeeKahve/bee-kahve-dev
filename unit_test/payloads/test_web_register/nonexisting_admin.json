@@ -1,0 +1,9 @@
+{
+    "user_id": 0,
+    "email": "test@example.com",
+    "hashedValue": "test_hash",
+    "name": "test_name",
+    "address": "test_address",
+    "admin_id": 0,
+    "is_admin": true
+}

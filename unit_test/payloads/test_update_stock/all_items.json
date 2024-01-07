@@ -1,0 +1,17 @@
+{
+    "small_cup_count" : 780,
+    "medium_cup_count" : 3000,
+    "large_cup_count" : 1500,
+    "espresso_amount" : 80000,
+    "decaff_espresso_amount" : 100000,
+    "whole_milk_amount" : 10000,
+    "reduced_fat_milk_amount" : 100000,
+    "lactose_free_milk_amount" : 100000,
+    "oat_milk_amount" : 100000,
+    "almond_milk_amount" : 100000,
+    "chocolate_syrup_amount" : 100000,
+    "white_chocolate_syrup_amount" : 100000,
+    "caramel_syrup_amount" : 100000,
+    "sugar_amount" : 100000,
+    "ice_amount" : 100000
+}

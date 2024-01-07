@@ -1,0 +1,5 @@
+{
+    "email": "test@example.com",
+    "hashedValue": "test_hash",
+    "is_admin": true
+}
