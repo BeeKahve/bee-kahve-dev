@@ -356,7 +356,7 @@ def test_delete_product_existent():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["message"] == "Product is deleted successfully."
-"""
+
 
 def test_get_address_nonexistent_customer():
     customer_id = -1
@@ -374,3 +374,21 @@ def test_get_address_existent_customer():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["address"] != None
+"""
+
+def test_get_customer_nonexistent():
+    customer_id = -1
+    response = client.get(f"get_customer?customer_id={customer_id}")
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["name"] == None
+
+
+def test_get_customer_existent():
+    customer_id = 13
+    response = client.get(f"get_customer?customer_id={customer_id}")
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["name"] != None
