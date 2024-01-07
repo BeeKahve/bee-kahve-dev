@@ -18,6 +18,7 @@
 --
 -- Table structure for table `Admins`
 --
+USE bee_kahve_db;
 
 DROP TABLE IF EXISTS `Admins`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
