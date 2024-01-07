@@ -189,7 +189,8 @@ def test_get_product_existent():
     response = client.get(f"/get_product?product_id={product_id}")
     assert response.status_code == 200
     assert response.json()["coffee_name"] != None
-"""
+
+    
 def test_get_status_existent_order():
     order_id = 144
     response = client.get(f"/get_status?order_id={order_id}")
@@ -202,6 +203,23 @@ def test_get_status_nonexistent_order():
     response = client.get(f"/get_status?order_id={order_id}")
     assert response.status_code == 200
     assert response.json()["order_status"] == None
+"""
+
+def test_set_status_existent_order():
+    order_id = 144
+    order_status = "delivered"
+    response = client.get(f"/set_status?order_id={order_id}&status={order_status}")
+    assert response.status_code == 200
+    assert response.json()["message"] == "Status is updated successfully."
+
+
+def test_set_status_nonexistent_order():
+    order_id = -1
+    order_status = "delivered"
+    response = client.get(f"/set_status?order_id={order_id}&status={order_status}")
+    assert response.status_code == 200
+    assert response.json()["message"] == "Status is not updated."
+    
 
 """
 def test_update_address_nonexisting_customer():
