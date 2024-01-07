@@ -235,7 +235,7 @@ def test_set_status_nonexistent_order_nonexistent_status():
     response = client.get(f"/set_status?order_id={order_id}&status={order_status}")
     assert response.status_code == 200
     assert response.json()["message"] == "Status is not updated."
-"""
+
 
 def test_order_history_nonexistent_customer():
     customer_id = -1
@@ -252,7 +252,7 @@ def test_order_history_existent_customer():
     response_json = response.json()
     assert len(response_json["orders"]) == response_json["order_count"]
 
-"""
+
 def test_update_address_nonexisting_customer():
     address = read_json("update_address", "nonexisting_customer.json")
     response = client.post("/update_address", json=address)
@@ -288,8 +288,22 @@ def test_rate_existing_product():
     assert response.status_code == 200
     # Check for handled error
     assert response.json()["message"] == "Rate is updated successfully."
+"""
+
+def test_get_stock_existent_stock():
+    stock_id = 1
+    response = client.get(f"/get_stock?stock_id={stock_id}")
+    assert response.status_code == 200
+    assert response.json() != None
 
 
+def test_get_stock_nonexistent_stock():
+    stock_id = -1
+    response = client.get(f"/get_stock?stock_id={stock_id}")
+    assert response.status_code == 200
+    assert response.json() != None
+
+"""
 def test_update_stock_missing_items():
     stock = read_json("update_stock", "missing_items.json")
     response = client.post("/update_stock", json=stock)
