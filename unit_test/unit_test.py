@@ -264,6 +264,7 @@ def test_get_active_orders_nonexisting_admin():
     response = client.post(f"/get_active_orders?admin_id={admin_id}")
     # Check for server error
     assert response.status_code == 200
+    # Check for handled error
     assert response.json()["orders"] == None
 
 
@@ -272,13 +273,14 @@ def test_get_active_orders_existing_admin():
     response = client.post(f"/get_active_orders?admin_id={admin_id}")
     # Check for server error
     assert response.status_code == 200
-"""
+
 
 def test_get_waiting_orders_nonexisting_admin():
     admin_id = -1
     response = client.get(f"/get_waiting_orders?admin_id={admin_id}")
     # Check for server error
     assert response.status_code == 200
+    # Check for handled error
     assert response.json()["orders"] == None
 
 
@@ -287,3 +289,21 @@ def test_get_waiting_orders_existing_admin():
     response = client.get(f"/get_waiting_orders?admin_id={admin_id}")
     # Check for server error
     assert response.status_code == 200
+"""
+
+def test_get_full_product_nonexistent():
+    product_id = -1
+    response = client.get(f"/get_full_product?product_id={product_id}")
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["coffee_name"] == None
+
+
+def test_get_full_product_existent():
+    product_id = 68
+    response = client.get(f"/get_full_product?product_id={product_id}")
+    # Check for server error
+    assert response.status_code == 200
+    # Check for handled error
+    assert response.json()["coffee_name"] != None
