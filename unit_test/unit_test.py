@@ -203,9 +203,9 @@ def test_get_status_nonexistent_order():
     response = client.get(f"/get_status?order_id={order_id}")
     assert response.status_code == 200
     assert response.json()["order_status"] == None
-"""
 
-def test_set_status_existent_order():
+
+def test_set_status_existent_order_existent_status():
     order_id = 144
     order_status = "delivered"
     response = client.get(f"/set_status?order_id={order_id}&status={order_status}")
@@ -213,13 +213,30 @@ def test_set_status_existent_order():
     assert response.json()["message"] == "Status is updated successfully."
 
 
-def test_set_status_nonexistent_order():
+def test_set_status_nonexistent_order_existent_status():
     order_id = -1
     order_status = "delivered"
     response = client.get(f"/set_status?order_id={order_id}&status={order_status}")
     assert response.status_code == 200
     assert response.json()["message"] == "Status is not updated."
-    
+"""
+
+def test_set_status_existent_order_nonexistent_status():
+    order_id = 144
+    order_status = "dummy_status"
+    response = client.get(f"/set_status?order_id={order_id}&status={order_status}")
+    assert response.status_code == 200
+    assert response.json()["message"] == "Status is not updated."
+
+
+def test_set_status_nonexistent_order_nonexistent_status():
+    order_id = -1
+    order_status = "dummy_status"
+    response = client.get(f"/set_status?order_id={order_id}&status={order_status}")
+    assert response.status_code == 200
+    assert response.json()["message"] == "Status is not updated."
+
+
 
 """
 def test_update_address_nonexisting_customer():
