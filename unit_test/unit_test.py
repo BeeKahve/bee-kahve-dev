@@ -175,7 +175,7 @@ def test_get_menu():
     assert response_json != None
     assert response_json["menuProducts"] != None
     assert len(response_json["menuProducts"]) == response_json["product_count"]
-"""
+
 
 def test_get_product_nonexistent():
     product_id = -1
@@ -189,7 +189,19 @@ def test_get_product_existent():
     response = client.get(f"/get_product?product_id={product_id}")
     assert response.status_code == 200
     assert response.json()["coffee_name"] != None
+"""
+def test_get_status_existent_order():
+    order_id = 144
+    response = client.get(f"/get_status?order_id={order_id}")
+    assert response.status_code == 200
+    assert response.json()["order_status"] != None
 
+
+def test_get_status_nonexistent_order():
+    order_id = -1
+    response = client.get(f"/get_status?order_id={order_id}")
+    assert response.status_code == 200
+    assert response.json()["order_status"] == None
 
 """
 def test_update_address_nonexisting_customer():
@@ -288,6 +300,12 @@ def test_get_active_orders_existing_admin():
     response = client.post(f"/get_active_orders?admin_id={admin_id}")
     # Check for server error
     assert response.status_code == 200
+    # Check for handled error
+    response_json = response.json()
+    if response_json["orders"] != None:
+        for order in response_json["orders"]:
+            assert order["order_status"] in ["preparing", "on_the_way"]
+            assert order["line_items"] != None
 
 
 def test_get_waiting_orders_nonexisting_admin():
@@ -304,6 +322,12 @@ def test_get_waiting_orders_existing_admin():
     response = client.get(f"/get_waiting_orders?admin_id={admin_id}")
     # Check for server error
     assert response.status_code == 200
+    # Check for handled error
+    response_json = response.json()
+    if response_json["orders"] != None:
+        for order in response_json["orders"]:
+            assert order["order_status"] == "waiting"
+            assert order["line_items"] != None
 
 
 def test_get_full_product_nonexistent():
